@@ -180,7 +180,7 @@ console.log("heyyyy")
                         setLoading(false)
                         reload()
                     } catch (err) {
-                        seterrorMessages('Error on Pool Update')
+                        seterrorMessages('Rejected')
                         setopen2(true)
                         setLoading(false)
                     }

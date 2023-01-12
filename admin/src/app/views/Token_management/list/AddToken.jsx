@@ -101,9 +101,15 @@ export default function AddToken(props) {
 
     async function SubmitFarm() {
         try {
+            var imageFormat = /\.(png)$/;
+            var errors = {};
+            if(!farmData.lplogo){
+                errors.logoURI = "Please Select logo";
+                setvalidatation(errors)
+                return;
+            }
             if (tokenimage) {
 
-                    var imageFormat = /\.(png)$/, errors = {}
                     console.log(farmData.lplogo.name, "Name")
                     if (!imageFormat.test(farmData.lplogo.name)) {
                         errors.logoURI = "Please Select PNG format only";

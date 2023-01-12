@@ -20,6 +20,7 @@ import "jspdf-autotable";
 import { getLiqutityHistory } from '../../../Api/Swapping'
 import config from '../../../config/config'
 import { dateFormat } from '../../../helper/dateFormat'
+import moment from 'moment/moment'
 
 const Container = styled('div')(({ theme }) => ({
     margin: '30px',
@@ -117,8 +118,8 @@ const AppTable = () => {
 
     const exportPDF = async () => {
         const unit = "pt";
-        const size = "A4"; // Use A1, A2, A3 or A4
-        const orientation = "portrait"; // portrait or landscape
+        const size = "A3"; // Use A1, A2, A3 or A4
+        const orientation = "landscape"; // portrait or landscape
 
         const marginLeft = 40;
         const doc = new jsPDF(orientation, unit, size);
@@ -132,7 +133,9 @@ const AppTable = () => {
             let fromamount = `${elt.fromAmt}-${elt.fromSym}`;
             let toamount = `${elt.toAmt}-${elt.toSym}`;
             let transaction = `${config.txUrl}${elt.txid}`;
-            return [elt.createdAt, fromamount,toamount,transaction]
+            let data = moment(elt.createdAt).format('DD-MM-YYYY hh:mm');
+            let date =`${data}`;
+            return [date,elt.useraddress, fromamount,toamount,transaction]
         }
         );
 
@@ -181,8 +184,8 @@ const AppTable = () => {
                             {historylist.map((items, index) => (
                                 <TableRow key={index}>
                                     <TableCell align="left">
-                                        {dateFormat(
-                                            items.createdAt,
+                                        {moment(
+                                            items.createdAt).format(
                                             'DD-MM-YYYY hh:mm'
                                         )}
                                     </TableCell>

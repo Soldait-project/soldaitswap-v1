@@ -6,15 +6,15 @@ import { makeStyles } from "@material-ui/core/styles";
 import { List, ListItem, Button, Hidden, Popper, Fade } from "@material-ui/core";
 import { AccountBalanceWallet } from '@material-ui/icons';
 import styles from "../../assets/jss/material-kit-react/components/headerLinksStyle.js";
-
+import { toastAlert } from "../../helper/toastAlert";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
 import config from "../../config/config"
-import { setWallet, setTokens } from "../../reducers/Actions"
+import { setWallet, setTokens ,setEligible} from "../../reducers/Actions"
 import { connection } from "../../helper/connection"
 import { formatAddress, toFixedFormat } from "../../helper/custommath"
 import { tokenDetails } from "../../Api/TokenActions"
-import { userlogin } from "../../Api/UserActions"
+import { userlogin ,checkUser } from "../../Api/UserActions"
 
 import Web3Modal from "web3modal";
 
@@ -71,7 +71,7 @@ export default function HeaderLinks(props) {
 
   useEffect(() => {
     if (walletConnection && walletConnection.provider?.on) {
-      console.log('&&&&&&&&&&*****')
+
       const handleAccountsChanged = (accounts) => {
         //setAccounts(accounts);
         console.log('accounts-accounts', accounts)
@@ -114,18 +114,54 @@ export default function HeaderLinks(props) {
   }, [walletConnection]);
 
   async function setConnection() {
-    var WEB3_CONNECT_CACHED_PROVIDER = localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER")
-    if (WEB3_CONNECT_CACHED_PROVIDER) {
-      var connnector = JSON.parse(WEB3_CONNECT_CACHED_PROVIDER)
-      if (connnector == "injected" || connnector == "walletconnect" || connnector === "binancechainwallet"
-        || connnector == "walletlink") {
-        console.log('setConnectionsetConnection')
-        var get = await connection();
-        dispatch(setWallet(get));
-        getuserBalance();
+    console.log("itsmeeeeeeeee")
+  
+    if (localStorage.getItem("connect") == "yes") {
+      var get = await connection();
+    console.log(get ,'getitsmeeeeeeeee')
+      let reqdata = { address: get && get.address ? get.address : '' };
+      let { status } = await checkUser(reqdata);
+      console.log(status, 'pagecalll')
+        if (status == true) {
+          var eligibleStatus = {
+            eligible: "no",
+          }
+          
+           dispatch(setEligible(eligibleStatus));
+          toastAlert('error', "Your Address is Blocked");
+        }
+        else {
+          let initialState = {
+            connect: (localStorage.getItem("connect") && localStorage.getItem("connect") == "yes")
+              ? localStorage.getItem("connect") : "no",
+            iswallet: (localStorage.getItem("iswallet") && localStorage.getItem("iswallet") != "")
+              ? localStorage.getItem("iswallet") : "no",
+            network: get.network,
+            web3: get.web3,
+            address: get.address,
+          };
+          dispatch(setWallet(initialState));
+          var add = get && get.address ? get.address :''
+          console.log(add,'addaddaddadd')
+          setuseraddress(add);
+          //addUsers({ address: get.address });
+        var WEB3_CONNECT_CACHED_PROVIDER = localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER")
+        if (WEB3_CONNECT_CACHED_PROVIDER) {
+          var connnector = JSON.parse(WEB3_CONNECT_CACHED_PROVIDER)
+          if (connnector == "injected" || connnector == "walletconnect" || connnector === "binancechainwallet"
+            || connnector == "walletlink") {
+            console.log('setConnectionsetConnection')
+            var get = await connection();
+            dispatch(setWallet(get));
+            getuserBalance();
+          }
+        }
+        }
       }
-    }
+
   }
+ 
+ 
 
 
   const disconnectWeb3Wallet = async () => {
@@ -161,11 +197,12 @@ export default function HeaderLinks(props) {
         window.location.reload(false)
       }, 1000);
 
-    } catch (error) {
+    }
+     catch (error) {
       console.error(error);
     }
   };
-
+console.log(walletConnection,'newwalletConnection')
   async function getuserBalance() {
     if (walletConnection && walletConnection.web3 && walletConnection.address && walletConnection.address != "") {
       setuseraddress(walletConnection.address);
@@ -214,18 +251,7 @@ export default function HeaderLinks(props) {
           <ListItem className={classes.listItem}>
             <NavLink to="/pools" color="transparent" className="nav-link">Pools</NavLink>
           </ListItem>
-          <ListItem className={classes.listItem}>
-            <NavLink to="/p2p" color="transparent" className="nav-link">P2P</NavLink>
-          </ListItem>
-          {/* <ListItem className={classes.listItem}>
-            <NavLink to="/referral" color="transparent" className="nav-link">Referral</NavLink>
-          </ListItem> */}
-          {/* <ListItem className={classes.listItem}>
-            <a href="#" color="transparent" className="nav-link"><i className="fab fa-medium"></i></a>
-          </ListItem> */}
-          {/* <ListItem className={classes.listItem}>
-            <a href="#" color="transparent" className="nav-link"><i className="fab fa-reddit-alien"></i></a>
-          </ListItem> */}
+
           <ListItem className={classes.listItem}>
             <a href={socialLinks.twitter} color="transparent" className="nav-link"><i className="fab fa-twitter"></i></a>
           </ListItem>
@@ -242,6 +268,7 @@ export default function HeaderLinks(props) {
             <a href={socialLinks.linkedin} color="transparent" className="nav-link"><i className="fab fa-linkedin"></i></a>
           </ListItem>
         </Hidden>
+{console.log(useraddress,'useraddress2')}
         {walletConnection && walletConnection.connect == "yes" && walletConnection.address && walletConnection.address != "" ?
           <ListItem className={classes.listItem + " p-0"} id="walletaddress">
             <span className="wallet_add" onClick={handleClick}>{formatAddress(useraddress)}</span>

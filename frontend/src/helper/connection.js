@@ -42,14 +42,7 @@ export async function connection() {
     provider = await web3Modal.connect();
   }
 
-  if (provider && provider != "") {
-    connect.network = currentProvider.walletConnection.network;
-    connect.web3 = currentProvider.walletConnection.web3;
-    connect.address = currentProvider.walletConnection.address;
-    connect.provider = currentProvider.walletConnection.provider;
-    connect.connect = "yes";
-
-  } else if (provider && provider !== "") {
+  if (provider && provider !== "") {
     //var provider = await web3Modal.connect();
     var web3 = new Web3(provider);
     if (typeof web3 !== "undefined") {

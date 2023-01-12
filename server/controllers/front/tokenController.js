@@ -94,7 +94,7 @@ export const addToken = async (req, res) => {
                 chainId: reqBody.chainId,
                 decimals: reqBody.decimals,
                 useraddress: reqBody.useraddress,
-                logoURI: "https://soldaitapi.alwin.io/coins/default.png",
+                logoURI: "https://indxapi.alwin.io/coins/default.png",
                 addedbyuser: "yes"
             }
 
@@ -155,37 +155,3 @@ export const getCurrencyList = async (req, res) => {
     }
 
 }
-
-
-export const allTokenList = async (req, res) => {
-
-    try {
-
-        var query = [
-            { $match: {} },
-            {
-                $project: {
-                    name: 1,
-                    symbol: 1,
-                    address: 1,
-                    chainId: 1,
-                    decimals: 1,
-                    logoURI: 1,
-                    default: 1,
-                }
-            }
-        ];
-        var result = await DB.AsyncAggregation('tokens', query);
-
-        var list = "";
-        if (result && result.length > 0) {
-            list = JSON.stringify(result);
-        }
-
-        return res.status(200).json({ status: true, 'list': list })
-
-    } catch (err) {
-        return res.status(200).json({ status: true, 'list': [] })
-    }
-
-};

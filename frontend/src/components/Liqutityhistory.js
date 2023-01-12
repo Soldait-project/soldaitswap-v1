@@ -11,10 +11,10 @@ import {
     getallPairsLength,
     getLiqutityAllList
 } from "../ContractActions/factoryActions";
-
+import { toastAlert } from "../helper/toastAlert";
 import RemoveLiqutityModal from "./RemoveLiqutityModal";
 import btnImage from '../assets/images/btn.png';
-
+import { checkUser } from "../Api/UserActions"
 
 const Liqutityhistory = (props) => {
 
@@ -144,12 +144,20 @@ const Liqutityhistory = (props) => {
     }
 
     async function showremoveLiqutityModal(items) {
-        setfromToken(items.tokenA);
-        settoToken(items.tokenB);
-        setTimeout(function () {
-            window.$('#remove_liqutity_modal').modal('show');
-        }, 500)
-
+        let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+        let { status } = await checkUser(reqdata);
+        if (status == true) {
+          toastAlert('error', "Your Address is Blocked");
+        }
+        else {
+            setfromToken(items.tokenA);
+            settoToken(items.tokenB);
+            setTimeout(function () {
+                window.$('#remove_liqutity_modal').modal('show');
+            }, 500)
+    
+        }
+       
     }
 
     return (

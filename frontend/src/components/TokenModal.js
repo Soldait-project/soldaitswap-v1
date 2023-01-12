@@ -92,7 +92,7 @@ const TokenModal = forwardRef((props, ref) => {
                         symbol,
                         decimals
                     } = await getTokenDetail(value);
-                    var logo = config.imageUrl + "default.png";
+                    var logo = "https://indxapi.alwin.io/coins/default.png";
                     setnewtoken(logo);
 
                     if (tokenName && tokenName !== "") {

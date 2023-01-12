@@ -200,7 +200,7 @@ export const addToken = async (param) =>{
 };
 export const updateToken = async (param) =>{
     if(param.file){
-   let newname = `${param.address.toLowerCase()}.png`
+   var newname = `${param.address.toLowerCase()}.png`
     }
     var formData = new FormData();
     formData.append('_id', param._id);
@@ -209,7 +209,7 @@ export const updateToken = async (param) =>{
     formData.append('decimals', param.decimals);
     formData.append('totalSupply', param.totalSupply);
     formData.append('address', param.address);
-    formData.append('file',param.file?param.logoURI:'');
+    formData.append('file',param.file?param.logoURI:'',param.file?newname:'');
     try {
         let respData = await axios({
             method: 'post',

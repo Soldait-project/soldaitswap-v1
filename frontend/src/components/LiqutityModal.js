@@ -16,7 +16,7 @@ import {
 	addliqutityValue
 } from "../Api/LiqutityActions";
 
-
+import { checkUser } from "../Api/UserActions"
 import config from "../config/config"
 
 import unknownToken from "../assets/images/question.svg";
@@ -42,11 +42,17 @@ const LiqutityModal = (props) => {
 	var { onChildClickLiqutity } = props;
 
 	const walletConnection = useSelector((state) => state.walletConnection);
-
+	const eligibleUser = useSelector((state) => state.isEligible);
 	const [txid, settxid] = useState("");
 
 	async function proceedLiqutity() {
-
+		let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+    let { status } = await checkUser(reqdata);
+    console.log(status, 'liqmodalll')
+    if (status == true) {
+      toastAlert('error', "Your Address is Blocked");
+    }
+		else{
 		try {
 
 			window.$('#liqutity_modal').modal('hide');
@@ -156,7 +162,8 @@ const LiqutityModal = (props) => {
 		} catch (err) {
 
 		}
-
+	}
+	
 	}
 
 	return (

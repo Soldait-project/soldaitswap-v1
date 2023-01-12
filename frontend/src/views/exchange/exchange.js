@@ -10,7 +10,7 @@ import HeaderLinks from "../../components/Header/HeaderLinks.js";
 import StaticNavbar from "../../components/StaticNavbar";
 import { Slider } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { checkUser } from "../../Api/UserActions"
 import WalletModal from "../../components/WalletModal";
 import TokenModal from "../../components/TokenModal";
 import SwapModal from "../../components/SwapModal";
@@ -126,7 +126,7 @@ export default function Exchange(props) {
   const dispatch = useDispatch();
   const pairValue = useSelector((state) => state.allowedPairs);
   const walletConnection = useSelector((state) => state.walletConnection);
-
+  const eligibleUser = useSelector((state) => state.isEligible);
   const [fromValue, setfromValue] = useState(initialData);
   const [toValue, settoValue] = useState(initialData);
   const [swapcurrent, setswapcurrent] = useState("");
@@ -159,7 +159,7 @@ export default function Exchange(props) {
   const [best_to_check_trades, setbest_to_check_trades] = useState([]);
   const [isPair, setisPair] = useState(true);
   const [showRecentHistory, setshowRecentHistory] = useState(false);
-  const [singleHopOnly, setsingleHopOnly] = useState(false);
+  //const [singleHopOnly, setsingleHopOnly] = useState(false);
 
   const [currentPair, setcurrentPair] = useState("");
 
@@ -179,6 +179,7 @@ export default function Exchange(props) {
     if (tokenList && tokenList.length > 0) {
 
       var resp = await getBestTokens(tokenList);
+      console.log(resp, 'resprespresprespresp')
       setbest_to_check_trades(resp);
 
       var index = 1;
@@ -322,7 +323,7 @@ export default function Exchange(props) {
     if (status && res !== "." && parseFloat(value) > 0) {
 
       var isExactIn = (id === "from") ? true : false;
-      //var singleHopOnly = false;
+      var singleHopOnly = false;
       var typedValue = value;
       var from = fromData.address;
       var to = toData.address;
@@ -504,40 +505,57 @@ export default function Exchange(props) {
   }
 
   async function approveToken() {
-
-    var value = await getbalance(fromValue.address, fromValue.symbol);
-    try {
-      var balance = value.balance;
-      var amt = parseFloat(fromValue.amount) / 1e18;
-
-      if (balance >= amt) {
-        setapprovebtn(true);
-        var approveAmt = 10000000 * (10 ** 18);
-        approveAmt = await convert(approveAmt);
-        var result = await approveSwap(fromValue.address, approveAmt, config.Router);
-        if (result.status) {
-          //setshowapprove(false);
-          setshowswap(true);
-          setcheckallowance(false);
-          setapprovebtn(false);
-          toastAlert('success', "Approve Success", 'balance');
+    let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+    let { status } = await checkUser(reqdata);
+    if (status == true) {
+      toastAlert('error', "Your Address is Blocked");
+    }
+    else {
+      var value = await getbalance(fromValue.address, fromValue.symbol);
+      try {
+        var balance = value.balance;
+        var amt = parseFloat(fromValue.amount) / 1e18;
+  
+        if (balance >= amt) {
+          setapprovebtn(true);
+          var approveAmt = 10000000 * (10 ** 18);
+          approveAmt = await convert(approveAmt);
+          var result = await approveSwap(fromValue.address, approveAmt, config.Router);
+          if (result.status) {
+            //setshowapprove(false);
+            setshowswap(true);
+            setcheckallowance(false);
+            setapprovebtn(false);
+            toastAlert('success', "Approve Success", 'balance');
+          } else {
+            setapprovebtn(false);
+          }
         } else {
           setapprovebtn(false);
+          toastAlert('error', "Insuffucient balance", 'balance');
         }
-      } else {
+      } catch (err) {
         setapprovebtn(false);
-        toastAlert('error', "Insuffucient balance", 'balance');
       }
-    } catch (err) {
-      setapprovebtn(false);
     }
+    
 
   }
-
+console.log(walletConnection,'walletConnection22')
   async function showSwapModal() {
     //check to current price update
-    await calculateAmount(swapcurrent, enterValue, fromValue, toValue, "no", slippageValue);
-    window.$('#swap_modal').modal('show');
+    let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+    let { status } = await checkUser(reqdata);
+    console.log(status, 'rtttttttttttttt')
+    if (status == true) {
+      toastAlert('error', "Your Address is Blocked");
+    }
+    else{
+      await calculateAmount(swapcurrent, enterValue, fromValue, toValue, "no", slippageValue);
+      window.$('#swap_modal').modal('show');
+    }
+   
+    
   }
 
   async function confirmSupply() {
@@ -556,8 +574,8 @@ export default function Exchange(props) {
     }
 
     if (value && value.ismultiHops) {
-      var isHops = (value.ismultiHops === "true") ? true : false
-      setsingleHopOnly(isHops);
+      //var isHops = (value.ismultiHops === "true") ? true : false
+      // setsingleHopOnly(isHops);
       resetSwap(fromValue, toValue)
     }
   }

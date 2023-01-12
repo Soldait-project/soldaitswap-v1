@@ -19,7 +19,8 @@ var Storage = multer.diskStorage({
         cb(null, 'public/tokens/')
     },
     filename: function (req, file, cb) {
-        cb(null, file.fieldname + Date.now() + path.extname(file.originalname))
+        console.log(file,"fill------")
+        cb(null, file.originalname)
     }
 });
 
@@ -112,7 +113,8 @@ router.route("/pool-update").post(poolCtrl.poolupdate);
 router.route("/Pool-data").post(poolCtrl.Pooldata);
 router.route("/pool-delete").post(poolCtrl.pooldelete);
 
-
+router.route("/update-APY").post(settingCtrl.updateapy);
+router.route("/get-APY").get(settingCtrl.getapy);
 router.route("/get-site-template").get(settingCtrl.gettemplate);
 router.route("/update-site-template").post(settingCtrl.settemplate);
 router.route("/get-settings").post(authVerify,settingCtrl.getsettings);

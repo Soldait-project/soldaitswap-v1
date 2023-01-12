@@ -1,6 +1,5 @@
 import WalletConnect from "@walletconnect/web3-provider";
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
-import config from "./config"
 
 export const providerOptions = {
     walletlink: {

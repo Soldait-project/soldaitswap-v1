@@ -50,7 +50,7 @@ import {
 import {
     removeliqutityValue
 } from "../Api/LiqutityActions";
-
+import {checkUser} from '../Api/UserActions'
 import config from "../config/config";
 
 
@@ -243,161 +243,177 @@ const RemoveLiqutityModal = (props) => {
 
     async function ApproveRemove() {
 
-        var get = await connection();
-
-        if (get && get.web3) {
-            var web3 = get.web3;
-            var address = get.address;
-            var value = removeLiq;
-            var deadLine = await getdeadline(2);
-            var nonce = web3.utils.toHex(0);
-            // var msg = "owner: " + address + "\n" + "spender:" + address + "\n" + "value:" + value + "\n"
-            //     + "nonce:" + nonce + "\n" + "deadline:" + deadLine;
-
-            var msg = `owner: ${address} \n spender: ${address} \n value: ${value} \n nonce: ${nonce} \n deadline:${deadLine}`
-
-            setshowloader(true)
-            try {
-                setisapproveBtn(true)
-                await web3.eth.personal.sign(msg, address);
-                await approve(pairaddress, value.toString());
-                setshowloader(false)
-                setisRemove(false);
-            } catch (err) {
-                setshowloader(false)
-                setisapproveBtn(false)
-            }
-
+        let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+        let { status } = await checkUser(reqdata);
+        if (status == true) {
+          toastAlert('error', "Your Address is Blocked");
         }
+        else {
+            var get = await connection();
+
+            if (get && get.web3) {
+                var web3 = get.web3;
+                var address = get.address;
+                var value = removeLiq;
+                var deadLine = await getdeadline(2);
+                var nonce = web3.utils.toHex(0);
+                // var msg = "owner: " + address + "\n" + "spender:" + address + "\n" + "value:" + value + "\n"
+                //     + "nonce:" + nonce + "\n" + "deadline:" + deadLine;
+    
+                var msg = `owner: ${address} \n spender: ${address} \n value: ${value} \n nonce: ${nonce} \n deadline:${deadLine}`
+    
+                setshowloader(true)
+                try {
+                    setisapproveBtn(true)
+                    await web3.eth.personal.sign(msg, address);
+                    await approve(pairaddress, value.toString());
+                    setshowloader(false)
+                    setisRemove(false);
+                } catch (err) {
+                    setshowloader(false)
+                    setisapproveBtn(false)
+                }
+    
+            }
+        }
+      
 
     }
 
     async function Remove() {
 
-        var get = await connection();
-        var result = "";
-        if (get && get.web3) {
-            var amountAMin = 0;
-            var amountBMin = 0;
-            if (from.symbol !== config.ETHSYMBOL && to.symbol !== config.ETHSYMBOL) {
-                var tokenAamt = await percentage(from.amount, 3, 'minus');
-                amountAMin = await convertToWei(tokenAamt, from.decimals);
-                amountAMin = await ChecktokenDecimal(amountAMin, from.decimals);
-
-                var tokenBamt = await percentage(to.amount, 3, 'minus');
-                amountBMin = await convertToWei(tokenBamt, to.decimals);
-                amountBMin = await ChecktokenDecimal(amountBMin, to.decimals);
-
-                setshowloader(true);
-                setisRemove(true);
-                try {
-                    result = await removeLiquidity(
-                        tokena,
-                        tokenb,
-                        removeLiq,
-                        amountAMin,
-                        amountBMin
-                    );
-                    setshowloader(false);
-                    setisRemove(false);
-                    setisapproveBtn(false);
-
-                    if (result && result.status) {
-                        var tx = (result.value && result.value.transactionHash) ?
-                            result.value.transactionHash : "";
-                        var gasFeevalue = (result.value && result.value.gasUsed) ?
-                            result.value.gasUsed : 0;
-                        var gasFee = await division(gasFeevalue, 10 ** 18);
-
-                        let LiqData = {
-                            txid: tx,
-                            address: walletConnection.address,
-                            fromaddress: from.address,
-                            fromamount: from.showamount,
-                            toaddress: to.address,
-                            toamount: to.showamount,
-                            gasfee: gasFee,
-                            lpamount: parseFloat(removeLiq) / 10 ** 18
-                        }
-                        await removeliqutityValue(LiqData);
-                        toastAlert('success', "Successfully removed", 'liqutity');
-                        window.location.reload(false);
-                    } else {
-                        toastAlert('error', "Rejected", 'liqutity');
-                    }
-
-                } catch (err) {
-
-                    setshowloader(false)
-                }
-            } else {
-
-                let tokenAamt = await percentage(from.amount, 3, 'minus');
-                amountAMin = await convertToWei(tokenAamt, from.decimals);
-
-                let tokenBamt = await percentage(to.amount, 3, 'minus');
-                amountBMin = await convertToWei(tokenBamt, to.decimals);
-
-                var token = from.address;
-                if (to.symbol !== config.ETHSYMBOL) {
-                    token = to.address;
-                }
-
-                var tokenMin = (from.symbol !== config.ETHSYMBOL) ? amountAMin : amountBMin;
-                var tokenETHMin = (from.symbol === config.ETHSYMBOL) ? amountAMin : amountBMin;
-
-                setshowloader(true);
-                setisRemove(true);
-
-                var removeLiq1 = await convert(removeLiq);
-                amountAMin = await convert(tokenMin);
-                amountAMin = await ChecktokenDecimal(amountAMin, from.decimals);
-
-                amountBMin = await convert(tokenETHMin);
-                amountBMin = await ChecktokenDecimal(tokenETHMin, to.decimals);
-
-                try {
-                    result = await removeLiquidityETH(
-                        token,
-                        removeLiq1,
-                        amountAMin,
-                        amountBMin
-                    );
-                    setshowloader(false);
-                    setisRemove(false);
-                    setisapproveBtn(false)
-                    if (result && result.status) {
-
-                        var tx1 = (result.value && result.value.transactionHash) ?
-                            result.value.transactionHash : "";
-                        var gasFeevalue1 = (result.value && result.value.gasUsed) ?
-                            result.value.gasUsed : 0;
-                        var gasFee1 = await division(gasFeevalue1, 10 ** 18);
-
-                        let LiqData = {
-                            txid: tx1,
-                            address: walletConnection.address,
-                            fromaddress: from.address,
-                            fromamount: from.showamount,
-                            toaddress: to.address,
-                            toamount: to.showamount,
-                            gasfee: gasFee1,
-                            lpamount: parseFloat(removeLiq) / 10 ** 18
-                        }
-                        await removeliqutityValue(LiqData);
-                        toastAlert('success', "Successfully removed", 'liqutity');
-                        window.location.reload(false);
-                    } else {
-                        toastAlert('error', "Rejected", 'liqutity');
-                    }
-                } catch (err) {
-                    setshowloader(false)
-                }
-
-            }
-
-
+        let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+        let { status } = await checkUser(reqdata);
+        if (status == true) {
+          toastAlert('error', "Your Address is Blocked");
         }
+        else {
+            var get = await connection();
+            var result = "";
+            if (get && get.web3) {
+                var amountAMin = 0;
+                var amountBMin = 0;
+                if (from.symbol !== config.ETHSYMBOL && to.symbol !== config.ETHSYMBOL) {
+                    var tokenAamt = await percentage(from.amount, 3, 'minus');
+                    amountAMin = await convertToWei(tokenAamt, from.decimals);
+                    amountAMin = await ChecktokenDecimal(amountAMin, from.decimals);
+    
+                    var tokenBamt = await percentage(to.amount, 3, 'minus');
+                    amountBMin = await convertToWei(tokenBamt, to.decimals);
+                    amountBMin = await ChecktokenDecimal(amountBMin, to.decimals);
+    
+                    setshowloader(true);
+                    setisRemove(true);
+                    try {
+                        result = await removeLiquidity(
+                            tokena,
+                            tokenb,
+                            removeLiq,
+                            amountAMin,
+                            amountBMin
+                        );
+                        setshowloader(false);
+                        setisRemove(false);
+                        setisapproveBtn(false);
+    
+                        if (result && result.status) {
+                            var tx = (result.value && result.value.transactionHash) ?
+                                result.value.transactionHash : "";
+                            var gasFeevalue = (result.value && result.value.gasUsed) ?
+                                result.value.gasUsed : 0;
+                            var gasFee = await division(gasFeevalue, 10 ** 18);
+    
+                            let LiqData = {
+                                txid: tx,
+                                address: walletConnection.address,
+                                fromaddress: from.address,
+                                fromamount: from.showamount,
+                                toaddress: to.address,
+                                toamount: to.showamount,
+                                gasfee: gasFee,
+                                lpamount: parseFloat(removeLiq) / 10 ** 18
+                            }
+                            await removeliqutityValue(LiqData);
+                            toastAlert('success', "Successfully removed", 'liqutity');
+                            window.location.reload(false);
+                        } else {
+                            toastAlert('error', "Rejected", 'liqutity');
+                        }
+    
+                    } catch (err) {
+    
+                        setshowloader(false)
+                    }
+                } else {
+    
+                    let tokenAamt = await percentage(from.amount, 3, 'minus');
+                    amountAMin = await convertToWei(tokenAamt, from.decimals);
+    
+                    let tokenBamt = await percentage(to.amount, 3, 'minus');
+                    amountBMin = await convertToWei(tokenBamt, to.decimals);
+    
+                    var token = from.address;
+                    if (to.symbol !== config.ETHSYMBOL) {
+                        token = to.address;
+                    }
+    
+                    var tokenMin = (from.symbol !== config.ETHSYMBOL) ? amountAMin : amountBMin;
+                    var tokenETHMin = (from.symbol === config.ETHSYMBOL) ? amountAMin : amountBMin;
+    
+                    setshowloader(true);
+                    setisRemove(true);
+    
+                    var removeLiq1 = await convert(removeLiq);
+                    amountAMin = await convert(tokenMin);
+                    amountAMin = await ChecktokenDecimal(amountAMin, from.decimals);
+    
+                    amountBMin = await convert(tokenETHMin);
+                    amountBMin = await ChecktokenDecimal(tokenETHMin, to.decimals);
+    
+                    try {
+                        result = await removeLiquidityETH(
+                            token,
+                            removeLiq1,
+                            amountAMin,
+                            amountBMin
+                        );
+                        setshowloader(false);
+                        setisRemove(false);
+                        setisapproveBtn(false)
+                        if (result && result.status) {
+    
+                            var tx1 = (result.value && result.value.transactionHash) ?
+                                result.value.transactionHash : "";
+                            var gasFeevalue1 = (result.value && result.value.gasUsed) ?
+                                result.value.gasUsed : 0;
+                            var gasFee1 = await division(gasFeevalue1, 10 ** 18);
+    
+                            let LiqData = {
+                                txid: tx1,
+                                address: walletConnection.address,
+                                fromaddress: from.address,
+                                fromamount: from.showamount,
+                                toaddress: to.address,
+                                toamount: to.showamount,
+                                gasfee: gasFee1,
+                                lpamount: parseFloat(removeLiq) / 10 ** 18
+                            }
+                            await removeliqutityValue(LiqData);
+                            toastAlert('success', "Successfully removed", 'liqutity');
+                            window.location.reload(false);
+                        } else {
+                            toastAlert('error', "Rejected", 'liqutity');
+                        }
+                    } catch (err) {
+                        setshowloader(false)
+                    }
+    
+                }
+    
+    
+            }
+        }
+       
 
     }
 

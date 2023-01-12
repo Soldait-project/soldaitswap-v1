@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 // core components
 import Header from "../components/Header/Header.js";
 import FooterHome from "../components/Footer/FooterHome.js";
@@ -610,7 +610,7 @@ export default function LandingPage(props) {
                   <div className="text-center">
                     <h2>Soldait Token Info</h2>
                     <p className="para">Soldait Token is a smart contract that empowers & enhances tthe payment systems based on binance smart chain (BSC). Increase the effficiency, decrease the cost of money transfers and send or receive cross-border payments instantly.</p>
-                    {walletConnection && walletConnection.connect == "yes" && walletConnection.address && walletConnection.address != "" ? '' :
+                    {walletConnection && walletConnection.connect === "yes" && walletConnection.address && walletConnection.address !== "" ? '' :
                       <Button className="auth_btn" data-toggle="modal" data-target="#wallet_modal"><AccountBalanceWallet /> Connect Wallet</Button>}
 
                     <div className="token_info">

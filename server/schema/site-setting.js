@@ -6,6 +6,8 @@ var SchemaFormat = new Schema({
   twitter: { type: String, default: '' },
   linkedin: { type: String, default: '' },
   telegram: { type: String, default: '' },
+  youtube: { type: String, default: '' },
+  apy: {type: Number, default: 0},
 });
 
 module.exports = mongoose.model('siteurl', SchemaFormat, 'siteurl');

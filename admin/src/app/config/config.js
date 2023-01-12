@@ -1,5 +1,5 @@
 let key = {};
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV == "production") {
   key = {
     baseUrl: "https://soldaitapi.alwin.io/adminapi",
     imageUrl: "https://soldaitapi.alwin.io/tokens/",

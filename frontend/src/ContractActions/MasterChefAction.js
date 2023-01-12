@@ -635,7 +635,7 @@ export async function harverst(pid) {
       var bal = await ContractM.methods.pendingSoldait(pid, address).call();
       if (bal === 0 || bal === "0" || parseFloat(bal) < 0) {
         return {
-          value: "Insuffucient reward earned",
+          value: "insufficient reward earned",
           status: false,
         };
       }

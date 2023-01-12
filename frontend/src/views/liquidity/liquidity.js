@@ -9,7 +9,7 @@ import HeaderLinks from "../../components/Header/HeaderLinks.js";
 import StaticNavbar from "../../components/StaticNavbar";
 import { Link } from 'react-router-dom';
 import { Slider } from '@material-ui/core';
-
+import { checkUser } from "../../Api/UserActions"
 import { withStyles } from "@material-ui/core/styles";
 
 import WalletModal from "../../components/WalletModal";
@@ -179,7 +179,7 @@ export default function Liquidity(props) {
 
   //redux
   const walletConnection = useSelector((state) => state.walletConnection);
-
+  const eligibleUser = useSelector((state) => state.isEligible);
   useEffect(() => {
     setInitialTokens();
     getHistory()
@@ -356,7 +356,16 @@ export default function Liquidity(props) {
   }
 
   async function showLiqutityModal() {
+    let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+    let { status } = await checkUser(reqdata);
+    console.log(status, 'liquidity')
+    if (status == true) {
+      toastAlert('error', "Your Address is Blocked");
+    }
+   else{
     window.$('#liqutity_modal').modal('show');
+    }
+  
   }
 
   async function rateCalulation(reserveA, reserveB) {
@@ -418,55 +427,71 @@ export default function Liquidity(props) {
   }
 
   async function approveTokenA(item, id) {
-    var value = await getbalance(item.address, item.symbol);
-    try {
-      var balance = parseFloat(value.balanceOf);
-      var amt = parseFloat(item.amount);
-      setapproveloader(true);
-      setapproveBtn(true);
-      if (balance >= amt) {
-        var result = await approve(item.address, balance);
-        if (result.status) {
-          setfromError({ ...fromError, ...{ "allowance": "no" } });
-          toastAlert('success', "Approve Success", 'balance');
-        } else {
-          toastAlert('error', "Oops failed!", 'balance');
-        }
-      } else {
-        toastAlert('error', "Insuffucient balance", 'balance');
-      }
-      setapproveBtn(false);
-      setapproveloader(false);
-    } catch (err) {
-      setapproveBtn(false);
-      setapproveloader(false);
+    let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+    let { status } = await checkUser(reqdata);
+    if (status == true) {
+      toastAlert('error', "Your Address is Blocked");
     }
+    else {
+      var value = await getbalance(item.address, item.symbol);
+      try {
+        var balance = parseFloat(value.balanceOf);
+        var amt = parseFloat(item.amount);
+        setapproveloader(true);
+        setapproveBtn(true);
+        if (balance >= amt) {
+          var result = await approve(item.address, balance);
+          if (result.status) {
+            setfromError({ ...fromError, ...{ "allowance": "no" } });
+            toastAlert('success', "Approve Success", 'balance');
+          } else {
+            toastAlert('error', "Oops failed!", 'balance');
+          }
+        } else {
+          toastAlert('error', "Insuffucient balance", 'balance');
+        }
+        setapproveBtn(false);
+        setapproveloader(false);
+      } catch (err) {
+        setapproveBtn(false);
+        setapproveloader(false);
+      }
+    }
+   
   }
 
   async function approveTokenB(item, id) {
-    var value = await getbalance(item.address, item.symbol);
-    try {
-      setapproveloader(true);
-      setapproveBtn1(true);
-      var balance = parseFloat(value.balanceOf);
-      var amt = parseFloat(item.amount);
-      if (balance >= amt) {
-        var result = await approve(item.address, balance);
-        if (result.status) {
-          settoError({ ...toError, ...{ "allowance": "no" } });
-          toastAlert('success', "Approve Success", 'balance');
-        } else {
-          toastAlert('error', "Oops failed!", 'balance');
-        }
-      } else {
-        toastAlert('error', "Insuffucient balance", 'balance');
-      }
-      setapproveBtn1(false);
-      setapproveloader(false);
-    } catch (err) {
-      setapproveloader(false);
-      setapproveBtn1(false);
+    let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+    let { status } = await checkUser(reqdata);
+    if (status == true) {
+      toastAlert('error', "Your Address is Blocked");
     }
+    else {
+      var value = await getbalance(item.address, item.symbol);
+      try {
+        setapproveloader(true);
+        setapproveBtn1(true);
+        var balance = parseFloat(value.balanceOf);
+        var amt = parseFloat(item.amount);
+        if (balance >= amt) {
+          var result = await approve(item.address, balance);
+          if (result.status) {
+            settoError({ ...toError, ...{ "allowance": "no" } });
+            toastAlert('success', "Approve Success", 'balance');
+          } else {
+            toastAlert('error', "Oops failed!", 'balance');
+          }
+        } else {
+          toastAlert('error', "Insuffucient balance", 'balance');
+        }
+        setapproveBtn1(false);
+        setapproveloader(false);
+      } catch (err) {
+        setapproveloader(false);
+        setapproveBtn1(false);
+      }
+    }
+   
   }
 
   const sliderChange = async (value) => {

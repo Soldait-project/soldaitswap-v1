@@ -58,7 +58,8 @@ export const swapHistory = async (req, res) => {
             var page = parseInt(req.query.page);
             skip = (page - 1) * limit;
         }
-        var cond = { useraddress: req.query.address }
+        // var cond = { useraddress: req.query.address }
+        var cond = { }
         var query = [
             { $match: { _id: { $ne: null } } },
             { $sort: { createdAt: -1 } },
@@ -132,7 +133,7 @@ export const swapHistoryChart = async (req, res) => {
         cond['$and'] = [
             { fromaddress: from, toaddress: to }
         ];
-
+        console.log(cond, 'condcondcond')
         var query = [
             {
                 "$match": cond

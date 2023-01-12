@@ -134,7 +134,7 @@ export const adminaddforms = (async (req, res) => {
             quoteTokenSymbol: req.body.quoteTokenSymbol,
             quoteTokenAdresses: req.body.quoteTokenAdresses,
             depositFee: req.body.depositFee,
-            logoURI: (req.files && req.files[0] && req.files[0].filename) ? `${config.imageUrl}forms/${req.files[0].filename}` : "",
+            logoURI: (req.files && req.files[0] && req.files[0].filename) ? `${config.imageURL}forms/${req.files[0].filename}` : "",
         }
         var data = await db.AsyncInsert('forms', saveData);
         // }
@@ -171,7 +171,7 @@ export const adminupdateforms = (async (req, res) => {
                 'depositFee': req.body.depositFee,
             };
             if (req.files[0] && req.files[0].filename != "") {
-                update.logoURI = (req.files[0] && req.files[0].filename) ? req.files[0].filename : "";
+                update.logoURI = (req.files[0] && req.files[0].filename) ? `${config.imageURL}forms/${req.files[0].filename}` : "";
             }
             await db.AsyncfindOneAndUpdate('forms', cond, update, { new: true });
 
@@ -223,7 +223,7 @@ export const addtoken = (async (req, res) => {
             decimals: req.body.decimals,
             totalSupply: req.body.totalSupply,
             address: req.body.address,
-            logoURI: (req.files && req.files[0] && req.files[0].filename) ? `${config.baseUrl}tokens/${req.files[0].filename}` : "",
+            logoURI: (req.files && req.files[0] && req.files[0].filename) ? req.files[0].filename : "",
         }
         var data = await db.AsyncInsert('tokens', saveData);
         // }
@@ -254,7 +254,7 @@ export const updatetoken = (async (req, res) => {
                 address: req.body.address,
             };
             if (req.files && req.files[0] && req.files[0].filename != "") {
-                update.logoURI = (req.files[0] && req.files[0].filename) ? `${config.baseUrl}tokens/${req.files[0].filename}` : "";
+                update.logoURI = (req.files[0] && req.files[0].filename) ?req.files[0].filename : "";
             }
             await db.AsyncfindOneAndUpdate('tokens', cond, update, { new: true });
 

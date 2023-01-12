@@ -341,7 +341,7 @@ export async function getAllCommonPairsList(
     ? [wrappedCurrency(currencyA, chainId), wrappedCurrency(currencyB, chainId)]
     : [undefined, undefined];
 
-    const common = BASES_TO_CHECK_TRADES_AGAINST[chainId] ?? []
+    const common = bestPath ?? []
     const additionalA = tokenA ? ADDITIONAL_BASES[chainId]?.[tokenA.address] ?? [] : []
     const additionalB = tokenB ? ADDITIONAL_BASES[chainId]?.[tokenB.address] ?? [] : []
     const returndata =  [...common, ...additionalA, ...additionalB]
@@ -433,9 +433,8 @@ export async function getPairs(
       ? Pair.getAddress(tokenA, tokenB)
       : undefined;
   });
-
+  
   var originalPairs = await getallPairs();
-
   //var originalPairs = PairList;
 
   var getValidpair = [];
@@ -588,7 +587,6 @@ export async function swapTradeExactOut(
   allowedPairs?: any
 ) {
  
-
   const MAX_HOPS = 3;
 
   if (
@@ -728,7 +726,7 @@ export async function getFormatMulticall1(results: any, name: any, pos: any) {
 export async function getBestTokens(list: any) {
   var bestList =[];
   for(var t=0;t<list.length;t++){
-
+    if(list[t].symbol=="BUSD" || list[t].symbol=="CAKE" || list[t].symbol=="BNB" || list[t].symbol=="SIT"){
    var routeToken =  new Token(
     list[t].chainId,
     list[t].address,
@@ -737,6 +735,7 @@ export async function getBestTokens(list: any) {
     list[t].name,
     );
     bestList.push(routeToken);
+   }
 
   }
 

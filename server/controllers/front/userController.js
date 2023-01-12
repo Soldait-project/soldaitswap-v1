@@ -82,6 +82,26 @@ else {
 
     }
 }
+export const saveSubscriber = async (req, res) => {
+
+    try {
+
+        var email = req.body.email;
+
+        var data = {
+            email: email
+        }
+        var exits = await DB.AsyncfindOne('subscribe', data, {});
+        if (!exits) {
+            exits = await DB.AsyncInsert('subscribe', data);
+        }
+        return res.status(200).json({ status: true,  'message': 'Subscribed successfully' })
+
+    } catch (err) {
+        return res.status(400).json({ status: true, 'message': 'failed' })
+    }
+
+};
 export const getsettings = (async (req, res) => {
 
     try {

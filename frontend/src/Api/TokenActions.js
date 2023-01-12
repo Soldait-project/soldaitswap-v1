@@ -130,7 +130,7 @@ export const currencyList = async (data) => {
 }
 
 export const allTokenList = async (data) => {
-    var useraddress = (data && data.useraddress) ? data.useraddress : 0;
+
     try {
         let respData = await axios({
             'method': 'get',

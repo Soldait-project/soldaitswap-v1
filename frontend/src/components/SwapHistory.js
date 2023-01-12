@@ -2,7 +2,6 @@ import React, { useEffect, useState, Fragment } from 'react';
 import DataTable from 'react-data-table-component';
 import { useSelector } from 'react-redux';
 import {
-    tokenDetails,
     allTokenList
 } from "../Api/TokenActions";
 import config from "../config/config"
@@ -118,8 +117,8 @@ const SwapHistory = (props) => {
 
     async function setInitial() {
 
-        let userAddress = ""
-        if (walletConnection && walletConnection.connect === "yes" && walletConnection.web3 && walletConnection.address && walletConnection.address !== "") userAddress = walletConnection.address;
+
+        //if (walletConnection && walletConnection.connect === "yes" && walletConnection.web3 && walletConnection.address && walletConnection.address !== "") var userAddress = walletConnection.address;
 
         var getToken = await allTokenList();
         var allToken = JSON.parse(getToken.result);
@@ -165,7 +164,7 @@ const SwapHistory = (props) => {
                 data={historyList}
                 highlightOnHover
                 pagination
-                paginationRowsPerPageOptions={[5,10,15,20,500]}
+                paginationRowsPerPageOptions={[5, 10, 15, 20, 500]}
                 Responsive={true}
                 paginationServer
                 paginationTotalRows={totalrecords}

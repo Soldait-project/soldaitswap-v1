@@ -60,15 +60,16 @@ export const sitesocialurl = (async (req, res) => {
             var cond = {
                 _id: _id
             }
-            exits = await db.AsyncfindOne('siteurl', cond, {});
+         exits = await db.AsyncfindOne('siteurl', cond, {});
         }
-
+        
 
         var update = {
             'facebook': req.body.facebook,
             'twitter': req.body.twitter,
             'linkedin': req.body.linkedin,
             'telegram': req.body.telegram,
+            'youtube': req.body.youtube,
         };
         if (exits) {
             console.log("exites")
@@ -121,7 +122,7 @@ export const sendnewsletter = (async (req, res) => {
         let content = req.body.message;
         console.log(req.body.email, 'email')
         let mailContent = {
-            "subject": " Soldait Newsletter",
+            "subject": " INDX Newsletter",
             "template": content
         };
         // mailContent['subject'] = "Babypink Newsletter";
@@ -281,5 +282,39 @@ export const settemplate = (async (req, res) => {
 
     } catch (err) {
         res.status(400).json({ message: 'error on server' })
+    }
+});
+
+export const getapy = (async (req, res) => {
+
+    try {
+        
+        let exits = await db.AsyncfindOne('siteurl', {}, {});
+
+        return res.status(200).json({ message: 'apy fetched successfully.', data: exits })
+
+
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ message: 'error on server', status: 400 });
+    }
+});
+
+export const updateapy = (async (req, res) => {
+
+    try {
+        console.log(req.body.apy, "params")
+        var update = { "apy": req.body.apy }
+        if(req.body._id){
+        let cond = { "_id": req.body._id};
+        var template = await db.AsyncfindOneAndUpdate('siteurl', cond, update, {});
+        }else{
+        let data = await db.AsyncInsert('siteurl', update);
+        }
+
+        return res.status(200).json({status:true, message: 'APY successfully updated' })
+
+    } catch (err) {
+        res.status(400).json({status: false, message: 'error on server' })
     }
 });

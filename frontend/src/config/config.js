@@ -4,6 +4,8 @@ var key = {
   Factory: "0x1e9b8b105174e2c6c1e7068b8698078d2e30a748",
   ETHSYMBOL: "BNB"
 };
+
+
 if (process.env.NODE_ENV === "production") {
   key = {
     frontUrl: "https://soldait-frontend-2023.pages.dev",
@@ -36,8 +38,8 @@ if (process.env.NODE_ENV === "production") {
 } else {
   key = {
     frontUrl: "http://localhost:3000/",
-    baseUrl: "http://localhost:3533/api",
-    //baseUrl: "https://soldaitapi.alwin.io/api",
+    //baseUrl: "http://localhost:3533/api",
+    baseUrl: "https://soldaitapi.alwin.io/api",
     Router: "0x81911a74a5f6e940fe364d8da3312405b79a51ed",
     Factory: "0x1e9b8b105174e2c6c1e7068b8698078d2e30a748",
     NetworkId: 97,

@@ -14,18 +14,10 @@ import {
 export async function getbalance(from, symbol) {
 
     var get = await connection();
-    console.log(get, 'getgetgetgetget')
     try {
         if (get && get.web3) {
             var web3 = get.web3;
-            var network = await web3.eth.net.getId();
-            var getNetworkType = await web3.eth.net.getNetworkType();
-            var getChainId = await web3.eth.getChainId();
-
-            console.log(getChainId, 'getChainIdgetChainId')
-            console.log(getNetworkType, 'getNetworkType')
             var address = get.address;
-            console.log(address, 'address+++++', from, 'ffff', network)
             var balanceOf = 0;
             var bal = 0;
             if (symbol === config.ETHSYMBOL) {

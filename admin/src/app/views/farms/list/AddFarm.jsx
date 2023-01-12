@@ -239,8 +239,8 @@ export default function AddFarm(props) {
                         setopensuccess(true)
                         reload()
                     } catch (err) {
-                        console.log(err, 'error on farm update')
-                        seterrorMessages('Error on Farm Update')
+                        console.log(err, 'farm update')
+                        seterrorMessages('Farm Update Rejected')
                         setopen2(true)
                         setLoading(false)
                     }

@@ -11,7 +11,7 @@ import {
   addSwap
 } from "../Api/SwapActions";
 
-
+import { checkUser } from "../Api/UserActions"
 import { division } from "../helper/custommath";
 
 import unknownToken from "../assets/images/question.svg"
@@ -37,13 +37,20 @@ const SwapModal = (props) => {
   var { onchildSwapModal, onchildconfirmSupply } = props;
 
   const walletConnection = useSelector((state) => state.walletConnection);
-
+  const eligibleUser = useSelector((state) => state.isEligible);
   const [txid, settxid] = useState("");
   const [swapbtn, setswapbtn] = useState(false);
   const [isConfirm, setisConfirm] = useState(false);
+  const [errtxt, seterrtxt] = useState("Transaction Rejected");
 
   async function proceedSwap() {
-
+    let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+    let { status } = await checkUser(reqdata);
+    console.log(status, 'modalll')
+    if (status == true) {
+      toastAlert('error', "Your Address is Blocked");
+    }
+   else{
     setisConfirm(true);
 
     try {
@@ -95,8 +102,24 @@ const SwapModal = (props) => {
                 // window.location.reload(false)
               }, 1500)
             } else {
+
+              var err = (result && result.error && result.error !== "") ? result.error.toString() : ""
+              let position = err.search("Time limit exceeded");
+
+              let position1 = err.search("insufficient");
+              if (position > 0) {
+                seterrtxt("Please try again");
+              } else if (position1 > 0) {
+                seterrtxt("Insufficient gas fee");
+              } else {
+                seterrtxt("Transaction Rejected");
+              }
+
               window.$('#pending_swap_modal').modal('hide');
-              window.$('#error_swap_modal').modal('show');
+              setTimeout(function () {
+                window.$('#error_swap_modal').modal('show');
+              }, 600)
+
             }
           } catch (err) {
             setisConfirm(false);
@@ -109,6 +132,7 @@ const SwapModal = (props) => {
     } catch (err) {
       setisConfirm(false);
     }
+  }
 
   }
 
@@ -235,7 +259,7 @@ const SwapModal = (props) => {
             <div className="modal-body">
               <div className="text-center">
                 <img src={require("../assets/images/warning.png")} alt="Warning" className="img-fluid mb-2" />
-                <p className="">Transaction Rejected</p>
+                <p className="">{errtxt}</p>
               </div>
               <div className="text-center">
                 <button className="btn btn-primary btn-rounded w-50" data-dismiss="modal">Dismiss</button>

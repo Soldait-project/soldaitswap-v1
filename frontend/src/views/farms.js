@@ -11,6 +11,7 @@ import HeaderLinks from "../components/Header/HeaderLinks.js";
 import StaticNavbar from "../components/StaticNavbar";
 import { Launch } from '@material-ui/icons';
 import $ from "jquery"
+import { checkUser } from "../Api/UserActions"
 // Datatable
 import WalletModal from "../components/WalletModal";
 import { toastAlert } from "../helper/toastAlert";
@@ -67,7 +68,7 @@ export default function Farms(props) {
   const [loader, setloader] = useState(false)
 
   const walletConnection = useSelector((state) => state.walletConnection);
-
+  const eligibleUser = useSelector((state) => state.isEligible);
   const [searchdata, setsearchdata] = useState({ text: "", filter: "", stake: "", status: "Live" });
 
   useEffect(() => {
@@ -78,34 +79,51 @@ export default function Farms(props) {
   }, [walletConnection]);
 
   async function approveToken(lpAddress, pid) {
-    setshowloader(true);
-    setcurrentId(pid);
-    var allDetails = await approvetoken(lpAddress);
-    setshowloader(false);
-    setcurrentId("");
-    if (allDetails.status) {
-      toastAlert("success", "Token Approved Successfully", "balance");
-      var index = poolDetails.findIndex(val => val.LPaddress === lpAddress);
-      var index1 = allPoolDetails.findIndex(val => val.LPaddress === lpAddress);
-      var approveAmt = (allDetails && allDetails.approveAmt) ? parseFloat(allDetails.approveAmt) : 0;
-      setisLoad(false)
-      if (index !== -1) {
-        poolDetails[index].allowance = approveAmt;
-        setpoolDetails(poolDetails);
-      }
-      if (index1 !== -1) {
-        allPoolDetails[index1].allowance = approveAmt
-        setallPoolDetails(allPoolDetails);
-      }
-      setisLoad(true)
 
-    } else {
-      toastAlert("error", "Unable Approve token", "balance");
+    let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+    let { status } = await checkUser(reqdata);
+    console.log(status, 'farms333')
+    if (status == true) {
+      toastAlert('error', "Your Address is Blocked");
     }
+    else{
+      setshowloader(true);
+      setcurrentId(pid);
+      var allDetails = await approvetoken(lpAddress);
+      setshowloader(false);
+      setcurrentId("");
+      if (allDetails.status) {
+        toastAlert("success", "Token Approved Successfully", "balance");
+        var index = poolDetails.findIndex(val => val.LPaddress === lpAddress);
+        var index1 = allPoolDetails.findIndex(val => val.LPaddress === lpAddress);
+        var approveAmt = (allDetails && allDetails.approveAmt) ? parseFloat(allDetails.approveAmt) : 0;
+        setisLoad(false)
+        if (index !== -1) {
+          poolDetails[index].allowance = approveAmt;
+          setpoolDetails(poolDetails);
+        }
+        if (index1 !== -1) {
+          allPoolDetails[index1].allowance = approveAmt
+          setallPoolDetails(allPoolDetails);
+        }
+        setisLoad(true)
+  
+      } else {
+        toastAlert("error", "Unable Approve token", "balance");
+      }
+    }
+   
   }
 
   async function stakeToken() {
-
+    let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+    let { status } = await checkUser(reqdata);
+    console.log(status, 'farms111')
+    if (status == true) {
+      toastAlert('error', "Your Address is Blocked");
+    }
+    else{
+      console.log('farms212')
     if (amount > lpBal) {
       toastAlert("error", "Insufficient Balance", "balance");
       return false;
@@ -132,17 +150,26 @@ export default function Farms(props) {
     }
     setcurrentId("");
   }
+ 
+  }
 
   async function unstakeToken() {
     console.log(amount, stakeBal, "amount > stakeBal")
-
+    let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+    let { status } = await checkUser(reqdata);
+    console.log(status, 'farms122')
+    if (status == true) {
+      toastAlert('error', "Your Address is Blocked");
+    }
+else{
+      console.log('farmss')
     if (parseFloat(amount) <= 0 || !amount || amount === "" || amount === 0 || amount === "0") {
       toastAlert("error", "Invalid Amount", "balance");
       return false;
     }
 
     if (parseFloat(amount) > parseFloat(stakeBal)) {
-      toastAlert("error", "Insufficient Balance", "balance");
+      toastAlert("error", "insufficient Balance", "balance");
       return false;
     }
 
@@ -161,9 +188,18 @@ export default function Farms(props) {
     }
     setcurrentId("");
   }
+ 
+  }
 
   async function harvestToken(pid) {
-
+    let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
+    let { status } = await checkUser(reqdata);
+    console.log(status, 'farms111')
+    if (status == true) {
+      toastAlert('error', "Your Address is Blocked");
+    }
+   else{
+      console.log("iff")
     setshowloader(true);
     setcurrentId(pid);
     var allDetails = await harverst(pid);
@@ -171,10 +207,12 @@ export default function Farms(props) {
     if (allDetails.status) {
       toastAlert("success", "Reward withdraw Successfully", "balance");
     } else {
-      var err = (allDetails && allDetails.value != "") ? allDetails.value : "Unable to withdraw reward"
+      var err = (allDetails && allDetails.value !== "") ? allDetails.value : "Unable to withdraw reward"
       toastAlert("error", err, "balance");
     }
     setcurrentId("");
+  }
+ 
   }
 
   async function updateDetails(pid) {

@@ -2,7 +2,7 @@ import {
     SET_WEB3,
     WALLET_CONNECT,
     TOKEN_LIST,
-    ALLOWED_PAIRS
+    ALLOWED_PAIRS,IS_ELIGIBLE
 } from '../constant';
 
 export const setWeb3 = details => {
@@ -11,7 +11,12 @@ export const setWeb3 = details => {
         payload: details
     };
 };
-
+export const setEligible = details => {
+    return {
+        type: IS_ELIGIBLE,
+        payload: details
+    };
+};
 export const setWallet = details => {
     return {
         type: WALLET_CONNECT,

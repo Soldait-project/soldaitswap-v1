@@ -274,7 +274,7 @@ export async function addliqutity(
       amountAMin = await convert(amountAMin);
       amountBMin = await convert(amountBMin);
 
-      var estimateGas = await Contract.methods
+      await Contract.methods
         .addLiquidity(
           tokenA,
           tokenB,
@@ -324,6 +324,7 @@ export async function addliqutity(
     return {
       value: "",
       status: false,
+      error: err
     };
   }
 }

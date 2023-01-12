@@ -35,7 +35,7 @@ const LineChart = ({ height, color = [],liqutitydata,swapdata }) => {
     },
     series: [
       {
-        data: [0, '11.9', 0, '18.6', '000017.5', '7.4', 0],
+        data: swapdata,
         type: 'line',
         stack: 'Swap',
         name: 'Swap',

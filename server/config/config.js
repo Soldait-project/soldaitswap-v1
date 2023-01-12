@@ -1,6 +1,6 @@
 var keyEnvBased = {};
 // prod
-var NODE_ENV = "delocalmo";
+var NODE_ENV = "local";
 if (NODE_ENV === "prod") {
   keyEnvBased = {
     mongoURI: "mongodb://soldaitdb:8LYIydpk7vFGOLXKPayA38765456789654NIBfCcICXIJ6b1wXhdVFh9gcBy@127.0.0.1:10590/soldaitdb",
@@ -8,18 +8,19 @@ if (NODE_ENV === "prod") {
     port: 3550,
     jwtname: "SOLDAIT",
     secretKey: "SOLDAIT*26@7#$%@",
+    imageURL: "https://soldaitapi.alwin.io/",
     baseUrl: "https://soldait-frontend-2023.pages.dev/",
     adminpanel: "https://soldait-admin-panel-frontend-2023.pages.dev/",
     frontUrl: "",
     emailGateway: {
       SENDGRID_API_KEY: 'G2_6DHfmSaWcrRQ1RxTHrQ',
-      fromMail: "techupdate@dev.wealwin.com",
+      fromMail: "devtest@dev.wealwin.com",
       nodemailer: {
         host: "smtp.hostinger.com",
         port: 465,
         secure: true, // true for 465, false for other ports
         auth: {
-          user: 'techupdate@dev.wealwin.com', // generated ethereal user
+          user: 'devtest@dev.wealwin.com', // generated ethereal user   | WeAlwin___MA1L___niwlAeW
           pass: 'WeAlwin___MA1L___niwlAeW', // generated ethereal password
         },
       }
@@ -29,21 +30,22 @@ if (NODE_ENV === "prod") {
   keyEnvBased = {
     mongoURI: "mongodb://soldaitdb:8LYIydpk7vFGOLXKPayA38765456789654NIBfCcICXIJ6b1wXhdVFh9gcBy@127.0.0.1:10590/soldaitdb",
     Auth_key: "soldait^&#*2931E#",
-    port: 3533,
+    port: 3550,
     jwtname: "SOLDAIT",
     secretKey: "SOLDAIT*26@7#$%@",
+    imageURL: "https://soldaitapi.alwin.io/",
     baseUrl: "https://soldait-frontend-2023.pages.dev/",
     adminpanel: "https://soldait-admin-panel-frontend-2023.pages.dev/",
     frontUrl: "",
     emailGateway: {
       SENDGRID_API_KEY: 'G2_6DHfmSaWcrRQ1RxTHrQ',
-      fromMail: "techupdate@dev.wealwin.com",
+      fromMail: "devtest@dev.wealwin.com",
       nodemailer: {
         host: "smtp.hostinger.com",
         port: 465,
         secure: true, // true for 465, false for other ports
         auth: {
-          user: 'techupdate@dev.wealwin.com', // generated ethereal user
+          user: 'devtest@dev.wealwin.com', // generated ethereal user   | WeAlwin___MA1L___niwlAeW
           pass: 'WeAlwin___MA1L___niwlAeW', // generated ethereal password
         },
       }
@@ -51,24 +53,25 @@ if (NODE_ENV === "prod") {
   };
 } else {
   keyEnvBased = {
-    // mongoURI: "mongodb://soldaitdb:8LYIydpk7vFGOLXKPayA38765456789654NIBfCcICXIJ6b1wXhdVFh9gcBy@127.0.0.1:10590/soldaitdb",
-    mongoURI: "mongodb://localhost:27017/soldait",
+   //mongoURI: "mongodb://soldaitdb:8LYIydpk7vFGOLXKPayA38765456789654NIBfCcICXIJ6b1wXhdVFh9gcBy@127.0.0.1:10590/soldaitdb",
+    mongoURI: "mongodb://localhost:27017/soldaitdb",
     Auth_key: "soldait^&#*2931E#",
-    port: 3533,
+    port: 3550,
     jwtname: "SOLDAIT",
     secretKey: "SOLDAIT*26@7#$%@",
+    imageURL: "https://soldaitapi.alwin.io/",
     baseUrl: "https://soldait-frontend-2023.pages.dev/",
     adminpanel: "https://soldait-admin-panel-frontend-2023.pages.dev/",
     frontUrl: "",
     emailGateway: {
       SENDGRID_API_KEY: 'G2_6DHfmSaWcrRQ1RxTHrQ',
-      fromMail: "techupdate@dev.wealwin.com",
+      fromMail: "devtest@dev.wealwin.com",
       nodemailer: {
         host: "smtp.hostinger.com",
         port: 465,
         secure: true, // true for 465, false for other ports
         auth: {
-          user: 'techupdate@dev.wealwin.com', // generated ethereal user   | WeAlwin___MA1L___niwlAeW
+          user: 'devtest@dev.wealwin.com', // generated ethereal user   | WeAlwin___MA1L___niwlAeW
           pass: 'WeAlwin___MA1L___niwlAeW', // generated ethereal password
         },
       }

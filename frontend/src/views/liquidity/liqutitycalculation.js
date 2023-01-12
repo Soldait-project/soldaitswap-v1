@@ -1,6 +1,5 @@
 import {
     allowance,
-    getLPbalance,
     getLPbalances
 } from "../../ContractActions/bep20Actions";
 
@@ -18,10 +17,6 @@ import {
     toFixedWithoutRound,
     ChecktokenDecimal
 } from "../../helper/custommath";
-
-import {
-    getTotalSupply
-} from "../../ContractActions/LPTokenActions";
 
 import config from "../../config/config"
 
@@ -76,7 +71,7 @@ export async function calculateValue(
                     reserveB = reserveB / 10 ** reserveBDecimal
                 }
 
-                var InOutAmount = (id === "from") ? toValue.amount : fromValue.amount;
+                let InOutAmount = (id === "from") ? toValue.amount : fromValue.amount;
 
                 if (reserveA > 0 && reserveB > 0) {
                     var divAmt = await division(reserveA, reserveB);
@@ -84,7 +79,7 @@ export async function calculateValue(
                     mulAmt = parseFloat(await ChecktokenDecimal(mulAmt, (id === "from") ? todecimals : fromdecimals));
 
                     InOutAmount = await convertToWei(mulAmt, (id === "from") ? todecimals : fromdecimals);
-                    console.log(InOutAmount, 'InOutAmount')
+
 
                 }
 
@@ -109,9 +104,9 @@ export async function calculateValue(
                     reserveB
                 }
             } else if (firstliqutity) {
-                var InOutAmount = (id === "from") ? toValue.amount : fromValue.amount;
-                var fromAmt = (id === "from") ? enterAmount : InOutAmount;
-                var toAmt = (id === "to") ? enterAmount : InOutAmount;
+                let InOutAmount = (id === "from") ? toValue.amount : fromValue.amount;
+                let fromAmt = (id === "from") ? enterAmount : InOutAmount;
+                let toAmt = (id === "to") ? enterAmount : InOutAmount;
 
                 if (firstliqutity) {
                     reserveA = fromAmt / 10 ** fromdecimals;

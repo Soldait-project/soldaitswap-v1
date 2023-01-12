@@ -114,9 +114,6 @@ const LiqutityList = (props) => {
 
     async function setInitial() {
 
-        let userAddress = ""
-        if (walletConnection && walletConnection.connect === "yes" && walletConnection.web3 && walletConnection.address && walletConnection.address !== "") userAddress = walletConnection.address;
-
         var getToken = await allTokenList();
         var allToken = JSON.parse(getToken.result);
 
