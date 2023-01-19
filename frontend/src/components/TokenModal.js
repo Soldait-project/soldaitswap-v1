@@ -35,9 +35,15 @@ const TokenModal = forwardRef((props, ref) => {
     const [newtoken, setnewtoken] = useState("");
 
     useEffect(() => {
+<<<<<<< HEAD
+        // if (walletConnection && walletConnection.connect === "yes" && walletConnection.web3 && walletConnection.address && walletConnection.address !== "") {
+        setInitial();
+        // }
+=======
         if (walletConnection && walletConnection.connect === "yes" && walletConnection.web3 && walletConnection.address && walletConnection.address !== "") {
             setInitial();
         }
+>>>>>>> 156a06a4ac002538eeb430364b13700027022698
         //eslint-disable-next-line
     }, [walletConnection]);
 

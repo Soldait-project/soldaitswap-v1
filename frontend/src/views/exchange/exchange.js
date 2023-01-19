@@ -319,7 +319,11 @@ export default function Exchange(props) {
     } else if (id === "to") {
       settoValue({ ...toData, ...{ "amount": value, "showamount": value, value } });
     }
+<<<<<<< HEAD
+    console.log(value, 'valuevaluevaluevalue')
+=======
 
+>>>>>>> 156a06a4ac002538eeb430364b13700027022698
     if (status && res !== "." && parseFloat(value) > 0) {
 
       var isExactIn = (id === "from") ? true : false;
@@ -351,8 +355,13 @@ export default function Exchange(props) {
 
         setcurrentPair(pairAddr);
 
+<<<<<<< HEAD
+        let inputAmount = (trade && trade.route && trade.inputAmount) ? (id === "from") ? typedValue : trade.inputAmount.toSignificant(18) : null;
+        let outputAmount = (trade && trade.route && trade.outputAmount) ? (id === "to") ? typedValue : trade.outputAmount.toSignificant(18) : null;
+=======
         let inputAmount = (trade && trade.route && trade.inputAmount) ? (id === "from") ? typedValue : trade.inputAmount.toSignificant(6) : null;
         let outputAmount = (trade && trade.route && trade.outputAmount) ? (id === "to") ? typedValue : trade.outputAmount.toSignificant(6) : null;
+>>>>>>> 156a06a4ac002538eeb430364b13700027022698
         var path = (trade && trade.route && trade.route.path) ? trade.route.path : null
 
         var priceper = "0";
@@ -372,7 +381,12 @@ export default function Exchange(props) {
         } else {
           return;
         }
+<<<<<<< HEAD
+        console.log(inputAmount, 'inputAmountinputAmount')
+        console.log(outputAmount, 'outputAmountoutputAmount', trade.outputAmount.toSignificant(18))
+=======
 
+>>>>>>> 156a06a4ac002538eeb430364b13700027022698
         const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade)
 
         var minReceived = {
@@ -460,11 +474,21 @@ export default function Exchange(props) {
         resetSwap(fromData, toData)
       }
     } else if (value === "") {
+<<<<<<< HEAD
+      await resetSwap(fromData, toData)
+    } else if (!status) {
+      await resetSwap(fromData, toData)
+    }
+
+    setswaploading(false);
+
+=======
       resetSwap(fromData, toData)
     } else if (!status) {
       resetSwap(fromData, toData)
     }
 
+>>>>>>> 156a06a4ac002538eeb430364b13700027022698
   }
 
 
@@ -486,7 +510,12 @@ export default function Exchange(props) {
     });
     setfromValue({ ...fromData, ...{ "amount": "", showamount: "", value: "" } });
     settoValue({ ...toData, ...{ "amount": "", showamount: "", value: "" } });
+<<<<<<< HEAD
+
+    return;
+=======
     setswaploading(false);
+>>>>>>> 156a06a4ac002538eeb430364b13700027022698
 
   }
 
@@ -563,7 +592,11 @@ console.log(walletConnection,'walletConnection22')
     return true;
   }
 
+<<<<<<< HEAD
+  async function childSettingClick(value) {
+=======
   function childSettingClick(value) {
+>>>>>>> 156a06a4ac002538eeb430364b13700027022698
     if (value && value.settings) {
       setslippageValue(value.settings);
       calculateAmount("from", fromValue.showamount, fromValue, toValue, "no", parseFloat(value.settings));
@@ -576,7 +609,12 @@ console.log(walletConnection,'walletConnection22')
     if (value && value.ismultiHops) {
       //var isHops = (value.ismultiHops === "true") ? true : false
       // setsingleHopOnly(isHops);
+<<<<<<< HEAD
+      await resetSwap(fromValue, toValue);
+      setswaploading(false);
+=======
       resetSwap(fromValue, toValue)
+>>>>>>> 156a06a4ac002538eeb430364b13700027022698
     }
   }
 
@@ -824,7 +862,11 @@ console.log(walletConnection,'walletConnection22')
                               <Button className="primary_btn blue_btn">Insufficient liquidity for this trade.</Button>
                             </div>
                             :
+<<<<<<< HEAD
+                            (fromValue.amount === "" || toValue.amount === "" || fromValue.amount === "0" || toValue.amount === "0" || fromValue.amount === 0 || toValue.amount === 0) ?
+=======
                             (fromValue.amount === "" || toValue.amount === "") ?
+>>>>>>> 156a06a4ac002538eeb430364b13700027022698
                               <div className="text-center mt-2">
                                 <Button className="primary_btn blue_btn">Enter Amount</Button>
                               </div>
