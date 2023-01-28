@@ -86,7 +86,7 @@ export default function Farms(props) {
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
-    else{
+    else {
       setshowloader(true);
       setcurrentId(pid);
       var allDetails = await approvetoken(lpAddress);
@@ -107,12 +107,12 @@ export default function Farms(props) {
           setallPoolDetails(allPoolDetails);
         }
         setisLoad(true)
-  
+
       } else {
-        toastAlert("error", "Unable Approve token", "balance");
+        toastAlert("error", "Unable to Approve Token", "balance");
       }
     }
-   
+
   }
 
   async function stakeToken() {
@@ -122,35 +122,35 @@ export default function Farms(props) {
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
-    else{
+    else {
       console.log('farms212')
-    if (amount > lpBal) {
-      toastAlert("error", "Insufficient Balance", "balance");
-      return false;
+      if (amount > lpBal) {
+        toastAlert("error", "Insufficient Balance", "balance");
+        return false;
+      }
+
+      if (parseFloat(amount) <= 0 || !amount || amount === "" || amount === 0 || amount === "0") {
+        toastAlert("error", "Invalid Amount", "balance");
+        return false;
+      }
+
+      window.$("#stake_modal1").modal("hide");
+
+      setcurrentId(curpid);
+      setshowloader(true);
+
+      var allDetails = await stake(curpid, amount, curLPAddress, lpBal);
+      updateDetails(curpid);
+      setamount("");
+      setshowloader(false);
+      if (allDetails.status) {
+        toastAlert("success", "Staked Successfully", "balance");
+      } else {
+        toastAlert("error", "Unable to stake", "balance");
+      }
+      setcurrentId("");
     }
 
-    if (parseFloat(amount) <= 0 || !amount || amount === "" || amount === 0 || amount === "0") {
-      toastAlert("error", "Invalid Amount", "balance");
-      return false;
-    }
-
-    window.$("#stake_modal1").modal("hide");
-
-    setcurrentId(curpid);
-    setshowloader(true);
-
-    var allDetails = await stake(curpid, amount, curLPAddress, lpBal);
-    updateDetails(curpid);
-    setamount("");
-    setshowloader(false);
-    if (allDetails.status) {
-      toastAlert("success", "Staked Successfully", "balance");
-    } else {
-      toastAlert("error", "Unable to stake", "balance");
-    }
-    setcurrentId("");
-  }
- 
   }
 
   async function unstakeToken() {
@@ -161,34 +161,34 @@ export default function Farms(props) {
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
-else{
+    else {
       console.log('farmss')
-    if (parseFloat(amount) <= 0 || !amount || amount === "" || amount === 0 || amount === "0") {
-      toastAlert("error", "Invalid Amount", "balance");
-      return false;
+      if (parseFloat(amount) <= 0 || !amount || amount === "" || amount === 0 || amount === "0") {
+        toastAlert("error", "Invalid Amount", "balance");
+        return false;
+      }
+
+      if (parseFloat(amount) > parseFloat(stakeBal)) {
+        toastAlert("error", "insufficient Balance", "balance");
+        return false;
+      }
+
+      window.$("#stake_modal").modal("hide");
+      setshowloader(true);
+      setcurrentId(curpid);
+      var allDetails = await unstake(amount, curpid, stakeBal);
+      updateDetails(curpid);
+      setshowloader(false);
+      setamount("");
+
+      if (allDetails.status) {
+        toastAlert("success", "Unstaked Successfully", "balance");
+      } else {
+        toastAlert("error", "Unable to unstake", "balance");
+      }
+      setcurrentId("");
     }
 
-    if (parseFloat(amount) > parseFloat(stakeBal)) {
-      toastAlert("error", "insufficient Balance", "balance");
-      return false;
-    }
-
-    window.$("#stake_modal").modal("hide");
-    setshowloader(true);
-    setcurrentId(curpid);
-    var allDetails = await unstake(amount, curpid, stakeBal);
-    updateDetails(curpid);
-    setshowloader(false);
-    setamount("");
-
-    if (allDetails.status) {
-      toastAlert("success", "Unstaked Successfully", "balance");
-    } else {
-      toastAlert("error", "Unable to unstake", "balance");
-    }
-    setcurrentId("");
-  }
- 
   }
 
   async function harvestToken(pid) {
@@ -198,21 +198,21 @@ else{
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
-   else{
+    else {
       console.log("iff")
-    setshowloader(true);
-    setcurrentId(pid);
-    var allDetails = await harverst(pid);
-    setshowloader(false);
-    if (allDetails.status) {
-      toastAlert("success", "Reward withdraw Successfully", "balance");
-    } else {
-      var err = (allDetails && allDetails.value !== "") ? allDetails.value : "Unable to withdraw reward"
-      toastAlert("error", err, "balance");
+      setshowloader(true);
+      setcurrentId(pid);
+      var allDetails = await harverst(pid);
+      setshowloader(false);
+      if (allDetails.status) {
+        toastAlert("success", "Reward withdraw Successfully", "balance");
+      } else {
+        var err = (allDetails && allDetails.value !== "") ? allDetails.value : "Unable to withdraw reward"
+        toastAlert("error", err, "balance");
+      }
+      setcurrentId("");
     }
-    setcurrentId("");
-  }
- 
+
   }
 
   async function updateDetails(pid) {
@@ -466,6 +466,7 @@ else{
 
                     <div className="pools_filter_right">
                       <select className="custom-select" onChange={sortBy}>
+                        <option>Sort By</option>
                         <option value="earned">Earned</option>
                         <option value="totalstaked">Total staked</option>
                       </select>
@@ -482,7 +483,7 @@ else{
                         poolDetails.map((poolDet) => {
 
                           return (
-                            <GridItem md={4} sm={6}>
+                            <GridItem lg={4} md={6} sm={12}>
                               <div className="grid_view_single" data-aos="fade-up" data-aos-duration="2000">
                                 <div className="grid_view_single_first">
                                   <div>
@@ -637,7 +638,7 @@ else{
 
                       {isLoad && poolDetails && poolDetails.length > 0 && loadmorebutton === false &&
 
-                        <GridItem md={12} sm={12} data-aos="fade-up" data-aos-duration="2000">
+                        <GridItem md={12} sm={12} data-aos="fade-up" data-aos-duration="2000" className="mb-5">
                           <div className="text-center mb-4"> <Button className="load_more_btn mx-auto" onClick={Pagenation} disabled={(loader) ? "disabled" : ""}>{loader && (
                             <i
                               class="fa fa-spinner fa-spin mr-1"
@@ -648,14 +649,14 @@ else{
                         </GridItem>}
 
                       {isLoad && poolDetails && poolDetails.length === 0 &&
-                        <GridItem md={12} sm={12} data-aos="fade-up" data-aos-duration="2000">
+                        <GridItem md={12} sm={12} data-aos="fade-up" data-aos-duration="2000" className="mb-5">
                           <div className="grid_view_single_second">
                             <p className="text-center pt-5">No farms</p>
                           </div>
                         </GridItem>
                       }
                       {!isLoad &&
-                        <GridItem md={12} sm={12} data-aos="fade-up" data-aos-duration="2000">
+                        <GridItem md={12} sm={12} data-aos="fade-up" data-aos-duration="2000" className="mb-5">
                           <div className="grid_view_single_second">
                             <p className="text-center pt-5">Loading</p>
                           </div>

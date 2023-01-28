@@ -15,10 +15,10 @@ const useStyles = makeStyles(styles);
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
-    color: "rgba(85,0,255,1)",
+    color: "#503ca1",
   },
   tooltip: {
-    background: "linear-gradient(90deg, rgba(85,0,255,1) 35%, rgba(214,0,255,1) 100%)",
+    background: "linear-gradient(90deg, #503ca1 35%, #d52edd 100%)",    
     fontSize: "14px"
   },
 }));

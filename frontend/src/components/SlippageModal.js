@@ -26,7 +26,7 @@ const HtmlTooltip = withStyles((theme) => ({
 
 const SlippageModal = ({ onChildClick }) => {
 
-  const [slippage, setslippage] = useState(0.1);
+  const [slippage, setslippage] = useState(0.5);
   const [deadline, setdeadline] = useState(5);
   const [slippageerr, setslippageerr] = useState("");
   //const [checked, setchecked] = useState(false);

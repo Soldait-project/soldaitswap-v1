@@ -17,6 +17,7 @@ const Liquidity = React.lazy(() => import('./views/liquidity/liquidity'))
 const Terms = React.lazy(() => import('./views/terms'))
 const Faq = React.lazy(() => import('./views/faq'))
 const Policy = React.lazy(() => import('./views/policy'))
+const Contact = React.lazy(() => import('./views/contact'))
 
 ReactDOM.render(
   <Provider store={store}>
@@ -32,6 +33,7 @@ ReactDOM.render(
           <Route path="/terms" component={Terms} />
           <Route path="/policy" component={Policy} />
           <Route path="/faq" component={Faq} />
+          <Route path="/contact" component={Contact} />
           <Route exact path="/*" component={Home}>
             <Redirect to="/home" />
           </Route>

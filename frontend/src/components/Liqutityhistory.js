@@ -55,7 +55,7 @@ const Liqutityhistory = (props) => {
                     fromsymbol = tokensData[fromIndex].symbol;
                     fromimage = tokensData[fromIndex].address.toLowerCase() + '.png';
                     var tokenAAmt = parseFloat(record.tokenAAmt);
-                    fromamount = tokenAAmt;
+                    fromamount = (tokenAAmt && tokenAAmt > 0) ? tokenAAmt.toFixed(8) : 0;
                 }
 
                 var toIndex = tokensData.findIndex(val => val.address.toLowerCase() === record.tokenB.toLowerCase());
@@ -63,7 +63,7 @@ const Liqutityhistory = (props) => {
                     tosymbol = tokensData[toIndex].symbol;
                     toimage = tokensData[toIndex].address.toLowerCase() + '.png';
                     var tokenBAmt = parseFloat(record.tokenBAmt);
-                    toamount = tokenBAmt;
+                    toamount = (tokenBAmt && tokenBAmt > 0) ? tokenBAmt.toFixed(8) : 0;
                 }
 
                 return (
@@ -89,13 +89,14 @@ const Liqutityhistory = (props) => {
         {
             name: 'LP Token',
             selector: 'displayamt',
-            width: '150px'
+            width: '200px'
         },
         {
             name: 'Your pool share',
             //selector: 'shareOfPool',
             selector: record => {
                 var shareOfPool = parseFloat(record.shareOfPool);
+                shareOfPool = (shareOfPool && shareOfPool > 0) ? shareOfPool.toFixed(8) : 0;
                 return shareOfPool;
             },
             width: '200px'
@@ -147,7 +148,7 @@ const Liqutityhistory = (props) => {
         let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
         let { status } = await checkUser(reqdata);
         if (status == true) {
-          toastAlert('error', "Your Address is Blocked");
+            toastAlert('error', "Your Address is Blocked");
         }
         else {
             setfromToken(items.tokenA);
@@ -155,9 +156,9 @@ const Liqutityhistory = (props) => {
             setTimeout(function () {
                 window.$('#remove_liqutity_modal').modal('show');
             }, 500)
-    
+
         }
-       
+
     }
 
     return (

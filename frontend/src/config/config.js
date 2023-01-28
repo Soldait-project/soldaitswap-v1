@@ -6,7 +6,7 @@ var key = {
 };
 
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV !== "production") {
   key = {
     frontUrl: "https://soldait-frontend-2023.pages.dev",
     baseUrl: "https://soldaitapi.alwin.io/api",

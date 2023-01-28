@@ -463,7 +463,7 @@ export default function Pools(props) {
                       {isLoad && poolDetails && poolDetails.length > 0 &&
                         poolDetails.map((poolDet) => {
                           return (
-                            <GridItem md={4} sm={6}>
+                            <GridItem lg={4} md={6} sm={12}>
                               <div className="grid_view_single" data-aos="fade-up" data-aos-duration="2000">
                                 <div className="grid_view_single_first">
                                   <div>
@@ -606,7 +606,7 @@ export default function Pools(props) {
                     </GridContainer>
 
                     {isLoad && poolDetails && poolDetails.length > 0 && loadmorebutton === false &&
-                      <GridItem md={12} sm={12} data-aos="fade-up" data-aos-duration="2000">
+                      <GridItem md={12} sm={12} data-aos="fade-up" data-aos-duration="2000" className="mb-5">
                         <div className="text-center mb-4">
                           <Button className="load_more_btn mx-auto" onClick={Pagenation} disabled={(loader) ? "disabled" : ""}>
                             {loader && (
@@ -617,14 +617,14 @@ export default function Pools(props) {
                               ></i>
                             )}{" "}Load more</Button></div></GridItem>}
                     {isLoad && poolDetails && poolDetails.length === 0 &&
-                      <GridItem md={12} sm={12} data-aos="fade-up" data-aos-duration="2000">
+                      <GridItem md={12} sm={12} data-aos="fade-up" data-aos-duration="2000" className="mb-5">
                         <div className="grid_view_single_second">
                           <p className="text-center pt-5">No pools</p>
                         </div>
                       </GridItem>
                     }
                     {!isLoad &&
-                      <GridItem md={12} sm={12} data-aos="fade-up" data-aos-duration="2000">
+                      <GridItem md={12} sm={12} data-aos="fade-up" data-aos-duration="2000" className="mb-5">
                         <div className="grid_view_single_second">
                           <p className="text-center pt-5">Loading</p>
                         </div>

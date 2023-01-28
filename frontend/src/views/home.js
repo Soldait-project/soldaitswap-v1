@@ -109,7 +109,84 @@ export default function LandingPage(props) {
   async function getCurrencyList() {
 
     var { result } = await currencyList();
+      var datasol = {
+        ath
+        : 
+        1.15,
+        ath_change_percentage
+        : 
+        -13.37294,
+        ath_date
+        : 
+        "2020-03-13T02:35:42.953Z",
+        atl
+        : 
+        0.901127,
+        atl_change_percentage
+        : 
+        10.95581,
+        atl_date
+        : 
+        "2021-05-19T13:04:37.445Z",
+        circulating_supply
+        : 
+        16030973401.47,
+        current_price
+        : 
+        0.121557,
+        fully_diluted_valuation
+        : 
+        16040895738,
+        high_24h
+        : 
+        1.005,
+        id
+        : 
+        "binance-usd",
+        image
+        : 
+        "https://soldaitapi.alwin.io/tokens/0x271c2aa1b889f25bbafee698d4446504139bb51c.png",
+        low_24h
+        : 
+        0.995173,
+        market_cap
+        : 
+        16040895738,
+        market_cap_change_24h
+        : 
+        -104938769.30654335,
+        market_cap_change_percentage_24h
+        : 
+        -0.64994,
+        market_cap_rank
+        : 
+        7,
+        max_supply
+        : 
+        null,
+        name
+        : 
+        "Binance USD",
+        price_change_24h
+        : 
+        0.00126931,
+        price_change_percentage_24h
+        : 
+        0.12701,
+        roi
+        : 
+        null,
+        symbol
+        : 
+        "SIT",
+        total_supply
+        : 
+        16030973401.47,
+        total_volume
+        : 
+        10877232893}
     if (result && result.length > 0) {
+      result.unshift(datasol);
       setlist(result)
     }
   }
@@ -175,10 +252,10 @@ export default function LandingPage(props) {
         <div className={classes.container}>
           <GridContainer className="mt-5 align-items-center py-5">
             <GridItem sm={12} md={6} lg={6} data-aos="fade-up" data-aos-duration="2000">
-              <h1>Invest in crypto   with confidence     with Soldait</h1>
-              <h3>We are building a new social crypto experience offering <span>fun</span> and <span>simple</span> investing for <span>everyone.</span></h3>
+              <h1>Invest, Trade, Win Crypto with SOLDAIT</h1>
+              <h3>Trade with soldaitswap, connect your <span>wallet</span> and start <span>secure</span>, fast swap, stake & farm your cryptoAssets</h3>              
               <div className="d-flex align-items-center">
-                <p>Grow your passive income between trades with our unique five-tier referral system</p>
+                <p>Grow your passive income with soldaitswap Anti-bots</p>
               </div>
             </GridItem>
             <GridItem sm={12} md={6} lg={6} data-aos="fade-up" data-aos-duration="2000">
@@ -626,11 +703,11 @@ export default function LandingPage(props) {
                         <h3>Number of Tokens For Sale</h3>
                         <h4>350,000,000</h4>
                       </div>
-                      <div>
+                      {/* <div>
                         <h3>Token Exchange Rate</h3>
                         <h4>1 SIT = 0.30 $</h4>
                         <h4>1 SIT = 0.00055 BNB</h4>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>

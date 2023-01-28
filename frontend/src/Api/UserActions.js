@@ -217,6 +217,27 @@ export const checkUser = async (data) => {
         }
     }
 }
+export const getAllFaq = async () => {
+    try {
+        let respData = await axios({
+            'method': 'get',
+            'url': `${baseUrl}/faq`,
+       
+        });
+        console.log(respData,'respData')
+        return {
+            loading: false,
+            result: respData.data.result,
+            status: respData.data.status
+        }
+    }
+    catch (err) {
+        return {
+            loading: false,
+            error: returnErr(err)
+        }
+    }
+}
 function returnErr(err) {
     if (err.response && err.response.data && err.response.data.errors) {
         return err.response.data.errors;

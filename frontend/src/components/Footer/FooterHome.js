@@ -87,7 +87,7 @@ export default function Footer(props) {
           <GridContainer>
             <GridItem sm={12} md={3}>
               <img src={require("../../assets/images/footer_logo.png")} alt="logo" className="footer_logo img-fluid" />
-              <p className="footer_about">Elmna University Alumni is a lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidv idunt ut labore et dolore magna aliqua. </p>
+              <p className="footer_about">Trade with soldaitswap, connect your wallet and start secure,fast swap , stake & farm your cryptoAssets.</p>
             </GridItem>
             <GridItem sm={4} md={3}>
               <h2>Products</h2>
@@ -101,9 +101,12 @@ export default function Footer(props) {
             <GridItem sm={4} md={3}>
               <h2>Quick Links</h2>
               <ul className="footer_menu_list">
-                <li><a href="/policy" >Privacy Policy</a></li>
-                <li><a href="/terms" >Terms & Conditions</a></li>
+                {/* <li><a href="/policy" >Privacy Policy</a></li>
+                <li><a href="/terms" >Terms & Conditions</a></li> */}
+                <li><a href="/contact" >Contact Us</a></li> 
+                <li><a href="https://github.com/Soldait-project/soldaitswap-v1/tree/main/Contract" target="_blank">Github</a></li> 
                 <li><a href="/faq" >FAQ</a></li>
+                <li><a href="/" >Audit</a></li> 
               </ul>
             </GridItem>
             <GridItem sm={12} md={3}>
