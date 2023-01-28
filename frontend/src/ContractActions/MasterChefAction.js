@@ -32,6 +32,7 @@ var zeroAddr = "0x0000000000000000000000000000000000000000";
 
 export async function getFormsDetails(data) {
   var get = await connection();
+  console.log(get,'getttttttt')
   try {
 
     var web3 = get.web3;
@@ -44,18 +45,19 @@ export async function getFormsDetails(data) {
     }
 
     let { result } = await getFormData(data);
+    console.log(result,'resultresultresult')
     var range = (result && result.length > 0) ? result : [];
-
+console.log(web3,'web3web3web3web3web3web3')
     const multicall = new Multicall({
       web3Instance: web3,
     });
-
+console.log(config.rpcurl,'config.rpcurl')
     var pollArray = [];
     var obj = {};
     if (range && range.length > 0) {
       for (var i in range) {
         var ran = range[i].pid;
-
+console.log(ran,'ranran',address,'config',config.MasterChef)
         var masterChefContract = [
           {
             reference: "poolInfo",
@@ -75,13 +77,14 @@ export async function getFormsDetails(data) {
             ]
           }
         ];
-
+console.log("hryyy")
         const poolresults = await multicall.call(masterChefContract);
-
+        console.log(poolresults,"poolresults")
         var poolinfo = await getFormatMulticall(poolresults, "poolInfo", 0);
         var stakeBal = await getFormatMulticall(poolresults, "poolInfo", 1);
 
-
+        console.log(stakeBal,"stakeBal")
+        console.log(poolinfo,"poolinfo")
 
         var contractCallContext = [
           {
@@ -109,7 +112,7 @@ export async function getFormsDetails(data) {
         ];
 
         const results = await multicall.call(contractCallContext);
-
+console.log(results,'resultsresults')
         var LPtokengetBalanceof = await getFormatMulticall(results, "LPtokengetBalanceof", 0);
         var LPtokengettotalSupply = await getFormatMulticall(results, "LPtokengetBalanceof", 1);
         var ApprovedAlready = await getFormatMulticall(results, "LPtokengetBalanceof", 2);
@@ -596,7 +599,7 @@ export async function stakePool(pid, amount, LPaddress, lpBal) {
         await ContractM.methods.deposit(pid, amo).estimateGas({ from: address });
         await ContractM.methods.deposit(pid, amo).send({ from: address });
       } catch (err) {
-        console.log(err, 'err-err-err')
+        console.log(err, 'err12')
         return {
           value: "Ero",
           status: false,

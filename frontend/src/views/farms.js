@@ -263,11 +263,13 @@ export default function Farms(props) {
       status: farmsStatus,
     }
     var allDetails = await getFormsDetails(data);
-
+    console.log(allDetails,'allDetailsallDetails')
     if ((allDetails && allDetails.value && allDetails.value.length) < (parseInt(config.limit))) {
       setLoadmoreButton(true)
     }
+    
     if (allDetails && allDetails.value && allDetails.value.length > 0 && Array.isArray(allDetails.value)) {
+      console.log(allDetails.value,'allDetails')
       setpoolDetails(allDetails.value);
       setallPoolDetails(allDetails.value);
       rewardDetails(allDetails.value);
@@ -418,8 +420,9 @@ export default function Farms(props) {
   function clearAmount() {
     setamount("");
   }
-
+console.log(poolDetails,'poolDetailspoolDetails')
   return (
+  
     <div className="page_wrapper">
       <Header
         color="transparent"
