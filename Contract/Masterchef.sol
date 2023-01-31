@@ -1,4 +1,8 @@
 /**
+ *Submitted for verification at BscScan.com on 2023-01-31
+ */
+
+/**
  *Submitted for verification at BscScan.com on 2023-01-28
  */
 
@@ -932,7 +936,7 @@ contract Masterchef is Ownable {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
         _harvest(_pid);
-        // uint tokendeciaml = pool.lpToken.decimals();
+        //uint tokendeciaml = pool.lpToken.decimals();
         //uint256 convertAmount = _amount * (10**(tokendeciaml));
         uint256 convertAmount = _amount;
         if (convertAmount > 0) {
@@ -959,14 +963,20 @@ contract Masterchef is Ownable {
     function withdraw(uint256 _pid, uint256 _amount) public {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
-        require(user.amount >= _amount, "withdraw: not good");
+        require(
+            user.amount >= _amount && depositedToken >= _amount,
+            "withdraw: not good"
+        );
+        uint256 withdrawAmount = (depositedToken >= _amount)
+            ? _amount
+            : depositedToken;
         _harvest(_pid);
         if (_amount > 0) {
-            user.amount = user.amount.sub(_amount);
-            pool.lpToken.safeTransfer(address(msg.sender), _amount);
-            depositedToken -= _amount;
+            user.amount = user.amount.sub(withdrawAmount);
+            pool.lpToken.safeTransfer(address(msg.sender), withdrawAmount);
+            depositedToken -= withdrawAmount;
         }
-        emit Withdraw(msg.sender, _pid, _amount);
+        emit Withdraw(msg.sender, _pid, withdrawAmount);
     }
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.

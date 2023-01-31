@@ -1,9 +1,5 @@
 /**
- *Submitted for verification at BscScan.com on 2023-01-28
-*/
-
-/**
- *Submitted for verification at BscScan.com on 2023-01-19
+ *Submitted for verification at BscScan.com on 2023-01-31
 */
 
 pragma solidity =0.5.16;
@@ -11,7 +7,6 @@ pragma solidity =0.5.16;
 
 interface ISoldaitFactory {
     event PairCreated(address indexed token0, address indexed token1, address pair, uint);
-
     function feeTo() external view returns (address);
     function feeToSetter() external view returns (address);
 
@@ -414,7 +409,7 @@ contract SoldaitPair is ISoldaitPair, SoldaitERC20 {
 
     // this low-level function should be called from a contract which performs important safety checks
     function swap(uint amount0Out, uint amount1Out, address to, bytes calldata data) external lock {
-        
+        require(!ISoldaitFactory(factory).isBlocklist(to),"Your Address is Blocklisted, Contract Admin");
         if(ISoldaitFactory(factory).isEnableTime()){
             require(block.timestamp > lastSwapTime[to] + ISoldaitFactory(factory).timeLimit(), "Time limit exceeded");
         }

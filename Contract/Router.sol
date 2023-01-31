@@ -1,4 +1,8 @@
 /**
+ *Submitted for verification at BscScan.com on 2023-01-31
+*/
+
+/**
  *Submitted for verification at BscScan.com on 2023-01-28
 */
 
@@ -300,7 +304,7 @@ library SoldaitLibrary {
                 hex'ff',
                 factory,
                 keccak256(abi.encodePacked(token0, token1)),
-                hex'b084fad7c870ed44696d1b6bedf20ac9e6576e64154b599544040a2f97e536e6' // init code hash
+                hex'b23f2945f5828eeebad67be325e460d91713cc67cc7da7497f4cddfbff24a03a' // init code hash
             ))));
     }
 
