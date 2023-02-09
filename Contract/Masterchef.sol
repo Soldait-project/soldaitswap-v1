@@ -1,5 +1,5 @@
 /**
- *Submitted for verification at BscScan.com on 2023-02-06
+ *Submitted for verification at BscScan.com on 2023-02-09
 */
 
 // SPDX-License-Identifier: UNLICENSED
@@ -317,7 +317,9 @@ interface IBEP20Upgradeable {
      *
      * Emits a {Transfer} event.
      */
-    function transfer(address recipient, uint256 amount) external returns (bool);
+    function transfer(address recipient, uint256 amount)
+        external
+        returns (bool);
 
     /**
      * @dev Returns the remaining number of tokens that `spender` will be
@@ -326,13 +328,18 @@ interface IBEP20Upgradeable {
      *
      * This value changes when {approve} or {transferFrom} are called.
      */
-    function allowance(address _owner, address spender) external view returns (uint256);
+    function allowance(address _owner, address spender)
+        external
+        view
+        returns (uint256);
 
-   
     function approve(address spender, uint256 amount) external returns (bool);
 
-    
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
 
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
@@ -346,7 +353,11 @@ interface IBEP20Upgradeable {
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
      * a call to {approve}. `value` is the new allowance.
      */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 }
 
 // File: @openzeppelin/contracts/utils/Address.sol
@@ -566,19 +577,33 @@ library AddressUpgradeable {
     }
 }
 
-
 // File: contracts/libs/SafeBEP20.sol
 
 library SafeBEP20Upgradeable {
     using SafeMathUpgradeable for uint256;
     using AddressUpgradeable for address;
 
-    function safeTransfer(IBEP20Upgradeable token, address to, uint256 value) internal {
-        _callOptionalReturn(token, abi.encodeWithSelector(token.transfer.selector, to, value));
+    function safeTransfer(
+        IBEP20Upgradeable token,
+        address to,
+        uint256 value
+    ) internal {
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.transfer.selector, to, value)
+        );
     }
 
-    function safeTransferFrom(IBEP20Upgradeable token, address from, address to, uint256 value) internal {
-        _callOptionalReturn(token, abi.encodeWithSelector(token.transferFrom.selector, from, to, value));
+    function safeTransferFrom(
+        IBEP20Upgradeable token,
+        address from,
+        address to,
+        uint256 value
+    ) internal {
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.transferFrom.selector, from, to, value)
+        );
     }
 
     /**
@@ -588,25 +613,60 @@ library SafeBEP20Upgradeable {
      * Whenever possible, use {safeIncreaseAllowance} and
      * {safeDecreaseAllowance} instead.
      */
-    function safeApprove(IBEP20Upgradeable token, address spender, uint256 value) internal {
+    function safeApprove(
+        IBEP20Upgradeable token,
+        address spender,
+        uint256 value
+    ) internal {
         // safeApprove should only be called when setting an initial allowance,
         // or when resetting it to zero. To increase and decrease it, use
         // 'safeIncreaseAllowance' and 'safeDecreaseAllowance'
         // solhint-disable-next-line max-line-length
-        require((value == 0) || (token.allowance(address(this), spender) == 0),
+        require(
+            (value == 0) || (token.allowance(address(this), spender) == 0),
             "SafeBEP20: approve from non-zero to non-zero allowance"
         );
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, value));
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.approve.selector, spender, value)
+        );
     }
 
-    function safeIncreaseAllowance(IBEP20Upgradeable token, address spender, uint256 value) internal {
-        uint256 newAllowance = token.allowance(address(this), spender).add(value);
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
+    function safeIncreaseAllowance(
+        IBEP20Upgradeable token,
+        address spender,
+        uint256 value
+    ) internal {
+        uint256 newAllowance = token.allowance(address(this), spender).add(
+            value
+        );
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(
+                token.approve.selector,
+                spender,
+                newAllowance
+            )
+        );
     }
 
-    function safeDecreaseAllowance(IBEP20Upgradeable token, address spender, uint256 value) internal {
-        uint256 newAllowance = token.allowance(address(this), spender).sub(value, "SafeBEP20: decreased allowance below zero");
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
+    function safeDecreaseAllowance(
+        IBEP20Upgradeable token,
+        address spender,
+        uint256 value
+    ) internal {
+        uint256 newAllowance = token.allowance(address(this), spender).sub(
+            value,
+            "SafeBEP20: decreased allowance below zero"
+        );
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(
+                token.approve.selector,
+                spender,
+                newAllowance
+            )
+        );
     }
 
     /**
@@ -615,15 +675,24 @@ library SafeBEP20Upgradeable {
      * @param token The token targeted by the call.
      * @param data The call data (encoded using abi.encode or one of its variants).
      */
-    function _callOptionalReturn(IBEP20Upgradeable token, bytes memory data) private {
+    function _callOptionalReturn(IBEP20Upgradeable token, bytes memory data)
+        private
+    {
         // We need to perform a low level call here, to bypass Solidity's return data size checking mechanism, since
         // we're implementing it ourselves. We use {Address.functionCall} to perform this call, which verifies that
         // the target address contains contract code and also asserts for success in the low-level call.
 
-        bytes memory returndata = address(token).functionCall(data, "SafeBEP20: low-level call failed");
-        if (returndata.length > 0) { // Return data is optional
+        bytes memory returndata = address(token).functionCall(
+            data,
+            "SafeBEP20: low-level call failed"
+        );
+        if (returndata.length > 0) {
+            // Return data is optional
             // solhint-disable-next-line max-line-length
-            require(abi.decode(returndata, (bool)), "SafeBEP20: BEP20 operation did not succeed");
+            require(
+                abi.decode(returndata, (bool)),
+                "SafeBEP20: BEP20 operation did not succeed"
+            );
         }
     }
 }
@@ -721,7 +790,11 @@ abstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {
     uint256[49] private __gap;
 }
 
-contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgradeable {
+contract BEP20Upgradeable is
+    ContextUpgradeable,
+    IBEP20Upgradeable,
+    OwnableUpgradeable
+{
     using SafeMathUpgradeable for uint256;
 
     mapping(address => uint256) private _balances;
@@ -752,14 +825,14 @@ contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgra
     /**
      * @dev Returns the bep token owner.
      */
-    function getOwner() external override view returns (address) {
+    function getOwner() external view override returns (address) {
         return owner();
     }
 
     /**
      * @dev Returns the name of the token.
      */
-    function name() public override view returns (string memory) {
+    function name() public view override returns (string memory) {
         return _name;
     }
 
@@ -767,28 +840,28 @@ contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgra
      * @dev Returns the symbol of the token, usually a shorter version of the
      * name.
      */
-    function symbol() public override view returns (string memory) {
+    function symbol() public view override returns (string memory) {
         return _symbol;
     }
 
     /**
-    * @dev Returns the number of decimals used to get its user representation.
-    */
-    function decimals() public override view returns (uint8) {
+     * @dev Returns the number of decimals used to get its user representation.
+     */
+    function decimals() public view override returns (uint8) {
         return _decimals;
     }
 
     /**
      * @dev See {BEP20-totalSupply}.
      */
-    function totalSupply() public override view returns (uint256) {
+    function totalSupply() public view override returns (uint256) {
         return _totalSupply;
     }
 
     /**
      * @dev See {BEP20-balanceOf}.
      */
-    function balanceOf(address account) public override view returns (uint256) {
+    function balanceOf(address account) public view override returns (uint256) {
         return _balances[account];
     }
 
@@ -800,7 +873,11 @@ contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgra
      * - `recipient` cannot be the zero address.
      * - the caller must have a balance of at least `amount`.
      */
-    function transfer(address recipient, uint256 amount) public override returns (bool) {
+    function transfer(address recipient, uint256 amount)
+        public
+        override
+        returns (bool)
+    {
         _transfer(_msgSender(), recipient, amount);
         return true;
     }
@@ -808,7 +885,12 @@ contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgra
     /**
      * @dev See {BEP20-allowance}.
      */
-    function allowance(address owner, address spender) public override view returns (uint256) {
+    function allowance(address owner, address spender)
+        public
+        view
+        override
+        returns (uint256)
+    {
         return _allowances[owner][spender];
     }
 
@@ -819,7 +901,11 @@ contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgra
      *
      * - `spender` cannot be the zero address.
      */
-    function approve(address spender, uint256 amount) public override returns (bool) {
+    function approve(address spender, uint256 amount)
+        public
+        override
+        returns (bool)
+    {
         _approve(_msgSender(), spender, amount);
         return true;
     }
@@ -836,12 +922,19 @@ contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgra
      * - the caller must have allowance for `sender`'s tokens of at least
      * `amount`.
      */
-    function transferFrom (address sender, address recipient, uint256 amount) public override returns (bool) {
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) public override returns (bool) {
         _transfer(sender, recipient, amount);
         _approve(
             sender,
             _msgSender(),
-            _allowances[sender][_msgSender()].sub(amount, 'BEP20: transfer amount exceeds allowance')
+            _allowances[sender][_msgSender()].sub(
+                amount,
+                "BEP20: transfer amount exceeds allowance"
+            )
         );
         return true;
     }
@@ -858,8 +951,15 @@ contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgra
      *
      * - `spender` cannot be the zero address.
      */
-    function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].add(addedValue));
+    function increaseAllowance(address spender, uint256 addedValue)
+        public
+        returns (bool)
+    {
+        _approve(
+            _msgSender(),
+            spender,
+            _allowances[_msgSender()][spender].add(addedValue)
+        );
         return true;
     }
 
@@ -877,8 +977,18 @@ contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgra
      * - `spender` must have allowance for the caller of at least
      * `subtractedValue`.
      */
-    function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].sub(subtractedValue, 'BEP20: decreased allowance below zero'));
+    function decreaseAllowance(address spender, uint256 subtractedValue)
+        public
+        returns (bool)
+    {
+        _approve(
+            _msgSender(),
+            spender,
+            _allowances[_msgSender()][spender].sub(
+                subtractedValue,
+                "BEP20: decreased allowance below zero"
+            )
+        );
         return true;
     }
 
@@ -909,11 +1019,18 @@ contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgra
      * - `recipient` cannot be the zero address.
      * - `sender` must have a balance of at least `amount`.
      */
-    function _transfer (address sender, address recipient, uint256 amount) internal {
-        require(sender != address(0), 'BEP20: transfer from the zero address');
-        require(recipient != address(0), 'BEP20: transfer to the zero address');
+    function _transfer(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) internal {
+        require(sender != address(0), "BEP20: transfer from the zero address");
+        require(recipient != address(0), "BEP20: transfer to the zero address");
 
-        _balances[sender] = _balances[sender].sub(amount, 'BEP20: transfer amount exceeds balance');
+        _balances[sender] = _balances[sender].sub(
+            amount,
+            "BEP20: transfer amount exceeds balance"
+        );
         _balances[recipient] = _balances[recipient].add(amount);
         emit Transfer(sender, recipient, amount);
     }
@@ -928,7 +1045,7 @@ contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgra
      * - `to` cannot be the zero address.
      */
     function _mint(address account, uint256 amount) internal {
-        require(account != address(0), 'BEP20: mint to the zero address');
+        require(account != address(0), "BEP20: mint to the zero address");
 
         _totalSupply = _totalSupply.add(amount);
         _balances[account] = _balances[account].add(amount);
@@ -947,9 +1064,12 @@ contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgra
      * - `account` must have at least `amount` tokens.
      */
     function _burn(address account, uint256 amount) internal {
-        require(account != address(0), 'BEP20: burn from the zero address');
+        require(account != address(0), "BEP20: burn from the zero address");
 
-        _balances[account] = _balances[account].sub(amount, 'BEP20: burn amount exceeds balance');
+        _balances[account] = _balances[account].sub(
+            amount,
+            "BEP20: burn amount exceeds balance"
+        );
         _totalSupply = _totalSupply.sub(amount);
         emit Transfer(account, address(0), amount);
     }
@@ -967,9 +1087,13 @@ contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgra
      * - `owner` cannot be the zero address.
      * - `spender` cannot be the zero address.
      */
-    function _approve (address owner, address spender, uint256 amount) internal {
-        require(owner != address(0), 'BEP20: approve from the zero address');
-        require(spender != address(0), 'BEP20: approve to the zero address');
+    function _approve(
+        address owner,
+        address spender,
+        uint256 amount
+    ) internal {
+        require(owner != address(0), "BEP20: approve from the zero address");
+        require(spender != address(0), "BEP20: approve to the zero address");
 
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
@@ -983,7 +1107,14 @@ contract BEP20Upgradeable is ContextUpgradeable, IBEP20Upgradeable, OwnableUpgra
      */
     function _burnFrom(address account, uint256 amount) internal {
         _burn(account, amount);
-        _approve(account, _msgSender(), _allowances[account][_msgSender()].sub(amount, 'BEP20: burn amount exceeds allowance'));
+        _approve(
+            account,
+            _msgSender(),
+            _allowances[account][_msgSender()].sub(
+                amount,
+                "BEP20: burn amount exceeds allowance"
+            )
+        );
     }
 }
 
@@ -992,14 +1123,14 @@ contract Masterchef is Initializable, OwnableUpgradeable {
     using SafeBEP20Upgradeable for IBEP20Upgradeable;
     // Info of each user.
     struct UserInfo {
-        uint256 amount;         // How many LP tokens the user has provided.
+        uint256 amount; // How many LP tokens the user has provided.
         uint256 lastRewardTimestamp;
     }
 
     // Info of each pool.
     struct PoolInfo {
-        IBEP20Upgradeable lpToken;           // Address of LP token contract.
-        uint16 depositFeeBP;      // Deposit fee in basis points
+        IBEP20Upgradeable lpToken; // Address of LP token contract.
+        uint16 depositFeeBP; // Deposit fee in basis points
     }
 
     // The SOLDAITTOKEN TOKEN!
@@ -1016,22 +1147,26 @@ contract Masterchef is Initializable, OwnableUpgradeable {
     // Info of each pool.
     PoolInfo[] public poolInfo;
     // Info of each user that stakes LP tokens.
-    mapping (uint256 => mapping (address => UserInfo)) public userInfo;
+    mapping(uint256 => mapping(address => UserInfo)) public userInfo;
     // The block number when SOLDAIT mining starts.
     uint256 public startBlock;
     uint256 public depositedToken;
 
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
-    event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
+    event EmergencyWithdraw(
+        address indexed user,
+        uint256 indexed pid,
+        uint256 amount
+    );
 
-     function initialize( 
+    function initialize(
         BEP20Upgradeable _soldait,
         address _feeAddress,
         uint256 _soldaitApy,
         uint256 _perDaysecond,
-        uint256 _startBlock) public initializer 
-    {
+        uint256 _startBlock
+    ) public initializer {
         __Ownable_init();
         soldait = _soldait;
         feeAddress = _feeAddress;
@@ -1044,53 +1179,74 @@ contract Masterchef is Initializable, OwnableUpgradeable {
         return poolInfo.length;
     }
 
-    function add(IBEP20Upgradeable _lpToken, uint16 _depositFeeBP) public onlyOwner {
-        require(_depositFeeBP <= 10000, "add: invalid deposit fee basis points");
-        poolInfo.push(PoolInfo({
-            lpToken: _lpToken,
-            depositFeeBP: _depositFeeBP
-        }));
+    function add(IBEP20Upgradeable _lpToken, uint16 _depositFeeBP)
+        public
+        onlyOwner
+    {
+        require(
+            _depositFeeBP <= 10000,
+            "add: invalid deposit fee basis points"
+        );
+        poolInfo.push(
+            PoolInfo({lpToken: _lpToken, depositFeeBP: _depositFeeBP})
+        );
     }
 
     function set(uint256 _pid, uint16 _depositFeeBP) public onlyOwner {
-        require(_depositFeeBP <= 10000, "set: invalid deposit fee basis points");
+        require(
+            _depositFeeBP <= 10000,
+            "set: invalid deposit fee basis points"
+        );
         poolInfo[_pid].depositFeeBP = _depositFeeBP;
     }
 
     // Return reward multiplier over the given _from to _to block.
-    function getMultiplier(uint256 _from, uint256 _to) internal pure returns (uint256) {
+    function getMultiplier(uint256 _from, uint256 _to)
+        internal
+        pure
+        returns (uint256)
+    {
         return _to.sub(_from).mul(BONUS_MULTIPLIER);
     }
 
-    function pendingSoldait(uint256 _pid, address _user) external view returns (uint256) {
-       UserInfo storage user = userInfo[_pid][_user];
-       uint256 soldaitReward = 0;
-       if (block.timestamp > user.lastRewardTimestamp && user.amount > 0) {
-          uint256 multiplier = getMultiplier(user.lastRewardTimestamp, block.timestamp);
-          uint256 perYear = perDaysecond.mul(365);
-          uint256 mpadPerSecond = soldaitApy.mul(1e14).div(perYear);
-           soldaitReward = multiplier.mul(mpadPerSecond);
-      }else{
-          soldaitReward = 0;
-      }
-      return user.amount.mul(soldaitReward).div(1e18);
+    function pendingSoldait(uint256 _pid, address _user)
+        external
+        view
+        returns (uint256)
+    {
+        UserInfo storage user = userInfo[_pid][_user];
+        uint256 soldaitReward = 0;
+        if (block.timestamp > user.lastRewardTimestamp && user.amount > 0) {
+            uint256 multiplier = getMultiplier(
+                user.lastRewardTimestamp,
+                block.timestamp
+            );
+            uint256 perYear = perDaysecond.mul(365);
+            uint256 mpadPerSecond = soldaitApy.mul(1e14).div(perYear);
+            soldaitReward = multiplier.mul(mpadPerSecond);
+        } else {
+            soldaitReward = 0;
+        }
+        return user.amount.mul(soldaitReward).div(1e18);
     }
 
-
-      // Safe soldait transfer function, just in case if rounding error causes pool to not have enough SOLDAITs.
+    // Safe soldait transfer function, just in case if rounding error causes pool to not have enough SOLDAITs.
     function _harvest(uint256 _pid) internal {
-      UserInfo storage user = userInfo[_pid][msg.sender];
-      if (block.timestamp > user.lastRewardTimestamp && user.amount > 0) {
-         uint256 multiplier = getMultiplier(user.lastRewardTimestamp, block.timestamp);
-         uint256 perYear = perDaysecond.mul(365);
-         uint256 mpadPerSecond = soldaitApy.mul(1e14).div(perYear);
-         uint256 soldaitReward = multiplier.mul(mpadPerSecond);
-         uint256 pending = user.amount.mul(soldaitReward).div(1e18);
-         if(pending > 0) {
-             safeSoldaitTransfer(msg.sender, pending);
-         }
-     }
-      user.lastRewardTimestamp = block.timestamp;
+        UserInfo storage user = userInfo[_pid][msg.sender];
+        if (block.timestamp > user.lastRewardTimestamp && user.amount > 0) {
+            uint256 multiplier = getMultiplier(
+                user.lastRewardTimestamp,
+                block.timestamp
+            );
+            uint256 perYear = perDaysecond.mul(365);
+            uint256 mpadPerSecond = soldaitApy.mul(1e14).div(perYear);
+            uint256 soldaitReward = multiplier.mul(mpadPerSecond);
+            uint256 pending = user.amount.mul(soldaitReward).div(1e18);
+            if (pending > 0) {
+                safeSoldaitTransfer(msg.sender, pending);
+            }
+        }
+        user.lastRewardTimestamp = block.timestamp;
     }
 
     function deposit(uint256 _pid, uint256 _amount) public {
@@ -1099,21 +1255,26 @@ contract Masterchef is Initializable, OwnableUpgradeable {
         _harvest(_pid);
         //uint tokendeciaml = pool.lpToken.decimals();
         //uint256 convertAmount = _amount * (10**(tokendeciaml));
-        uint256 convertAmount = _amount;
-        if(convertAmount > 0) {
-            pool.lpToken.safeTransferFrom(address(msg.sender), address(this), convertAmount);
-            if(address(pool.lpToken) == address(soldait)){
-                depositedToken += convertAmount;
-            }
-            if(pool.depositFeeBP > 0){
+        if (_amount > 0) {
+            pool.lpToken.safeTransferFrom(
+                address(msg.sender),
+                address(this),
+                _amount
+            );
+            uint256 investAmount = _amount;
+            if (pool.depositFeeBP > 0) {
                 uint256 depositFee = _amount.mul(pool.depositFeeBP).div(10000);
                 pool.lpToken.safeTransfer(feeAddress, depositFee);
-                user.amount = user.amount.add(convertAmount).sub(depositFee);
-            }else{
-                user.amount = user.amount.add(convertAmount);
+                user.amount = user.amount.add(_amount).sub(depositFee);
+                investAmount = _amount.sub(depositFee);
+            } else {
+                user.amount = user.amount.add(_amount);
+            }
+            if (address(pool.lpToken) == address(soldait)) {
+                depositedToken += investAmount;
             }
         }
-        emit Deposit(msg.sender, _pid, convertAmount);
+        emit Deposit(msg.sender, _pid, _amount);
     }
 
     // Withdraw LP tokens from MasterChef.
@@ -1122,8 +1283,8 @@ contract Masterchef is Initializable, OwnableUpgradeable {
         UserInfo storage user = userInfo[_pid][msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
         _harvest(_pid);
-        if(_amount > 0) {
-             if (address(pool.lpToken) == address(soldait)) {
+        if (_amount > 0) {
+            if (address(pool.lpToken) == address(soldait)) {
                 depositedToken -= _amount;
             }
             user.amount = user.amount.sub(_amount);
@@ -1138,16 +1299,18 @@ contract Masterchef is Initializable, OwnableUpgradeable {
         UserInfo storage user = userInfo[_pid][msg.sender];
         uint256 amount = user.amount;
         user.amount = 0;
-         if (address(pool.lpToken) == address(soldait)) {
-                depositedToken -= amount;
-            }
+        if (address(pool.lpToken) == address(soldait)) {
+            depositedToken -= amount;
+        }
         pool.lpToken.safeTransfer(address(msg.sender), amount);
         emit EmergencyWithdraw(msg.sender, _pid, amount);
     }
 
     // Safe soldait transfer function, just in case if rounding error causes pool to not have enough SOLDAITs.
     function safeSoldaitTransfer(address _to, uint256 _amount) internal {
-        uint256 soldaitBal = soldait.balanceOf(address(this)).sub(depositedToken);
+        uint256 soldaitBal = soldait.balanceOf(address(this)).sub(
+            depositedToken
+        );
         if (_amount > soldaitBal) {
             soldait.transfer(_to, soldaitBal);
         } else {
@@ -1155,16 +1318,19 @@ contract Masterchef is Initializable, OwnableUpgradeable {
         }
     }
 
-    function safeSoldaitWithdraw(address _addr,uint256 _amount) public onlyOwner{
+    function safeSoldaitWithdraw(address _addr, uint256 _amount)
+        public
+        onlyOwner
+    {
         uint256 soldaitBal = soldait.balanceOf(address(this));
         if (_amount > soldaitBal) {
             soldait.transfer(_addr, soldaitBal);
         } else {
             soldait.transfer(_addr, _amount);
         }
-     }
+    }
 
-    function setFeeAddress(address _feeAddress) public{
+    function setFeeAddress(address _feeAddress) public {
         require(msg.sender == feeAddress, "setFeeAddress: FORBIDDEN");
         feeAddress = _feeAddress;
     }
