@@ -1,7 +1,7 @@
 var key = {
   NetworkId: 97,
   netWorkUrl: "https://data-seed-prebsc-2-s3.binance.org:8545",
-  Factory: "0xeac424ebabf11a3b1d8ae9f26384be371e7561ef",
+  Factory: "0x783909b26E4e9c8E5805373bDb97af4a287cB51d",
   ETHSYMBOL: "BNB"
 };
 
@@ -10,8 +10,8 @@ if (process.env.NODE_ENV == "production") {
   key = {
     frontUrl: "https://soldait-frontend-2023.pages.dev",
     baseUrl: "https://soldaitapi.alwin.io/api",
-    Router: "0xae15194c579ea2f19c5f68deeade7f3739aff83e",
-    Factory: "0xeac424ebabf11a3b1d8ae9f26384be371e7561ef",
+    Router: "0xe3C7CfB89203091E27edA0339Cb9495130feFee7",
+    Factory: "0x783909b26E4e9c8E5805373bDb97af4a287cB51d",
     NetworkId: 97,
     networkName: "Binance Chain",
     toFixed: 8,
@@ -27,7 +27,7 @@ if (process.env.NODE_ENV == "production") {
     blockexploer: "https://testnet.bscscan.com",
     imageUrl: "https://soldaitapi.alwin.io/tokens/",
     reactLoadr: "#19366b",
-    MasterChef: "0xB5d9861c0402703D2C67DC6b76CcCb2a83afE0Ff",
+    MasterChef: "0x321b972dEe6CF8827eeFa3D1FE95f9805E9D9A1a",
     rpcurl: "https://data-seed-prebsc-2-s3.binance.org:8545/",
     defaultLogo: "https://soldaitapi.alwin.io/tokens/question.svg",
     ETHSYMBOL: "BNB",
@@ -42,8 +42,8 @@ if (process.env.NODE_ENV == "production") {
     //baseUrl: "https://soldaitapi.alwin.io/api",
     //baseUrl: "http://localhost:3533/api",
     baseUrl: "https://soldaitapi.alwin.io/api",
-    Router: "0xae15194c579ea2f19c5f68deeade7f3739aff83e",
-    Factory: "0xeac424ebabf11a3b1d8ae9f26384be371e7561ef",
+    Router: "0xe3C7CfB89203091E27edA0339Cb9495130feFee7",
+    Factory: "0x783909b26E4e9c8E5805373bDb97af4a287cB51d",
     NetworkId: 97,
     networkName: "Binance Chain",
     toFixed: 8,
@@ -59,7 +59,7 @@ if (process.env.NODE_ENV == "production") {
     blockexploer: "https://testnet.bscscan.com",
     imageUrl: "https://soldaitapi.alwin.io/tokens/",
     reactLoadr: "#19366b",
-    MasterChef: "0xB5d9861c0402703D2C67DC6b76CcCb2a83afE0Ff",
+    MasterChef: "0x321b972dEe6CF8827eeFa3D1FE95f9805E9D9A1a",
     rpcurl: "https://data-seed-prebsc-2-s3.binance.org:8545/",
     defaultLogo: "https://soldaitapi.alwin.io/tokens/question.svg",
     ETHSYMBOL: "BNB",

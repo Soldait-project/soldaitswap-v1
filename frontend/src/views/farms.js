@@ -75,14 +75,14 @@ export default function Farms(props) {
     loadScript();
     getFarmDetails(pageSkip, pageLimit, farmsStatus);
     //eslint-disable-next-line
-    console.log('3333333333333333')
+
   }, [walletConnection]);
 
   async function approveToken(lpAddress, pid) {
 
     let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
     let { status } = await checkUser(reqdata);
-    console.log(status, 'farms333')
+
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
@@ -118,12 +118,12 @@ export default function Farms(props) {
   async function stakeToken() {
     let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
     let { status } = await checkUser(reqdata);
-    console.log(status, 'farms111')
+
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
     else {
-      console.log('farms212')
+
       if (amount > lpBal) {
         toastAlert("error", "Insufficient Balance", "balance");
         return false;
@@ -154,15 +154,15 @@ export default function Farms(props) {
   }
 
   async function unstakeToken() {
-    console.log(amount, stakeBal, "amount > stakeBal")
+
     let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
     let { status } = await checkUser(reqdata);
-    console.log(status, 'farms122')
+
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
     else {
-      console.log('farmss')
+
       if (parseFloat(amount) <= 0 || !amount || amount === "" || amount === 0 || amount === "0") {
         toastAlert("error", "Invalid Amount", "balance");
         return false;
@@ -194,12 +194,12 @@ export default function Farms(props) {
   async function harvestToken(pid) {
     let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
     let { status } = await checkUser(reqdata);
-    console.log(status, 'farms111')
+
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
     else {
-      console.log("iff")
+
       setshowloader(true);
       setcurrentId(pid);
       var allDetails = await harverst(pid);
@@ -220,12 +220,12 @@ export default function Farms(props) {
       var index = allPoolDetails.findIndex(val => parseInt(val.pid) === parseInt(pid))
       if (index !== -1) {
         var lpAddr = allPoolDetails[index].LPaddress;
-        console.log(lpAddr)
+
         var { stakeBal, lpBal, totalSupply } = await getStakeUnstakeBalance(pid, lpAddr);
         $("#startearn-" + pid).html(stakeBal);
         $("#startearnbtn-" + pid).prop('disabled', false);
         $("#totalLiq-" + pid).html(totalSupply);
-        console.log(lpBal, 'lpBal')
+
       }
     } catch (err) {
 
@@ -263,13 +263,13 @@ export default function Farms(props) {
       status: farmsStatus,
     }
     var allDetails = await getFormsDetails(data);
-    console.log(allDetails,'allDetailsallDetails')
+
     if ((allDetails && allDetails.value && allDetails.value.length) < (parseInt(config.limit))) {
       setLoadmoreButton(true)
     }
-    
+
     if (allDetails && allDetails.value && allDetails.value.length > 0 && Array.isArray(allDetails.value)) {
-      console.log(allDetails.value,'allDetails')
+
       setpoolDetails(allDetails.value);
       setallPoolDetails(allDetails.value);
       rewardDetails(allDetails.value);
@@ -279,14 +279,14 @@ export default function Farms(props) {
 
   }
   async function rewardDetails(details) {
-    // console.log(details, 'rewardDetailsrewardDetails')
+
     var Details = details;
 
     clearInterval(rewardinterval);
     rewardinterval = setInterval(async function () {
       try {
         var rewards = await getreward(details);
-        //console.log(rewards, 'rewardsrewardsrewards')
+
         for (var i = 0; i < rewards.value.length; i++) {
           if (rewards.value && rewards.value[i]) {
 
@@ -420,9 +420,9 @@ export default function Farms(props) {
   function clearAmount() {
     setamount("");
   }
-console.log(poolDetails,'poolDetailspoolDetails')
+
   return (
-  
+
     <div className="page_wrapper">
       <Header
         color="transparent"

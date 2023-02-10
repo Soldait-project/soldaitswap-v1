@@ -44,7 +44,7 @@ export async function swapping(
 ) {
   var get = await connection();
   try {
-    console.log(swapdata, 'swapdataswapdata', config.ETHSYMBOL)
+
     if (get && get.web3) {
       var web3 = get.web3;
       var address = get.address;

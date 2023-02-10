@@ -222,9 +222,9 @@ export const getAllFaq = async () => {
         let respData = await axios({
             'method': 'get',
             'url': `${baseUrl}/faq`,
-       
+
         });
-        console.log(respData,'respData')
+
         return {
             loading: false,
             result: respData.data.result,

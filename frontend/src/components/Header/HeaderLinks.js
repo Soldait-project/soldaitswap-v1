@@ -10,11 +10,11 @@ import { toastAlert } from "../../helper/toastAlert";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
 import config from "../../config/config"
-import { setWallet, setTokens ,setEligible} from "../../reducers/Actions"
+import { setWallet, setTokens, setEligible } from "../../reducers/Actions"
 import { connection } from "../../helper/connection"
 import { formatAddress, toFixedFormat } from "../../helper/custommath"
 import { tokenDetails } from "../../Api/TokenActions"
-import { userlogin ,checkUser } from "../../Api/UserActions"
+import { userlogin, checkUser } from "../../Api/UserActions"
 
 import Web3Modal from "web3modal";
 
@@ -74,7 +74,7 @@ export default function HeaderLinks(props) {
 
       const handleAccountsChanged = (accounts) => {
         //setAccounts(accounts);
-        console.log('accounts-accounts', accounts)
+
         dispatch(setWallet({
           network: walletConnection.network,
           web3: walletConnection.web3,
@@ -86,7 +86,7 @@ export default function HeaderLinks(props) {
 
       const handleChainChanged = (chainId) => {
         // setChainId(chainId);
-        console.log('chainId-chainId', chainId)
+
         dispatch(setWallet({
           network: chainId,
           web3: walletConnection.web3,
@@ -114,58 +114,57 @@ export default function HeaderLinks(props) {
   }, [walletConnection]);
 
   async function setConnection() {
-    console.log("itsmeeeeeeeee")
-  
+
+
     if (localStorage.getItem("connect") == "yes") {
       var get = await connection();
-    console.log(get ,'getitsmeeeeeeeee')
+
       let reqdata = { address: get && get.address ? get.address : '' };
       let { status } = await checkUser(reqdata);
-      console.log(status, 'pagecalll')
-        if (status == true) {
-          var eligibleStatus = {
-            eligible: "no",
-          }
-          
-           dispatch(setEligible(eligibleStatus));
-          toastAlert('error', "Your Address is Blocked");
+
+      if (status == true) {
+        var eligibleStatus = {
+          eligible: "no",
         }
-        else {
-          let initialState = {
-            connect: (localStorage.getItem("connect") && localStorage.getItem("connect") == "yes")
-              ? localStorage.getItem("connect") : "no",
-            iswallet: (localStorage.getItem("iswallet") && localStorage.getItem("iswallet") != "")
-              ? localStorage.getItem("iswallet") : "no",
-            network: get.network,
-            web3: get.web3,
-            address: get.address,
-          };
-          dispatch(setWallet(initialState));
-          var add = get && get.address ? get.address :''
-          console.log(add,'addaddaddadd')
-          setuseraddress(add);
-          //addUsers({ address: get.address });
+
+        dispatch(setEligible(eligibleStatus));
+        toastAlert('error', "Your Address is Blocked");
+      }
+      else {
+        let initialState = {
+          connect: (localStorage.getItem("connect") && localStorage.getItem("connect") == "yes")
+            ? localStorage.getItem("connect") : "no",
+          iswallet: (localStorage.getItem("iswallet") && localStorage.getItem("iswallet") != "")
+            ? localStorage.getItem("iswallet") : "no",
+          network: get.network,
+          web3: get.web3,
+          address: get.address,
+        };
+        dispatch(setWallet(initialState));
+        var add = get && get.address ? get.address : ''
+
+        setuseraddress(add);
+        //addUsers({ address: get.address });
         var WEB3_CONNECT_CACHED_PROVIDER = localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER")
         if (WEB3_CONNECT_CACHED_PROVIDER) {
           var connnector = JSON.parse(WEB3_CONNECT_CACHED_PROVIDER)
           if (connnector == "injected" || connnector == "walletconnect" || connnector === "binancechainwallet"
             || connnector == "walletlink") {
-            console.log('setConnectionsetConnection')
             var get = await connection();
             dispatch(setWallet(get));
             getuserBalance();
           }
         }
-        }
       }
+    }
 
   }
- 
- 
+
+
 
 
   const disconnectWeb3Wallet = async () => {
-    console.log("disconnectWeb3Wallet")
+
     try {
 
       const web3Modal = new Web3Modal({
@@ -198,11 +197,11 @@ export default function HeaderLinks(props) {
       }, 1000);
 
     }
-     catch (error) {
+    catch (error) {
       console.error(error);
     }
   };
-console.log(walletConnection,'newwalletConnection')
+
   async function getuserBalance() {
     if (walletConnection && walletConnection.web3 && walletConnection.address && walletConnection.address != "") {
       setuseraddress(walletConnection.address);
@@ -220,7 +219,7 @@ console.log(walletConnection,'newwalletConnection')
     setAnchorEl(anchorEl ? null : event.currentTarget);
     let data = { address: useraddress };
     let { result } = await userlogin(data);
-    console.log(result, "result")
+
     if (result) {
 
       localStorage.setItem("khdbfty", result)
@@ -268,7 +267,7 @@ console.log(walletConnection,'newwalletConnection')
             <a href={socialLinks.linkedin} color="transparent" className="nav-link"><i className="fab fa-linkedin"></i></a>
           </ListItem>
         </Hidden>
-{console.log(useraddress,'useraddress2')}
+
         {walletConnection && walletConnection.connect == "yes" && walletConnection.address && walletConnection.address != "" ?
           <ListItem className={classes.listItem + " p-0"} id="walletaddress">
             <span className="wallet_add" onClick={handleClick}>{formatAddress(useraddress)}</span>

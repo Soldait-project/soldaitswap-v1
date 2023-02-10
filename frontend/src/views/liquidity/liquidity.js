@@ -322,7 +322,7 @@ export default function Liquidity(props) {
     if (tokenA && tokenA !== "" && tokenB && tokenB !== "") {
 
       var { pairAddress, lpBal } = await getLiqutityLPdetails(tokenA, tokenB);
-      console.log(lpBal, 'lpBallpBallpBallpBal')
+
       if (pairAddress === "0x0000000000000000000000000000000000000000") {
         setfirstliqutity(true);
       } else {
@@ -358,14 +358,14 @@ export default function Liquidity(props) {
   async function showLiqutityModal() {
     let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
     let { status } = await checkUser(reqdata);
-    console.log(status, 'liquidity')
+
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
-   else{
-    window.$('#liqutity_modal').modal('show');
+    else {
+      window.$('#liqutity_modal').modal('show');
     }
-  
+
   }
 
   async function rateCalulation(reserveA, reserveB) {
@@ -457,7 +457,7 @@ export default function Liquidity(props) {
         setapproveloader(false);
       }
     }
-   
+
   }
 
   async function approveTokenB(item, id) {
@@ -491,7 +491,7 @@ export default function Liquidity(props) {
         setapproveBtn1(false);
       }
     }
-   
+
   }
 
   const sliderChange = async (value) => {

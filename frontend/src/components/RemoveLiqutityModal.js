@@ -50,7 +50,7 @@ import {
 import {
     removeliqutityValue
 } from "../Api/LiqutityActions";
-import {checkUser} from '../Api/UserActions'
+import { checkUser } from '../Api/UserActions'
 import config from "../config/config";
 
 
@@ -103,6 +103,8 @@ function valuetext(value) {
 }
 
 const RemoveLiqutityModal = (props) => {
+
+    var { removeLiqClick } = props;
 
     const [from, setfrom] = useState(initialData);
     const [to, setto] = useState(initialData);
@@ -246,7 +248,7 @@ const RemoveLiqutityModal = (props) => {
         let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
         let { status } = await checkUser(reqdata);
         if (status == true) {
-          toastAlert('error', "Your Address is Blocked");
+            toastAlert('error', "Your Address is Blocked");
         }
         else {
             var get = await connection();
@@ -259,9 +261,9 @@ const RemoveLiqutityModal = (props) => {
                 var nonce = web3.utils.toHex(0);
                 // var msg = "owner: " + address + "\n" + "spender:" + address + "\n" + "value:" + value + "\n"
                 //     + "nonce:" + nonce + "\n" + "deadline:" + deadLine;
-    
+
                 var msg = `owner: ${address} \n spender: ${address} \n value: ${value} \n nonce: ${nonce} \n deadline:${deadLine}`
-    
+
                 setshowloader(true)
                 try {
                     setisapproveBtn(true)
@@ -273,10 +275,10 @@ const RemoveLiqutityModal = (props) => {
                     setshowloader(false)
                     setisapproveBtn(false)
                 }
-    
+
             }
         }
-      
+
 
     }
 
@@ -285,7 +287,7 @@ const RemoveLiqutityModal = (props) => {
         let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
         let { status } = await checkUser(reqdata);
         if (status == true) {
-          toastAlert('error', "Your Address is Blocked");
+            toastAlert('error', "Your Address is Blocked");
         }
         else {
             var get = await connection();
@@ -297,11 +299,11 @@ const RemoveLiqutityModal = (props) => {
                     var tokenAamt = await percentage(from.amount, 3, 'minus');
                     amountAMin = await convertToWei(tokenAamt, from.decimals);
                     amountAMin = await ChecktokenDecimal(amountAMin, from.decimals);
-    
+
                     var tokenBamt = await percentage(to.amount, 3, 'minus');
                     amountBMin = await convertToWei(tokenBamt, to.decimals);
                     amountBMin = await ChecktokenDecimal(amountBMin, to.decimals);
-    
+
                     setshowloader(true);
                     setisRemove(true);
                     try {
@@ -315,14 +317,14 @@ const RemoveLiqutityModal = (props) => {
                         setshowloader(false);
                         setisRemove(false);
                         setisapproveBtn(false);
-    
+
                         if (result && result.status) {
                             var tx = (result.value && result.value.transactionHash) ?
                                 result.value.transactionHash : "";
                             var gasFeevalue = (result.value && result.value.gasUsed) ?
                                 result.value.gasUsed : 0;
                             var gasFee = await division(gasFeevalue, 10 ** 18);
-    
+
                             let LiqData = {
                                 txid: tx,
                                 address: walletConnection.address,
@@ -335,41 +337,43 @@ const RemoveLiqutityModal = (props) => {
                             }
                             await removeliqutityValue(LiqData);
                             toastAlert('success', "Successfully removed", 'liqutity');
-                            window.location.reload(false);
+                            //window.location.reload(false);
+                            window.$('#remove_liqutity_modal').modal('hide');
+                            removeLiqClick();
                         } else {
                             toastAlert('error', "Rejected", 'liqutity');
                         }
-    
+
                     } catch (err) {
-    
+
                         setshowloader(false)
                     }
                 } else {
-    
+
                     let tokenAamt = await percentage(from.amount, 3, 'minus');
                     amountAMin = await convertToWei(tokenAamt, from.decimals);
-    
+
                     let tokenBamt = await percentage(to.amount, 3, 'minus');
                     amountBMin = await convertToWei(tokenBamt, to.decimals);
-    
+
                     var token = from.address;
                     if (to.symbol !== config.ETHSYMBOL) {
                         token = to.address;
                     }
-    
+
                     var tokenMin = (from.symbol !== config.ETHSYMBOL) ? amountAMin : amountBMin;
                     var tokenETHMin = (from.symbol === config.ETHSYMBOL) ? amountAMin : amountBMin;
-    
+
                     setshowloader(true);
                     setisRemove(true);
-    
+
                     var removeLiq1 = await convert(removeLiq);
                     amountAMin = await convert(tokenMin);
                     amountAMin = await ChecktokenDecimal(amountAMin, from.decimals);
-    
+
                     amountBMin = await convert(tokenETHMin);
                     amountBMin = await ChecktokenDecimal(tokenETHMin, to.decimals);
-    
+
                     try {
                         result = await removeLiquidityETH(
                             token,
@@ -381,13 +385,13 @@ const RemoveLiqutityModal = (props) => {
                         setisRemove(false);
                         setisapproveBtn(false)
                         if (result && result.status) {
-    
+
                             var tx1 = (result.value && result.value.transactionHash) ?
                                 result.value.transactionHash : "";
                             var gasFeevalue1 = (result.value && result.value.gasUsed) ?
                                 result.value.gasUsed : 0;
                             var gasFee1 = await division(gasFeevalue1, 10 ** 18);
-    
+
                             let LiqData = {
                                 txid: tx1,
                                 address: walletConnection.address,
@@ -400,20 +404,22 @@ const RemoveLiqutityModal = (props) => {
                             }
                             await removeliqutityValue(LiqData);
                             toastAlert('success', "Successfully removed", 'liqutity');
-                            window.location.reload(false);
+                            //window.location.reload(false);
+                            window.$('#remove_liqutity_modal').modal('hide');
+                            removeLiqClick();
                         } else {
                             toastAlert('error', "Rejected", 'liqutity');
                         }
                     } catch (err) {
                         setshowloader(false)
                     }
-    
+
                 }
-    
-    
+
+
             }
         }
-       
+
 
     }
 

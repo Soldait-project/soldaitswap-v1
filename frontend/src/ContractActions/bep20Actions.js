@@ -46,7 +46,7 @@ export async function getbalance(from, symbol) {
             };
         }
     } catch (err) {
-        console.log(err, 'errerrerrerrKKKKKK')
+
         return {
             balance: 0,
             balanceOf: 0,
@@ -332,16 +332,16 @@ export async function getLPbalances(fromAddress, toAddress, pairAddr) {
 
             var tokenAbalance = await getFormatMulticall(results, "tokenAbalance", 0);
             var tokenADecimal = parseFloat(await getFormatMulticall(results, "tokenAbalance", 1));
-            console.log(tokenAbalance, 'tokenAbalance')
+
             var tokenBbalance = await getFormatMulticall(results, "tokenBbalance", 0);
             var tokenBDecimal = parseFloat(await getFormatMulticall(results, "tokenAbalance", 1));
 
             tokenAbalance = parseFloat(await web3.utils.hexToNumberString(tokenAbalance.hex));
             tokenBbalance = parseFloat(await web3.utils.hexToNumberString(tokenBbalance.hex));
-            console.log(tokenAbalance, 'tokenAbalance')
+
             var balA = tokenAbalance / 10 ** tokenADecimal;
             balA = await convert(balA);
-            console.log(tokenAbalance, 'tokenAbalance1')
+
             var balB = tokenBbalance / 10 ** tokenBDecimal;
             balB = await convert(balB);
 
@@ -366,7 +366,7 @@ export async function getLPbalances(fromAddress, toAddress, pairAddr) {
             };
         }
     } catch (err) {
-        console.log(err, 'errerrerrerrerr')
+
         return {
             tokenAbalance: 0,
             tokenAbalanceOf: 0,

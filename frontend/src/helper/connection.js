@@ -37,7 +37,7 @@ export async function connection() {
     }
   }
 
-  if (!isLoad && provider === "" && isConnected && web3Modal.cachedProvider) {
+  if (provider === "" && isConnected && web3Modal.cachedProvider) {
     isLoad = true;
     provider = await web3Modal.connect();
   }
@@ -51,7 +51,6 @@ export async function connection() {
       var result = await web3.eth.getAccounts();
 
       var currAddr = result[0];
-      //console.log(currAddr, 'currAddrcurrAddr')
       if (currAddr === undefined) currAddr = "";
       if (network === config.NetworkId) {
         connect.network = network;

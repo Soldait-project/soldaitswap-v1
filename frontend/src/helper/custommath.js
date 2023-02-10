@@ -209,7 +209,7 @@ export async function toFixedGreater(amount) {
 
     var deciChk = amount.toString();
     deciChk = deciChk.split('.');
-    console.log(deciChk, 'deciChk-deciChk')
+
     if (deciChk && deciChk.length === 2) {
 
         const getNumber = deciChk[1].split("");
@@ -221,7 +221,7 @@ export async function toFixedGreater(amount) {
             }
 
         }
-        console.log(getNumber, 'getNumber')
+
 
     }
 

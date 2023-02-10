@@ -179,9 +179,8 @@ export default function Exchange(props) {
     if (tokenList && tokenList.length > 0) {
 
       var resp = await getBestTokens(tokenList);
-      console.log(resp, 'resprespresprespresp')
+
       setbest_to_check_trades(resp);
-console.log(tokenList,'tokenList',)
 
 
       // var index = 1;
@@ -322,7 +321,7 @@ console.log(tokenList,'tokenList',)
     } else if (id === "to") {
       settoValue({ ...toData, ...{ "amount": value, "showamount": value, value } });
     }
-    console.log(value, 'valuevaluevaluevalue')
+
     if (status && res !== "." && parseFloat(value) > 0) {
 
       var isExactIn = (id === "from") ? true : false;
@@ -375,8 +374,7 @@ console.log(tokenList,'tokenList',)
         } else {
           return;
         }
-        console.log(inputAmount, 'inputAmountinputAmount')
-        console.log(outputAmount, 'outputAmountoutputAmount', trade.outputAmount.toSignificant(18))
+
         const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade)
 
         var minReceived = {
@@ -501,7 +499,7 @@ console.log(tokenList,'tokenList',)
 
     var value1 = await allowance(address, config.Router);
     setcheckallowance(false);
-    if (parseFloat(value1.value) < parseFloat(amounts0) && symbol !== "ETH") {
+    if (parseFloat(value1.value) < parseFloat(amounts0) && symbol !== config.ETHSYMBOL) {
       setcheckallowance(true);
       setshowswap(false);
     } else {
@@ -522,7 +520,7 @@ console.log(tokenList,'tokenList',)
       try {
         var balance = value.balance;
         var amt = parseFloat(fromValue.amount) / 1e18;
-  
+
         if (balance >= amt) {
           setapprovebtn(true);
           var approveAmt = 10000000 * (10 ** 18);
@@ -545,24 +543,24 @@ console.log(tokenList,'tokenList',)
         setapprovebtn(false);
       }
     }
-    
+
 
   }
-console.log(walletConnection,'walletConnection22')
+
   async function showSwapModal() {
     //check to current price update
     let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
     let { status } = await checkUser(reqdata);
-    console.log(status, 'rtttttttttttttt')
+
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
-    else{
+    else {
       await calculateAmount(swapcurrent, enterValue, fromValue, toValue, "no", slippageValue);
       window.$('#swap_modal').modal('show');
     }
-   
-    
+
+
   }
 
   async function confirmSupply() {

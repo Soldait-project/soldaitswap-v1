@@ -45,8 +45,7 @@ export async function calculateValue(
             }
 
             setswapcurrent(id);
-            console.log(value, 'value')
-            console.log(pairDetails, 'pairDetails')
+
             if (fromValue.address !== "" && toValue.address !== "" && parseFloat(value) > 0) {
 
                 var fromdecimals = fromValue.decimals;

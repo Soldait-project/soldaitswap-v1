@@ -1,25 +1,25 @@
 import React from 'react'
 import { useDispatch } from 'react-redux';
 import Web3 from 'web3';
-import { setWallet,setEligible } from "../reducers/Actions";
+import { setWallet, setEligible } from "../reducers/Actions";
 import { toastAlert } from "../helper/toastAlert";
 import config from "../config/config";
 
 import Web3Modal from "web3modal";
 import { providerOptions } from "../config/providerOptions"
 
-import {checkUser } from "../Api/UserActions"
+import { checkUser } from "../Api/UserActions"
 
 const WalletModal = (props) => {
 
   const dispatch = useDispatch();
 
   async function connectWallet(wallettype) {
-    console.log(wallettype, 'wallettypewallettype')
+
     try {
       //await web3Modal.clearCachedProvider();
-    
-   
+
+
 
       const web3Modal = new Web3Modal({
         providerOptions, // required,
@@ -27,21 +27,21 @@ const WalletModal = (props) => {
       });
 
       const provider = await web3Modal.connectTo(wallettype);
+
       var web3 = new Web3(provider);
       var network = await web3.eth.net.getId();
-      console.log(config.NetworkId, network, '=======,')
       if (config.NetworkId === network) {
         var result = await web3.eth.getAccounts();
-        console.log(result, 'resultresultresult')
+
         var currAddr = result[0];
-        let reqdata = {address : currAddr && currAddr ? currAddr :''}
+        let reqdata = { address: currAddr && currAddr ? currAddr : '' }
         let { status } = await checkUser(reqdata);
         if (status == true) {
           var eligibleStatus = {
             eligible: "no",
           }
-         
-           dispatch(setEligible(eligibleStatus));
+
+          dispatch(setEligible(eligibleStatus));
           toastAlert('error', "Your Address is Blocked");
         }
         localStorage.setItem("connect", "yes");
@@ -60,9 +60,9 @@ const WalletModal = (props) => {
       }
 
 
-   
+
     } catch (err) {
-      console.log(err, 'errerrerrerrerr')
+
     }
 
 

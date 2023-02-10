@@ -72,11 +72,11 @@ export default function Pools(props) {
   async function approveToken(lpAddress, curpid) {
     let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
     let { status } = await checkUser(reqdata);
-    console.log(status, 'farms111')
+
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
-    else{
+    else {
       setshowloader(true);
       setcurrentId(curpid);
       var allDetails = await approvetoken(lpAddress);
@@ -101,13 +101,13 @@ export default function Pools(props) {
         toastAlert("error", "Unable Approve token", "balance");
       }
     }
-   
+
   }
 
   async function stakeToken() {
     let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
     let { status } = await checkUser(reqdata);
-    console.log(status, 'farms111')
+
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
@@ -116,13 +116,13 @@ export default function Pools(props) {
         toastAlert("error", "Insufficient Balance", "balance");
         return false;
       }
-  
+
       if (parseFloat(amount) <= 0 || !amount || amount === "" || amount === 0 || amount === "0") {
         toastAlert("error", "Invalid Amount", "balance");
         return false;
       }
       window.$("#stake_modal1").modal("hide");
-  
+
       setshowloader(true);
       setcurrentId(curpid);
       var allDetails = await stakePool(curpid, amount, curLPAddress, lpBal);
@@ -137,13 +137,13 @@ export default function Pools(props) {
       }
       setcurrentId("");
     }
-   
+
   }
 
   async function unstakeToken() {
     let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
     let { status } = await checkUser(reqdata);
-    console.log(status, 'farms122')
+
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
@@ -152,14 +152,14 @@ export default function Pools(props) {
         toastAlert("error", "Invalid Amount", "balance");
         return false;
       }
-  
+
       if (parseFloat(amount) > parseFloat(stakeBal)) {
         toastAlert("error", "Insufficient Balance", "balance");
         return false;
       }
-  
+
       window.$("#stake_modal").modal("hide");
-  
+
       setshowloader(true);
       setcurrentId(curpid)
       var allDetails = await unstake(amount, curpid, stakeBal);
@@ -174,13 +174,13 @@ export default function Pools(props) {
       }
       setcurrentId("")
     }
-   
+
   }
 
   async function harvestToken(pid) {
     let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
     let { status } = await checkUser(reqdata);
-    console.log(status, 'farms111')
+
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
@@ -188,7 +188,7 @@ export default function Pools(props) {
       setshowloader(true);
       setcurrentId(pid)
       var allDetails = await harverst(pid);
-  
+
       setshowloader(false);
       if (allDetails.status) {
         toastAlert("success", "Reward withdraw Successfully", "balance");
@@ -199,7 +199,7 @@ export default function Pools(props) {
       setcurrentId("")
 
     }
-  
+
   }
 
   async function updateDetails(pid) {
@@ -207,7 +207,7 @@ export default function Pools(props) {
       var index = allPoolDetails.findIndex(val => parseInt(val.pid) === parseInt(pid))
       if (index !== -1) {
         var lpAddr = allPoolDetails[index].LPaddress;
-        console.log(lpAddr)
+
         var { stakeBal, lpBal, totalSupply } = await getStakeUnstakeBalance(pid, lpAddr);
         $("#startearn-" + pid).html(stakeBal);
         $("#totalLiq-" + pid).html(totalSupply);
@@ -269,20 +269,20 @@ export default function Pools(props) {
 
   async function rewardDetails(details) {
     var Details = details;
-    //console.log(Details, 'DetailsDetailsDetailsDetails')
+
     clearInterval(poolrewardinterval);
     poolrewardinterval = setInterval(async function () {
       try {
         var rewardAmt = 0;
         var rewards = await getreward(details);
-        //console.log(rewards, 'rewardsrewardsrewardsrewards')
+
         for (var i = 0; i < rewards.value.length; i++) {
           if (rewards.value && rewards.value[i]) {
             var pid = rewards.value[i].pid;
             var index = Details.findIndex(val => val.pid === pid);
             if (index !== -1) {
               rewardAmt = await toFixedWithoutRound(rewards.value[i].bal / 1e18, 6)
-              //console.log(rewardAmt, 'rewardAmtrewardAmt')
+
               Details[index].earned = rewardAmt;
             }
             $("#earned-" + pid).html(rewardAmt);

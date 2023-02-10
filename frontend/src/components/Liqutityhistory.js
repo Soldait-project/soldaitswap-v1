@@ -139,8 +139,9 @@ const Liqutityhistory = (props) => {
             settokenList(getToken.result);
             var list = await getLiqutityAllList(length, AllToken);
             setuserLiqutity(list);
-            setshowLiqutity(true)
+
         }
+        setshowLiqutity(true)
 
     }
 
@@ -159,6 +160,11 @@ const Liqutityhistory = (props) => {
 
         }
 
+    }
+
+
+    async function RefreshList() {
+        getLiqutityList();
     }
 
     return (
@@ -195,6 +201,7 @@ const Liqutityhistory = (props) => {
                             <RemoveLiqutityModal
                                 tokena={fromToken}
                                 tokenb={toToken}
+                                removeLiqClick={RefreshList}
                             />
                         }
                     </div>

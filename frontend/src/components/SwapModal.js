@@ -46,93 +46,93 @@ const SwapModal = (props) => {
   async function proceedSwap() {
     let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
     let { status } = await checkUser(reqdata);
-    console.log(status, 'modalll')
+
     if (status == true) {
       toastAlert('error', "Your Address is Blocked");
     }
-   else{
-    setisConfirm(true);
+    else {
+      setisConfirm(true);
 
-    try {
+      try {
 
-      await onchildconfirmSupply();//check to current price update
-      setTimeout(async function () {
+        await onchildconfirmSupply();//check to current price update
+        setTimeout(async function () {
 
-        setisConfirm(false);
+          setisConfirm(false);
 
-        setswapbtn(false)
-        try {
-
-          window.$('#swap_modal').modal('hide');
-          window.$('#pending_swap_modal').modal('show');
+          setswapbtn(false)
           try {
-            var result = await swapping(swapdata);
-            if (result && result.status === true) {
 
-              var tx = (result.value && result.value.transactionHash) ?
-                result.value.transactionHash : "";
-              var gasFeevalue = (result.value && result.value.gasUsed) ?
-                result.value.gasUsed : 0;
-              var gasFee = await division(gasFeevalue, 1e18);
+            window.$('#swap_modal').modal('hide');
+            window.$('#pending_swap_modal').modal('show');
+            try {
+              var result = await swapping(swapdata);
+              if (result && result.status === true) {
 
-              var swapDetail = {
-                txid: tx,
-                router: result.Router,
-                address: walletConnection.address,
-                fromaddress: fromValue.address,
-                fromamount: fromValue.showamount,
-                toaddress: toValue.address,
-                toamount: toValue.showamount,
-                gasfee: gasFee,
-                priceDetail: priceDetail,
-                fromSymbol: fromValue.symbol,
-                toSymbol: toValue.symbol,
-                fromName: fromValue.name,
-                toName: toValue.name,
-                lpAddress: lpAddress
-              }
+                var tx = (result.value && result.value.transactionHash) ?
+                  result.value.transactionHash : "";
+                var gasFeevalue = (result.value && result.value.gasUsed) ?
+                  result.value.gasUsed : 0;
+                var gasFee = await division(gasFeevalue, 1e18);
 
-              await addSwap(swapDetail, authValue);
-              toastAlert('success', "Your transaction is completed", 'swap');
-              onchildSwapModal();
-              settxid(tx);
-              window.$('#pending_swap_modal').modal('hide');
-              window.$('#success_swap_modal').modal('show');
-              setTimeout(function () {
-                // window.location.reload(false)
-              }, 1500)
-            } else {
+                var swapDetail = {
+                  txid: tx,
+                  router: result.Router,
+                  address: walletConnection.address,
+                  fromaddress: fromValue.address,
+                  fromamount: fromValue.showamount,
+                  toaddress: toValue.address,
+                  toamount: toValue.showamount,
+                  gasfee: gasFee,
+                  priceDetail: priceDetail,
+                  fromSymbol: fromValue.symbol,
+                  toSymbol: toValue.symbol,
+                  fromName: fromValue.name,
+                  toName: toValue.name,
+                  lpAddress: lpAddress
+                }
 
-              var err = (result && result.error && result.error !== "") ? result.error.toString() : ""
-              let position = err.search("Time limit exceeded");
-
-              let position1 = err.search("insufficient");
-              if (position > 0) {
-                seterrtxt("Please try again");
-              } else if (position1 > 0) {
-                seterrtxt("Insufficient gas fee");
+                await addSwap(swapDetail, authValue);
+                toastAlert('success', "Your transaction is completed", 'swap');
+                onchildSwapModal();
+                settxid(tx);
+                window.$('#pending_swap_modal').modal('hide');
+                window.$('#success_swap_modal').modal('show');
+                setTimeout(function () {
+                  // window.location.reload(false)
+                }, 1500)
               } else {
-                seterrtxt("Transaction Rejected");
+
+                var err = (result && result.error && result.error !== "") ? result.error.toString() : ""
+                let position = err.search("Time limit exceeded");
+
+                let position1 = err.search("insufficient");
+                if (position > 0) {
+                  seterrtxt("Please try again");
+                } else if (position1 > 0) {
+                  seterrtxt("Insufficient gas fee");
+                } else {
+                  seterrtxt("Transaction Rejected");
+                }
+
+                window.$('#pending_swap_modal').modal('hide');
+                setTimeout(function () {
+                  window.$('#error_swap_modal').modal('show');
+                }, 600)
+
               }
-
-              window.$('#pending_swap_modal').modal('hide');
-              setTimeout(function () {
-                window.$('#error_swap_modal').modal('show');
-              }, 600)
-
+            } catch (err) {
+              setisConfirm(false);
             }
           } catch (err) {
-            setisConfirm(false);
+
           }
-        } catch (err) {
 
-        }
-
-      }, 1000);
-    } catch (err) {
-      setisConfirm(false);
+        }, 1000);
+      } catch (err) {
+        setisConfirm(false);
+      }
     }
-  }
 
   }
 

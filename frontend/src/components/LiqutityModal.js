@@ -47,123 +47,123 @@ const LiqutityModal = (props) => {
 
 	async function proceedLiqutity() {
 		let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
-    let { status } = await checkUser(reqdata);
-    console.log(status, 'liqmodalll')
-    if (status == true) {
-      toastAlert('error', "Your Address is Blocked");
-    }
-		else{
-		try {
+		let { status } = await checkUser(reqdata);
 
-			window.$('#liqutity_modal').modal('hide');
-			window.$('#confirm_liqutity_modal').modal('show');
-			var tx;
-			var result;
-
-			if (fromValue.symbol === config.ETHSYMBOL || toValue.symbol === config.ETHSYMBOL) {
-				var token = "";
-				var amount = 0;
-				if (fromValue.symbol !== config.ETHSYMBOL) {
-					token = fromValue.address;
-					amount = fromValue.amount;
-				} else {
-					token = toValue.address;
-					amount = toValue.amount;
-				}
-				var amountETHMin = 0;
-				if (fromValue.symbol === config.ETHSYMBOL) {
-					amountETHMin = fromValue.amount;
-				}
-				if (toValue.symbol === config.ETHSYMBOL) {
-					amountETHMin = toValue.amount;
-				}
-
-				var amountTokenDesired = parseFloat(amount);
-
-				var tokenAamt = await percentage(parseFloat(amount), 2, 'minus');
-				var amountAMin = tokenAamt;
-
-				var tokenBamt = parseFloat(amountETHMin);
-				var amountBMin = tokenBamt;
-
-				result = await addliqutityETH(
-					token,
-					amountTokenDesired.toString(),
-					amountAMin.toString(),
-					amountBMin.toString()
-				);
-				tx = (result.value && result.value.transactionHash) ?
-					result.value.transactionHash : "";
-			} else {
-
-				var amountADesired = fromValue.amount;
-				var amountBDesired = toValue.amount;
-
-				var tokenAamt1 = await percentage(fromValue.amount, 2, 'minus');
-				var amountAMin1 = tokenAamt1;
-
-				var tokenBamt1 = await percentage(toValue.amount, 2, 'minus');
-				var amountBMin1 = tokenBamt1;
-
-				result = await addliqutity(
-					fromValue.address,
-					toValue.address,
-					amountADesired,
-					amountBDesired,
-					amountAMin1,
-					amountBMin1
-				);
-				tx = (result.value && result.value.transactionHash) ?
-					result.value.transactionHash : "";
-			}
-
-			if (result.status) {
-				settxid(tx);
-
-				var gasFeevalue = (result.value && result.value.gasUsed) ?
-					result.value.gasUsed : 0;
-				var lpAmount = (result.lpAmount && result.lpAmount) ?
-					result.lpAmount / 1e18 : 0;
-
-				var gasFee = await division(gasFeevalue, 10 ** 18);
-				var amt = parseFloat(fromValue.amount) / 1e18;
-				var amt1 = parseFloat(toValue.amount) / 1e18;
-
-				var newTokenData = "";
-				if (fromValue && fromValue.newtoken === "yes") {
-					newTokenData = fromValue;
-				} else if (toValue && toValue.newtoken === "yes") {
-					newTokenData = toValue;
-				}
-
-				var LiqData = {
-					txid: tx,
-					address: walletConnection.address,
-					fromaddress: fromValue.address,
-					fromamount: amt,
-					toaddress: toValue.address,
-					toamount: amt1,
-					gasfee: gasFee,
-					new_token: newTokenData,
-					lpamount: lpAmount
-				}
-				await addliqutityValue(LiqData);
-
-				toastAlert('success', "Your transaction is completed", 'liqutity');
-				window.$('#confirm_liqutity_modal').modal('hide');
-				window.$('#success_liqutity_modal').modal('show');
-				onChildClickLiqutity(newTokenData);
-
-			} else {
-				window.$('#confirm_liqutity_modal').modal('hide');
-				window.$('#success_liqutity_modal').modal('hide');
-				window.$('#error_liqutity_modal').modal('show');
-			}
-		} catch (err) {
-
+		if (status == true) {
+			toastAlert('error', "Your Address is Blocked");
 		}
-	}
-	
+		else {
+			try {
+
+				window.$('#liqutity_modal').modal('hide');
+				window.$('#confirm_liqutity_modal').modal('show');
+				var tx;
+				var result;
+
+				if (fromValue.symbol === config.ETHSYMBOL || toValue.symbol === config.ETHSYMBOL) {
+					var token = "";
+					var amount = 0;
+					if (fromValue.symbol !== config.ETHSYMBOL) {
+						token = fromValue.address;
+						amount = fromValue.amount;
+					} else {
+						token = toValue.address;
+						amount = toValue.amount;
+					}
+					var amountETHMin = 0;
+					if (fromValue.symbol === config.ETHSYMBOL) {
+						amountETHMin = fromValue.amount;
+					}
+					if (toValue.symbol === config.ETHSYMBOL) {
+						amountETHMin = toValue.amount;
+					}
+
+					var amountTokenDesired = parseFloat(amount);
+
+					var tokenAamt = await percentage(parseFloat(amount), 2, 'minus');
+					var amountAMin = tokenAamt;
+
+					var tokenBamt = parseFloat(amountETHMin);
+					var amountBMin = tokenBamt;
+
+					result = await addliqutityETH(
+						token,
+						amountTokenDesired.toString(),
+						amountAMin.toString(),
+						amountBMin.toString()
+					);
+					tx = (result.value && result.value.transactionHash) ?
+						result.value.transactionHash : "";
+				} else {
+
+					var amountADesired = fromValue.amount;
+					var amountBDesired = toValue.amount;
+
+					var tokenAamt1 = await percentage(fromValue.amount, 2, 'minus');
+					var amountAMin1 = tokenAamt1;
+
+					var tokenBamt1 = await percentage(toValue.amount, 2, 'minus');
+					var amountBMin1 = tokenBamt1;
+
+					result = await addliqutity(
+						fromValue.address,
+						toValue.address,
+						amountADesired,
+						amountBDesired,
+						amountAMin1,
+						amountBMin1
+					);
+					tx = (result.value && result.value.transactionHash) ?
+						result.value.transactionHash : "";
+				}
+
+				if (result.status) {
+					settxid(tx);
+
+					var gasFeevalue = (result.value && result.value.gasUsed) ?
+						result.value.gasUsed : 0;
+					var lpAmount = (result.lpAmount && result.lpAmount) ?
+						result.lpAmount / 1e18 : 0;
+
+					var gasFee = await division(gasFeevalue, 10 ** 18);
+					var amt = parseFloat(fromValue.amount) / 1e18;
+					var amt1 = parseFloat(toValue.amount) / 1e18;
+
+					var newTokenData = "";
+					if (fromValue && fromValue.newtoken === "yes") {
+						newTokenData = fromValue;
+					} else if (toValue && toValue.newtoken === "yes") {
+						newTokenData = toValue;
+					}
+
+					var LiqData = {
+						txid: tx,
+						address: walletConnection.address,
+						fromaddress: fromValue.address,
+						fromamount: amt,
+						toaddress: toValue.address,
+						toamount: amt1,
+						gasfee: gasFee,
+						new_token: newTokenData,
+						lpamount: lpAmount
+					}
+					await addliqutityValue(LiqData);
+
+					toastAlert('success', "Your transaction is completed", 'liqutity');
+					window.$('#confirm_liqutity_modal').modal('hide');
+					window.$('#success_liqutity_modal').modal('show');
+					onChildClickLiqutity(newTokenData);
+
+				} else {
+					window.$('#confirm_liqutity_modal').modal('hide');
+					window.$('#success_liqutity_modal').modal('hide');
+					window.$('#error_liqutity_modal').modal('show');
+				}
+			} catch (err) {
+
+			}
+		}
+
 	}
 
 	return (
