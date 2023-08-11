@@ -8,19 +8,19 @@ export const getFarms = async (req, res) => {
         var limit = 6;
         var skip = 0;
         var status = "Live"
-        if (req.query.limit && req.query.limit != "") {
-            limit = parseInt(req.query.limit);
+        if (req.body.limit && req.body.limit != "") {
+            limit = parseInt(req.body.limit);
         }
-        if (req.query.skip && req.query.skip != "") {
-            var skip = parseInt(req.query.skip);
+        if (req.body.skip && req.body.skip != "") {
+            var skip = parseInt(req.body.skip);
             skip = (skip - 1) * limit;
         }
-        if (req.query.status && req.query.status != "") {
-            status = req.query.status;
+        if (req.body.status && req.body.status != "") {
+            status = req.body.status;
         }
 
         var query = [
-            { $match: { isTokenOnly: false, status: (status == "Live") ? 1 : 0 } },
+            { $match: { isTokenOnly: false, status: status } },
             { $sort: { updated_time: -1 } },
             { $skip: skip },
             { $limit: limit },
@@ -64,15 +64,15 @@ export const getPools = async (req, res) => {
         var limit = 6;
         var skip = 0;
         var status = "Live";
-        if (req.query.limit && req.query.limit != "") {
-            limit = parseInt(req.query.limit);
+        if (req.body.limit && req.body.limit != "") {
+            limit = parseInt(req.body.limit);
         }
-        if (req.query.skip && req.query.skip != "") {
-            var skip = parseInt(req.query.skip);
+        if (req.body.skip && req.body.skip != "") {
+            var skip = parseInt(req.body.skip);
             skip = (skip - 1) * limit;
         }
-        if (req.query.status && req.query.status != "") {
-            status = req.query.status;
+        if (req.body.status && req.body.status != "") {
+            status = req.body.status;
         }
 
         var query = [

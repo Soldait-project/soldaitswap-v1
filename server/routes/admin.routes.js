@@ -85,6 +85,7 @@ router.route("/admin-liqutity-history").get(swapCtrl.adminliqutityhistory);
 router.route("/admin-users-list").get(swapCtrl.adminuserslist);
 router.route("/admin-update-user").post(swapCtrl.adminLockuser);
 router.route("/userlist-CSV-report").get(swapCtrl.userlistCSVreport);
+router.route("/suscriberslist-CSV-report").get(swapCtrl.suscriberslistCSVreport);
 router.route("/swaplist-CSV-report").get(swapCtrl.SwappingCSVreport);
 router.route("/liqutity-CSV-report").get(swapCtrl.LiqutityCSVreport);
 
@@ -121,13 +122,13 @@ router.route("/get-settings").post(authVerify,settingCtrl.getsettings);
 router.route("/update-settings").post(settingCtrl.updatesettings);
 router.route("/site-social-url").post(settingCtrl.sitesocialurl);
 router.route("/get-social-url").get(settingCtrl.getsocialurl);
+router.route("/subscribers-list").get(settingCtrl.getsubscriberslist);
+router.route("/admin-delete-subscribers").post(settingCtrl.admindeletesuscribers);
 router.route("/get-news-letter-subscriber").get(settingCtrl.getnewslettersubscriber);
 router.route("/send-news-letter").post(settingCtrl.sendnewsletter);
 router.route("/forgot-password").post(settingCtrl.forgotpassword);
 router.route("/verify-url").post(settingCtrl.verifyurl);
 router.route("/reset-password").post(settingCtrl.resetpassword);
 
-router.route("/add-currency").get(currencyCtrl.getCurrency).post(upload_currency,currencyCtrl.addCurrency).put(upload_currency,currencyCtrl.updateCurrency);
-router.route("/get-currency").get(p2pCtrl.getCurrencyList)
-router.route("/p2p-pair").post(p2pCtrl.addPair).get(p2pCtrl.getP2pPair).put(p2pCtrl.UpdatePair)
+router.route("/faq").post(settingCtrl.AddFaq).get(settingCtrl.getFaq).put(settingCtrl.updateFaq);
 export default router;

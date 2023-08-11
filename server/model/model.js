@@ -10,7 +10,8 @@ const admin = require("../schema/admin-model");
 const siteurl = require("../schema/site-setting");
 const subscribe = require("../schema/subscribe-model");
 const template = require("../schema/template");
-
+const faq = require("../schema/faq-schema");
+const pairs = require("../schema/pairs-model");
 
 module.exports = {
   swapusers: swapusers,
@@ -23,5 +24,7 @@ module.exports = {
   siteurl: siteurl,
   subscribe: subscribe,
   template: template,
- 
+  faq: faq,
+  pairs: pairs
+
 };

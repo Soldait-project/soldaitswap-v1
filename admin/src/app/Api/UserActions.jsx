@@ -78,6 +78,22 @@ export const getCSVreport = async (data) => {
     }
 }
 
+export const getsuscribersCSVreport = async (data) => {
+    try {
+        let respData = await axios({
+            method: 'get',
+            url: `${baseUrl}/suscriberslist-CSV-report?type=` + data.type,
+        })
+        return {
+            result: respData.data.result,
+        }
+    } catch (err) {
+        return {
+            errors: returnErr(err),
+        }
+    }
+}
+
 export const getswapCSVreport = async (data) => {
     try {
         let respData = await axios({

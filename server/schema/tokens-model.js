@@ -14,10 +14,11 @@ var SchemaFormat = new Schema({
     addedbyuser: { type: String, default: "no" },
     useraddress: { type: String, default: "" },
     price: { type: Number, default: 0 },
-    price_ETH: { type: Number, default: 0 },
-    status: {type: String,default: "Live"},
-    tradetype: {type: String,default:""},
+    price_BNB: { type: Number, default: 0 },
+    status: { type: String, default: "Live" },
+    tradetype: { type: String, default: "" },
     createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model('tokens', SchemaFormat, 'tokens');

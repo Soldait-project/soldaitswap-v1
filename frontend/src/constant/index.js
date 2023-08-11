@@ -2,4 +2,5 @@ export const SET_WEB3 = 'SET_WEB3';
 export const WALLET_CONNECT = 'WALLET_CONNECT';
 export const TOKEN_LIST = 'TOKEN_LIST';
 export const ALLOWED_PAIRS = 'ALLOWED_PAIRS';
+export const ALLOWED_PAIRS_PANCAKE = 'ALLOWED_PAIRS_PANCAKE';
 export const IS_ELIGIBLE = 'IS_ELIGIBLE';

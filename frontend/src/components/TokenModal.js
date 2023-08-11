@@ -105,7 +105,6 @@ const TokenModal = forwardRef((props, ref) => {
                             "newtoken": "yes",
                             "URI": logo
                         }]
-
                         settokenList(newToken);
                     } else {
 
@@ -187,8 +186,11 @@ const TokenModal = forwardRef((props, ref) => {
                                                         </div>
                                                     </div>
                                                 </li>
+                                                
                                                 : (show.symbol !== item.symbol) ?
+                                                
                                                     <li onClick={() => { setSwapToken(item) }}>
+
                                                         <img src={config.imageUrl + logo} alt="Icons" onError={(e) => { e.target.onerror = null; e.target.src = config.defaultLogo }} />
                                                         <p>{item.symbol}</p>
                                                     </li>

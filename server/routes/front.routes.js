@@ -11,27 +11,28 @@ import * as liqutityCtrl from "../controllers/front/liqutitycontroller";
 import * as swapCtrl from "../controllers/front/swapcontroller";
 import * as siteCtrl from "../controllers/front/siteController"
 
-const authVerify = async(req, res, next) => {
+const authVerify = async (req, res, next) => {
 
     try {
 
-        var name =config.jwtname;
+        var name = config.jwtname;
         var authentication = req.headers.authentication;
         var token = authentication.replace(name, "");
         if (req.headers.authentication && req.headers.authentication != "") {
             var getId = jwt.verify(token, config.Auth_key);
             req.body.loginId = (getId && getId._id) ? getId._id : "";
-            let data={_id: getId._id};
-           let checkUser = await DB.AsyncfindOne('users', data, {});
+            let data = { _id: getId._id };
+            let checkUser = await DB.AsyncfindOne('users', data, {});
             if (!checkUser) {
-                return res.status(400).json({ 'responseCode': 400, 'responseMessage': "User Not found"})
+                return res.status(400).json({ 'responseCode': 400, 'responseMessage': "User Not found" })
             }
             next();
         } else {
             next();
         }
     } catch (err) {
-        return res.status(400).json({'responseCode': 400,
+        return res.status(400).json({
+            'responseCode': 400,
             responseMessage: "authorization required.",
         });
     }
@@ -42,6 +43,12 @@ router.route("/check-users").post(userCtrl.checkUsers);
 router.route("/token-list").get(tokenCtrl.getTokens);
 router.route("/add-token").post(tokenCtrl.addToken);
 router.route("/get-currency-list").post(tokenCtrl.getCurrencyList);
+router.route("/all-token-list").get(tokenCtrl.allTokenList);
+router.route("/tokens").get(tokenCtrl.tokens);
+router.route("/pairs").get(tokenCtrl.pairs);
+router.route("/circulating-supply").get(tokenCtrl.circulatingSupply);
+router.route("/token-info").get(tokenCtrl.tokenInfo);
+
 router.route("/get-settings").get(userCtrl.getsettings);
 router.route("/site-template").get(siteCtrl.gettemplate);
 router.route("/subscribe").post(userCtrl.saveSubscriber);
@@ -57,6 +64,6 @@ router.route("/add-swap").post(swapCtrl.addSwap);
 router.route("/swap-history").get(swapCtrl.swapHistory);
 router.route("/recent-swap-history").get(swapCtrl.recentSwapHistory);
 router.route("/swap-history-chart").get(swapCtrl.swapHistoryChart);
-
+router.route("/faq").get(userCtrl.getFaq);
 
 export default router;

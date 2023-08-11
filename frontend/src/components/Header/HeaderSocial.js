@@ -14,7 +14,7 @@ export default function HeaderSocial(props) {
       <List className={classes.list + " main_navbar"}>
         <Hidden lgUp>
           <ListItem className={classes.listItem}>
-            <NavLink to="/home" color="transparent" className="nav-link">Home</NavLink>
+            <NavLink to="/" color="transparent" className="nav-link">Home</NavLink>
           </ListItem>
           <ListItem className={classes.listItem}>
             <NavLink to="/exchange" color="transparent" className="nav-link">Exchange</NavLink>

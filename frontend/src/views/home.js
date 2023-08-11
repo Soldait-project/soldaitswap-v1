@@ -109,82 +109,83 @@ export default function LandingPage(props) {
   async function getCurrencyList() {
 
     var { result } = await currencyList();
-      var datasol = {
-        ath
-        : 
+    var datasol = {
+      ath
+        :
         1.15,
-        ath_change_percentage
-        : 
+      ath_change_percentage
+        :
         -13.37294,
-        ath_date
-        : 
+      ath_date
+        :
         "2020-03-13T02:35:42.953Z",
-        atl
-        : 
+      atl
+        :
         0.901127,
-        atl_change_percentage
-        : 
+      atl_change_percentage
+        :
         10.95581,
-        atl_date
-        : 
+      atl_date
+        :
         "2021-05-19T13:04:37.445Z",
-        circulating_supply
-        : 
+      circulating_supply
+        :
         16030973401.47,
-        current_price
-        : 
+      current_price
+        :
         0.121557,
-        fully_diluted_valuation
-        : 
+      fully_diluted_valuation
+        :
         16040895738,
-        high_24h
-        : 
+      high_24h
+        :
         1.005,
-        id
-        : 
+      id
+        :
         "binance-usd",
-        image
-        : 
-        "https://soldaitapi.alwin.io/tokens/0x271c2aa1b889f25bbafee698d4446504139bb51c.png",
-        low_24h
-        : 
+      image
+        :
+        "https://productionapi.soldaitswap.finance/tokens/0xfd7113a715cee3d961edd72e277cb122e2f2744b.png",
+      low_24h
+        :
         0.995173,
-        market_cap
-        : 
+      market_cap
+        :
         16040895738,
-        market_cap_change_24h
-        : 
+      market_cap_change_24h
+        :
         -104938769.30654335,
-        market_cap_change_percentage_24h
-        : 
+      market_cap_change_percentage_24h
+        :
         -0.64994,
-        market_cap_rank
-        : 
+      market_cap_rank
+        :
         7,
-        max_supply
-        : 
+      max_supply
+        :
         null,
-        name
-        : 
+      name
+        :
         "Binance USD",
-        price_change_24h
-        : 
+      price_change_24h
+        :
         0.00126931,
-        price_change_percentage_24h
-        : 
+      price_change_percentage_24h
+        :
         0.12701,
-        roi
-        : 
+      roi
+        :
         null,
-        symbol
-        : 
+      symbol
+        :
         "SIT",
-        total_supply
-        : 
+      total_supply
+        :
         16030973401.47,
-        total_volume
-        : 
-        10877232893}
+      total_volume
+        :
+        10877232893
+    }
     if (result && result.length > 0) {
       result.unshift(datasol);
       setlist(result)
@@ -253,7 +254,7 @@ export default function LandingPage(props) {
           <GridContainer className="mt-5 align-items-center py-5">
             <GridItem sm={12} md={6} lg={6} data-aos="fade-up" data-aos-duration="2000">
               <h1>Invest, Trade, Win Crypto with SOLDAIT</h1>
-              <h3>Trade with soldaitswap, connect your <span>wallet</span> and start <span>secure</span>, fast swap, stake & farm your cryptoAssets</h3>              
+              <h3>Trade with soldaitswap, connect your <span>wallet</span> and start <span>secure</span>, fast swap, stake & farm your cryptoAssets</h3>
               <div className="d-flex align-items-center">
                 <p>Grow your passive income with soldaitswap Anti-bots</p>
               </div>

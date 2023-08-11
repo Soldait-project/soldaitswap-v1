@@ -60,9 +60,9 @@ export const sitesocialurl = (async (req, res) => {
             var cond = {
                 _id: _id
             }
-         exits = await db.AsyncfindOne('siteurl', cond, {});
+            exits = await db.AsyncfindOne('siteurl', cond, {});
         }
-        
+
 
         var update = {
             'facebook': req.body.facebook,
@@ -105,10 +105,64 @@ export const getsocialurl = (async (req, res) => {
 export const getnewslettersubscriber = (async (req, res) => {
 
     try {
-        const subscribermail = await db.AsyncFind('subscribe', {}, {}, {});
+        const subscribermail = await db.AsyncFind('subscribe', {status: "Live" }, {});
 
         return res.status(200).json({ message: 'site settings fetched successfully.', data: subscribermail })
 
+
+    } catch (err) {
+        console.log(err,"error")
+        res.send({ status: 400 });
+    }
+});
+
+export const getsubscriberslist = (async (req, res) => {
+
+    try {
+        var limit = 10;
+        var skip = 0;
+        if (req.query.limit && req.query.limit != "") {
+            limit = parseInt(req.query.limit);
+        }
+        if (req.query.skip && req.query.skip != "") {
+            var skip = parseInt(req.query.skip);
+            skip = (skip - 1) * limit;
+        }
+        var cond ={status: "Live"};
+        if (req.query.search && req.query.search != "") {
+            var search = req.query.search;
+            cond = {
+                status: "Live",email: { '$regex': new RegExp('.*' + search + '.*', 'i') }
+              };
+        }
+        console.log(cond,"cond")
+        var query =[{ $match: cond },
+        { $skip: skip },
+        { $limit: limit }]
+        const subscribermail = await db.AsyncAggregation('subscribe', query);
+
+        return res.status(200).json({ message: 'subscribers list fetched successfully.', data: subscribermail })
+
+
+    } catch (err) {
+        console.log(err,"error")
+        res.send({ status: 400,message: 'Error on server' });
+    }
+});
+
+export const admindeletesuscribers = (async (req, res) => {
+    try {
+        const _id = ObjectId(req.body._id);
+        console.log(_id, 'id')
+        var cond = {
+            _id: _id
+        }
+        let update = {
+            'status': "Deleted"
+        };
+        var resp = await db.AsyncfindOneAndUpdate('subscribe', cond, update, { new: true });
+        console.log(resp, 'dbres')
+        return res.status(200).send({ message: 'suscrbers deleted successfully. Refreshing data...', success: true })
 
     } catch (err) {
         res.send({ status: 400 });
@@ -122,7 +176,7 @@ export const sendnewsletter = (async (req, res) => {
         let content = req.body.message;
         console.log(req.body.email, 'email')
         let mailContent = {
-            "subject": " INDX Newsletter",
+            "subject": " Soldait Newsletter",
             "template": content
         };
         // mailContent['subject'] = "Babypink Newsletter";
@@ -288,7 +342,7 @@ export const settemplate = (async (req, res) => {
 export const getapy = (async (req, res) => {
 
     try {
-        
+
         let exits = await db.AsyncfindOne('siteurl', {}, {});
 
         return res.status(200).json({ message: 'apy fetched successfully.', data: exits })
@@ -305,16 +359,74 @@ export const updateapy = (async (req, res) => {
     try {
         console.log(req.body.apy, "params")
         var update = { "apy": req.body.apy }
-        if(req.body._id){
-        let cond = { "_id": req.body._id};
-        var template = await db.AsyncfindOneAndUpdate('siteurl', cond, update, {});
-        }else{
-        let data = await db.AsyncInsert('siteurl', update);
+        if (req.body._id) {
+            let cond = { "_id": req.body._id };
+            var template = await db.AsyncfindOneAndUpdate('siteurl', cond, update, {});
+        } else {
+            let data = await db.AsyncInsert('siteurl', update);
         }
 
-        return res.status(200).json({status:true, message: 'APY successfully updated' })
+        return res.status(200).json({ status: true, message: 'APY successfully updated' })
 
     } catch (err) {
-        res.status(400).json({status: false, message: 'error on server' })
+        res.status(400).json({ status: false, message: 'error on server' })
+    }
+});
+
+export const AddFaq = (async (req, res) => {
+
+    try {
+
+        console.log(req.body, '----------------')
+        var saveData = {
+            question: req.body.question,
+            answer: req.body.answer,
+        }
+        await db.AsyncInsert('faq', saveData);
+        return res.status(200).send({ success: true, message: 'Added successfully. Refreshing data...' })
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ success: false, message: 'error on server', status: 400 });
+    }
+});
+export const getFaq = (async (req, res) => {
+
+    try {
+        var limit = 10;
+        var skip = 0;
+        if (req.query.limit && req.query.limit != "") {
+            limit = parseInt(req.query.limit);
+        }
+        if (req.query.skip && req.query.skip != "") {
+            var page = parseInt(req.query.skip);
+            skip = (page - 1) * limit;
+        }
+        var cond = {}
+        var sort = { sort: { _id: -1 }, limit: limit, skip: skip }
+        const count = await db.AsynccountDocuments('faq', cond);
+        const faqList = await db.AsyncFind('faq', {}, {}, sort);;
+        return res.status(200).send({ success: true, result: faqList, message: 'success..', 'totalrecords': count })
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ success: false, message: 'error on server', status: 400 });
+    }
+});
+export const updateFaq = (async (req, res) => {
+
+    try {
+
+        const _id = ObjectId(req.body.id);
+        var cond = {
+            _id: _id
+        }
+        var update = {
+            question: req.body.question,
+            answer: req.body.answer,
+        };
+        await db.AsyncfindOneAndUpdate('faq', cond, update, { new: true });
+        return res.status(200).send({ message: 'Faq Updated successfully. Refreshing data...', success: true })
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ success: false, message: 'error on server', status: 400 });
     }
 });

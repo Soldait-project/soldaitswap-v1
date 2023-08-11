@@ -17,6 +17,8 @@ import sitesecurity from 'app/views/security/Routes'
 import tokenmanagement from 'app/views/Token_management/Routes'
 import settings from 'app/views/settings/Routes'
 import cms from 'app/views/cms/Routes'
+import faq from 'app/views/Faq/Routes'
+import subscribersRoutes from  'app/views/subscribers-list/Routes'
 
 import { Navigate } from 'react-router-dom'
 
@@ -44,6 +46,8 @@ export const AllPages = () => {
                 ...settings,
                 ...currencyRoutes,
                 ...cms,
+                ...faq,
+                ...subscribersRoutes,
             ],
         },
         ...LoginRoutes,

@@ -47,6 +47,11 @@ var SchemaFormat = new Schema({
         type: String,
         default: ""
     },
+    apy:
+    {
+        type: Number,
+        default: ""
+    },
     withdrawFee: {
         type: String,
         default: ""
@@ -67,6 +72,6 @@ var SchemaFormat = new Schema({
         type: String,
         default: "Live",
     },
-},{ timestamps: true });
+}, { timestamps: true });
 
 module.exports = mongoose.model('forms', SchemaFormat, 'forms');

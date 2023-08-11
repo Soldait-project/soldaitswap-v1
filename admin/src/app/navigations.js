@@ -17,7 +17,7 @@ export const navigations = [
                 name: 'Site Settings',
                 path: '/site-settings',
                 icon: 'settings_applications',
-            },,
+            },
             {
                 name: 'APY Settings',
                 path: '/apysettings',
@@ -51,6 +51,11 @@ export const navigations = [
         icon: 'shopping_cart',
     },
     {
+        name: 'Subscribers List',
+        path: '/subscribers-list',
+        icon: 'person_pin',
+    },
+    {
         name: 'News Letter',
         path: '/news-letter',
         icon: 'description',
@@ -64,6 +69,11 @@ export const navigations = [
         name: 'CMS',
         path: '/cms',
         icon: 'pages'
+    },
+    {
+        name: 'FAQ ',
+        icon: 'chat_bubble_outline',
+        path: '/faq',
     },
 
 ]

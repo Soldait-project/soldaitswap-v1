@@ -18,7 +18,7 @@ const useStylesBootstrap = makeStyles((theme) => ({
     color: "#503ca1",
   },
   tooltip: {
-    background: "linear-gradient(90deg, #503ca1 35%, #d52edd 100%)",    
+    background: "linear-gradient(90deg, #503ca1 35%, #d52edd 100%)",
     fontSize: "14px"
   },
 }));
@@ -36,12 +36,12 @@ export default function StaticNavbar(props) {
     <div className="left_navigation relative">
       <div className="sticky_left_nav top_menu">
         <div>
-         <a href='/'> <img src={require("../assets/images/logo.png")} alt="logo" className="brand_desk_logo" /></a>
+          <a href='/'> <img src={require("../assets/images/logo.png")} alt="logo" className="brand_desk_logo" /></a>
         </div>
         <List className={classes.list + " stick_left_nav_ul"}>
           <ListItem className={classes.listItem}>
             <BootstrapTooltip title="Home" placement="right">
-              <NavLink to="/home" color="transparent" className="nav-link top_nav_login">
+              <NavLink to="/" color="transparent" className="nav-link top_nav_login">
                 <img src={require("../assets/images/home.png")} alt="Icon" />
               </NavLink>
             </BootstrapTooltip>
@@ -72,6 +72,13 @@ export default function StaticNavbar(props) {
               <NavLink to="/pools" color="transparent" className="nav-link top_nav_login">
                 <img src={require("../assets/images/pools.png")} alt="Icon" />
               </NavLink>
+            </BootstrapTooltip>
+          </ListItem>
+          <ListItem className={classes.listItem}>
+            <BootstrapTooltip title="Gitbook" placement="right">
+              <a href="https://soldait.gitbook.io/soldaitswap/" target="_blank" color="transparent" className="nav-link top_nav_login">
+                <img src={require("../assets/images/gitbook_icon.png")} alt="Icon" />
+              </a>
             </BootstrapTooltip>
           </ListItem>
         </List>

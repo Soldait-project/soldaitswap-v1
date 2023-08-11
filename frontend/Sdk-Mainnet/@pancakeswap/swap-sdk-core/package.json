@@ -1,0 +1,92 @@
+{
+  "_args": [
+    [
+      "@pancakeswap/swap-sdk-core@1.0.0",
+      "/Users/apple/Documents/Prabhu/soldaitFrontend"
+    ]
+  ],
+  "_from": "@pancakeswap/swap-sdk-core@1.0.0",
+  "_id": "@pancakeswap/swap-sdk-core@1.0.0",
+  "_inBundle": false,
+  "_integrity": "sha512-MZBF8FHpCX/ffY8/gd2zz6TpiftwqRouVPr1kB88wm7desYh+E2y4kWPcZX1roWR38UkjBv4/DoXVSDeSTBgRg==",
+  "_location": "/@pancakeswap/swap-sdk-core",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "@pancakeswap/swap-sdk-core@1.0.0",
+    "name": "@pancakeswap/swap-sdk-core",
+    "escapedName": "@pancakeswap%2fswap-sdk-core",
+    "scope": "@pancakeswap",
+    "rawSpec": "1.0.0",
+    "saveSpec": null,
+    "fetchSpec": "1.0.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@pancakeswap/swap-sdk-core/-/swap-sdk-core-1.0.0.tgz",
+  "_spec": "1.0.0",
+  "_where": "/Users/apple/Documents/Prabhu/soldaitFrontend",
+  "bugs": {
+    "url": "https://github.com/pancakeswap/pancake-frontend/issues"
+  },
+  "dependencies": {
+    "big.js": "^5.2.2",
+    "decimal.js-light": "^2.5.0",
+    "tiny-invariant": "^1.1.0",
+    "tiny-warning": "^1.0.3",
+    "toformat": "^2.0.0"
+  },
+  "description": "🛠 An SDK for building applications on top of Pancakeswap.",
+  "devDependencies": {
+    "@swc/core": "^1.2.215",
+    "@swc/jest": "^0.2.21",
+    "@types/big.js": "^4.0.5",
+    "@types/jest": "^24.0.25",
+    "tsup": "^6.7.0",
+    "vitest": "^0.27.2"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/pancakeswap/pancake-frontend#readme",
+  "keywords": [
+    "pancakeswap"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "name": "@pancakeswap/swap-sdk-core",
+  "peerDependencies": {},
+  "prettier": {
+    "printWidth": 120,
+    "semi": false,
+    "singleQuote": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pancakeswap/pancake-frontend.git",
+    "directory": "packages/swap-sdk"
+  },
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsup --watch",
+    "lint": "eslint src test",
+    "test": "vitest --globals --run"
+  },
+  "typings": "dist/index.d.ts",
+  "version": "1.0.0"
+}

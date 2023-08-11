@@ -4,12 +4,16 @@ import config from "../../config/config"
 import DB from "../../commonQuery/commonQuery"
 const Web3 = require("web3");
 var web3 = new Web3(config.netWorkUrl);
+
+
+
+
 export const saveUsers = async (req, res) => {
 
     try {
 
         var address = req.body.address;
-console.log(address)
+        console.log(address)
         var data = {
             address: Web3.utils.toChecksumAddress(address)
         }
@@ -17,7 +21,7 @@ console.log(address)
         if (!exits) {
             exits = await DB.AsyncInsert('swapusers', data);
         }
-        console.log(exits._id,"id")
+        console.log(exits._id, "id")
         const payload = {
             _id: exits._id
         };
@@ -60,24 +64,23 @@ console.log(address)
 };
 
 export const checkUsers = async (req, res) => {
-    try{
-console.log(req.body,'req.bodyaddressaddress')
-var address = req.body.address;
-var data = {
-    address: address
-}
-var checkStatus = await DB.AsyncfindOne('swapusers', data, {});
-console.log(checkStatus,'checkStatus')
-if(checkStatus && checkStatus.status =='deactive'){
-    return res.status(200).json({ status: true })
-}
-else {
-    return res.status(200).json({ status: false }) 
-}
+    try {
+
+        var address = req.body.address;
+        var data = {
+            address: address
+        }
+        var checkStatus = await DB.AsyncfindOne('swapusers', data, {});
+        if (checkStatus && checkStatus.status == 'deactive') {
+            return res.status(200).json({ status: true })
+        }
+        else {
+            return res.status(200).json({ status: false })
+        }
 
     }
-  
-    catch(err){
+
+    catch (err) {
         return res.status(400).json({ status: false })
 
     }
@@ -95,7 +98,7 @@ export const saveSubscriber = async (req, res) => {
         if (!exits) {
             exits = await DB.AsyncInsert('subscribe', data);
         }
-        return res.status(200).json({ status: true,  'message': 'Subscribed successfully' })
+        return res.status(200).json({ status: true, 'message': 'Subscribed successfully' })
 
     } catch (err) {
         return res.status(400).json({ status: true, 'message': 'failed' })
@@ -106,9 +109,9 @@ export const getsettings = (async (req, res) => {
 
     try {
 
-        var settings = await DB.AsyncfindOne('settings', {}, {});
+        var settings = await DB.AsyncfindOne('siteurl', {}, {});
 
-        
+
         res.send({
             'status': 200,
             'result': settings
@@ -116,5 +119,17 @@ export const getsettings = (async (req, res) => {
 
     } catch (err) {
         res.send({ status: 400 });
+    }
+});
+
+export const getFaq = (async (req, res) => {
+
+    try {
+
+        const faqList = await DB.AsyncFind('faq', {}, {}, {});;
+        return res.status(200).send({ success: true, result: faqList, status: 'success' })
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ success: false, message: 'error on server', status: 400 });
     }
 });

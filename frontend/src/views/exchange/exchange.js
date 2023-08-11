@@ -37,7 +37,8 @@ import {
 import { convert } from "../../helper/convert";
 import { tokenDetails } from "../../Api/TokenActions";
 import config from "../../config/config";
-import { setPairs } from "../../reducers/Actions"
+import { setPairs } from "../../reducers/Actions";
+import { setPairsPancake } from "../../reducers/Actions";
 
 import {
   listToTokenMapValue,
@@ -51,8 +52,20 @@ import {
   getBestTokens,
   getAllowedPairs,
   SwapTradeExactIn
-} from "./Pancake/hooks";
+} from "./Pancake/hooks";//soldait
 
+import {
+  getAllowedPairs1,
+  SwapTradeExactIn1,
+  swapTradeExactOut1,
+  listToTokenMapValue1,
+  getBestTokens1,
+  tryParseAmount1,
+  computeTradePriceBreakdown1,
+  formatExecutionPrice1
+} from "./Pancake1/hooks";//pancake
+import { isEmpty } from "lodash";
+// import { Token } from "@pancakeswap/sdk";
 
 const marks = [
   {
@@ -125,6 +138,7 @@ export default function Exchange(props) {
   //const classes = useStyles();
   const dispatch = useDispatch();
   const pairValue = useSelector((state) => state.allowedPairs);
+  const pairValuePancake = useSelector((state) => state.allowedPairsPancake)
   const walletConnection = useSelector((state) => state.walletConnection);
   const eligibleUser = useSelector((state) => state.isEligible);
   const [fromValue, setfromValue] = useState(initialData);
@@ -159,10 +173,11 @@ export default function Exchange(props) {
   const [best_to_check_trades, setbest_to_check_trades] = useState([]);
   const [isPair, setisPair] = useState(true);
   const [showRecentHistory, setshowRecentHistory] = useState(false);
+  const [best_to_check_trades1, setbest_to_check_trades1] = useState([]);
   //const [singleHopOnly, setsingleHopOnly] = useState(false);
 
   const [currentPair, setcurrentPair] = useState("");
-
+  const [routerContract, setrouterContract] = useState("");
 
   useEffect(() => {
     setInitial();
@@ -177,16 +192,13 @@ export default function Exchange(props) {
     var getToken = await tokenDetails({ useraddress: userAddress });
     var tokenList = JSON.parse(getToken.result);
     if (tokenList && tokenList.length > 0) {
-
       var resp = await getBestTokens(tokenList);
+      var resp1 = await getBestTokens1(tokenList);
 
       setbest_to_check_trades(resp);
-
-
-      // var index = 1;
-      // var index1 = 2;
-      var index = tokenList.findIndex(val => val.symbol == 'BNB');
-      var index1 = tokenList.findIndex(val => val.symbol == 'SIT');
+      setbest_to_check_trades1(resp1);
+      var index = 1;
+      var index1 = 0;
       try {
         var fromData = {
           "name": tokenList[index].name,
@@ -217,38 +229,58 @@ export default function Exchange(props) {
           setToDetails(toData);
         }, 1000);
 
-
-        loadPairs(fromData.address, toData.address, resp)
-
+        await loadPairs(fromData.address, toData.address, resp)
       } catch (err) {
-
-
       }
 
     }
   }
 
+
   async function loadPairs(from, to, best) {
     setisPair(false)
+
     try {
       let index2 = tokenList.findIndex((val) => val.address.toLowerCase() === from.toLowerCase())
       let index3 = tokenList.findIndex((val) => val.address.toLowerCase() === to.toLowerCase())
       let inputToken = tokenList[index2];
       let outputToken = tokenList[index3];
-
       var inputCurrency = await listToTokenMapValue(inputToken);
       var outputCurrency = await listToTokenMapValue(outputToken);
+      setisPair(true)
+      let arr = [];
+      arr.push(inputToken, outputToken)
+      setisPair(true)
+      var soldaitgetPairs = await getAllowedPairs(inputCurrency ?? undefined, outputCurrency ?? undefined, best ?? undefined)
 
-      var getPairs = await getAllowedPairs(inputCurrency ?? undefined, outputCurrency ?? undefined, best ?? undefined)
-      dispatch(setPairs({ pairs: getPairs }));
+      var inputCurrency1 = await listToTokenMapValue1(tokenList[index2]);
+      var outputCurrency1 = await listToTokenMapValue1(tokenList[index3]);
+      if (inputCurrency1 && outputCurrency1) {
+        var pancakegetPairs = await getAllowedPairs1(inputCurrency1 ?? undefined, outputCurrency1 ?? undefined, best ?? undefined)
+        dispatch(setPairsPancake({ pairspancake: pancakegetPairs }));
+      }
+
+      setisPair(true)
+      dispatch(setPairs({ pairs: soldaitgetPairs }));
+
+      // setisPair(true)
+      return {
+        soldaitgetPairs,
+        pancakegetPairs
+        //   }
+        // }
+      }
+      setisPair(true)
+
     } catch (err) {
-
+      return {
+        soldaitgetPairs: [],
+        pancakegetPairs: []
+      }
     }
     setisPair(true)
     return true;
   }
-
-
   async function getuserbal(from, symbol) {
     var value = await getbalance(from, symbol);
     setfrombalance({ balance: value.balance, balanceOf: value.balanceOf });
@@ -281,9 +313,9 @@ export default function Exchange(props) {
       }
 
       var id = (swapcurrent === "from") ? "to" : "from";
-      await loadPairs(fromD.address, toD.address, best_to_check_trades)
+      var { soldaitgetPairs, pancakegetPairs } = await loadPairs(fromD.address, toD.address, best_to_check_trades)
       if (value && value > 0) {
-        await calculateAmount(id, value, fromD, toD, "yes", slippageValue, fromBal);
+        await calculateAmount(id, value, fromD, toD, "yes", slippageValue, fromBal, soldaitgetPairs, pancakegetPairs);
       }
 
       // if (toD.symbol === "ETH" || fromD.symbol === "ETH") {
@@ -300,17 +332,27 @@ export default function Exchange(props) {
 
     var id = event.target.id;
     var value = event.target.value;
-    calculateAmount(id, value, fromValue, toValue, "no", slippageValue);
+    calculateAmount(id, value, fromValue, toValue, "no", slippageValue, 0, [], []);
     setenterValue(value);
   }
 
-  async function calculateAmount(id, value, fromData, toData, interchange, slippage, fromBal) {
+  async function calculateAmount(id, value, fromData, toData, interchange, slippage, fromBal, soldaitpairs, pancakepairs) {
 
     setswaploading(true);
     setinsufficienterror(false);
     setinsufficientliqerror(false)
 
-    var pairs = pairValue.pairs;
+    var pairs = (soldaitpairs && soldaitpairs.length > 0) ? soldaitpairs : pairValue.pairs;
+    var pancakepairs = (pancakepairs && pancakepairs.length > 0) ? pancakepairs : pairValuePancake.pairspancake;
+    let index2 = tokenList.findIndex((val) => val.address.toLowerCase() === fromData.address.toLowerCase())
+    let index3 = tokenList.findIndex((val) => val.address.toLowerCase() === toData.address.toLowerCase())
+    let inputToken = tokenList[index2];
+
+    let outputToken = tokenList[index3];
+
+    var inputCurrency = await listToTokenMapValue(inputToken);
+    var outputCurrency = await listToTokenMapValue(outputToken);
+
     var status = await numberFloatOnly(value);
     setswapcurrent(id);
     var str = value.toString();
@@ -337,25 +379,62 @@ export default function Exchange(props) {
       var inputCurrency = await listToTokenMapValue(inputToken);
       var outputCurrency = await listToTokenMapValue(outputToken);
 
+      var inputCurrency1 = await listToTokenMapValue1(inputToken);
+      var outputCurrency1 = await listToTokenMapValue1(outputToken);
 
-      const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
+      var parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
+      var parsedAmount1 = tryParseAmount1(typedValue, (isExactIn ? inputCurrency1 : outputCurrency1) ?? undefined)
+
       var trade = null;
+      var Soldaittrade = null;
+      var Pancaketrade = null;
+      var priceImpactVal = 0;
 
+      var currRouter = null;
       if (isExactIn) {
-        trade = await SwapTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, singleHopOnly ?? undefined, pairs ?? undefined)
+        Soldaittrade = await SwapTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, singleHopOnly ?? undefined, pairs ?? undefined)
+        Pancaketrade = await SwapTradeExactIn1(isExactIn ? parsedAmount1 : undefined, outputCurrency1 ?? undefined, singleHopOnly ?? undefined, pancakepairs ?? undefined)
       } else {
-        trade = await swapTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, singleHopOnly ?? undefined, pairs ?? undefined)
+        Soldaittrade = await swapTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, singleHopOnly ?? undefined, pairs ?? undefined)
+        Pancaketrade = await swapTradeExactOut1(inputCurrency1 ?? undefined, !isExactIn ? parsedAmount1 : undefined, singleHopOnly ?? undefined, pancakepairs ?? undefined)
       }
 
+
+      if (!isEmpty(Soldaittrade)) {
+        trade = Soldaittrade
+        currRouter = config.Router;
+        var { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(Soldaittrade)
+        priceImpactVal = (priceImpactWithoutFee) ? priceImpactWithoutFee.toFixed(2) : 0
+
+        if (Pancaketrade && parseFloat(priceImpactVal) > 15) {
+          trade = Pancaketrade
+          var { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown1(Pancaketrade)
+          priceImpactVal = (priceImpactWithoutFee) ? priceImpactWithoutFee.toFixed(2) : 0;
+          currRouter = config.PancakeRouter;
+        }
+
+      }
+      else {
+        trade = Pancaketrade
+        currRouter = config.PancakeRouter;
+        var { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown1(trade)
+        priceImpactVal = (priceImpactWithoutFee) ? priceImpactWithoutFee.toFixed(2) : 0
+        if (Soldaittrade && parseFloat(priceImpactWithoutFee) > 15) {
+          trade = Soldaittrade
+          var { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown1(trade)
+          priceImpactVal = (priceImpactWithoutFee) ? priceImpactWithoutFee.toFixed(2) : 0
+          currRouter = config.Router;
+        }
+      }
+      setrouterContract(currRouter)
       if (trade) {
-
         let pairAddr = (trade.route && trade.route.pairs && trade.route.pairs[0] && trade.route.pairs[0].liquidityToken && trade.route.pairs[0].liquidityToken.address) ? trade.route.pairs[0].liquidityToken.address : ""
-
         setcurrentPair(pairAddr);
 
         let inputAmount = (trade && trade.route && trade.inputAmount) ? (id === "from") ? typedValue : trade.inputAmount.toSignificant(18) : null;
         let outputAmount = (trade && trade.route && trade.outputAmount) ? (id === "to") ? typedValue : trade.outputAmount.toSignificant(18) : null;
         var path = (trade && trade.route && trade.route.path) ? trade.route.path : null
+
 
         var priceper = "0";
         var priceperinvert = "0";
@@ -375,8 +454,6 @@ export default function Exchange(props) {
           return;
         }
 
-        const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade)
-
         var minReceived = {
           "fromAmt": (inputAmount) ? inputAmount : 0,
           "toAmt": (outputAmount) ? parseFloat(outputAmount) : 0,
@@ -385,7 +462,8 @@ export default function Exchange(props) {
         }
 
         var minVal = await getMinumumReceived(minReceived);
-        const priceImpact = (priceImpactWithoutFee) ? priceImpactWithoutFee.toFixed(2) : "0";
+        const priceImpact = (priceImpactVal) ? parseFloat(priceImpactVal).toFixed(2) : "0";
+
         const liqutityfee = (realizedLPFee) ? realizedLPFee.toSignificant(6) : "0";
 
         var data = {
@@ -431,10 +509,10 @@ export default function Exchange(props) {
 
         if (parseFloat(amount1) > parseFloat(checkFromBal)) {
           setinsufficienterror(true);
-          setInsufficienttoken(fromValue.symbol);
+          let symbl = fromData && fromData.symbol ? fromData.symbol : fromValue.symbol
+          setInsufficienttoken(symbl);
           return;
         }
-
         setswapdata({
           priceper: parseFloat(priceper),
           priceperinvert: parseFloat(priceperinvert),
@@ -450,12 +528,14 @@ export default function Exchange(props) {
           id: id,
           fromsymbol: fromData.symbol,
           tosymbol: toData.symbol,
-          isRoutes: isRoutes
+          isRoutes: isRoutes,
+          routerContract: currRouter
         })
         setswaploading(false);
 
       } else {
         if (value !== "") {
+
           setinsufficientliqerror(true)
         }
 
@@ -474,6 +554,7 @@ export default function Exchange(props) {
 
   function resetSwap(fromData, toData) {
 
+
     setswapdata({
       priceper: 0,
       priceperinvert: 0,
@@ -488,8 +569,9 @@ export default function Exchange(props) {
       method: "",
       isRoutes: []
     });
-    setfromValue({ ...fromData, ...{ "amount": "", showamount: "", value: "" } });
-    settoValue({ ...toData, ...{ "amount": "", showamount: "", value: "" } });
+
+    // setfromValue({ ...fromData, ...{ "amount": "", showamount: "", value: "" } });
+    // settoValue({ ...toData, ...{ "amount": "", showamount: "", value: "" } });
 
     return;
 
@@ -497,7 +579,9 @@ export default function Exchange(props) {
 
   async function ValidateAllowance(address, amounts0, symbol) {
 
-    var value1 = await allowance(address, config.Router);
+    // var value1 = await allowance(address, config.Router);
+    var value1 = await allowance(address, routerContract);
+
     setcheckallowance(false);
     if (parseFloat(value1.value) < parseFloat(amounts0) && symbol !== config.ETHSYMBOL) {
       setcheckallowance(true);
@@ -525,7 +609,9 @@ export default function Exchange(props) {
           setapprovebtn(true);
           var approveAmt = 10000000 * (10 ** 18);
           approveAmt = await convert(approveAmt);
-          var result = await approveSwap(fromValue.address, approveAmt, config.Router);
+          // var result = await approveSwap(fromValue.address, approveAmt, config.Router);
+          var result = await approveSwap(fromValue.address, approveAmt, routerContract);
+
           if (result.status) {
             //setshowapprove(false);
             setshowswap(true);
@@ -556,7 +642,7 @@ export default function Exchange(props) {
       toastAlert('error', "Your Address is Blocked");
     }
     else {
-      await calculateAmount(swapcurrent, enterValue, fromValue, toValue, "no", slippageValue);
+      await calculateAmount(swapcurrent, enterValue, fromValue, toValue, "no", slippageValue, 0, [], []);
       window.$('#swap_modal').modal('show');
     }
 
@@ -564,14 +650,15 @@ export default function Exchange(props) {
   }
 
   async function confirmSupply() {
-    await calculateAmount(swapcurrent, enterValue, fromValue, toValue, "no", slippageValue);
+    var { soldaitgetPairs, pancakegetPairs } = await loadPairs(fromValue.address, toValue.address, best_to_check_trades)
+    await calculateAmount(swapcurrent, enterValue, fromValue, toValue, "no", slippageValue, 0, soldaitgetPairs, pancakegetPairs);
     return true;
   }
 
   async function childSettingClick(value) {
     if (value && value.settings) {
       setslippageValue(value.settings);
-      calculateAmount("from", fromValue.showamount, fromValue, toValue, "no", parseFloat(value.settings));
+      calculateAmount("from", fromValue.showamount, fromValue, toValue, "no", parseFloat(value.settings), 0, [], []);
 
     }
     if (value && value.deadline) {
@@ -596,12 +683,12 @@ export default function Exchange(props) {
         setswaploading(true);
         setshowswap(false);
       }
-      await loadPairs(item.address, toValue.address, best_to_check_trades)
+      var { soldaitgetPairs, pancakegetPairs } = await loadPairs(item.address, toValue.address, best_to_check_trades)
+
       if (fromValue.showamount > 0) {
-        calculateAmount("from", fromValue.showamount, item, toValue, "no", slippageValue);
+        calculateAmount("from", fromValue.showamount, item, toValue, "no", slippageValue, 0, soldaitgetPairs, pancakegetPairs);
       }
       setFromDetails(item);
-
 
     } else if (item && item.address !== "") {
       if (toValue.showamount > 0) {
@@ -609,16 +696,16 @@ export default function Exchange(props) {
         setshowswap(false);
       }
       settoValue({ ...toValue, ...item });
-      setToDetails(item);
-      await loadPairs(fromValue.address, item.address, best_to_check_trades)
+
+      var { soldaitgetPairs, pancakegetPairs } = await loadPairs(fromValue.address, item.address, best_to_check_trades)
+
       if (toValue.showamount > 0) {
-        calculateAmount("to", toValue.showamount, fromValue, item, "no", slippageValue);
+        calculateAmount("from", fromValue.showamount, fromValue, item, "no", slippageValue, 0, soldaitgetPairs, pancakegetPairs);
+
       }
+      setToDetails(item);
     }
 
-    // setTimeout(function () {
-    //   setshowChart(true);
-    // }.bind(this), 500);
 
     setTimeout(setshowChart.bind(this, true), 500);
   }
@@ -659,7 +746,7 @@ export default function Exchange(props) {
       }
 
       setenterValue(calculate.toString());
-      await calculateAmount("from", calculate.toString(), fromValue, toValue, "no", slippageValue);
+      await calculateAmount("from", calculate.toString(), fromValue, toValue, "no", slippageValue, 0, [], []);
     }
     setloadslider(true)
   }
@@ -676,7 +763,6 @@ export default function Exchange(props) {
     setTimeout(function () {
       getuserbal1(toValue.address, toValue.symbol)
     }, 500);
-
     setfromValue({ ...fromValue, ...{ "amount": "", showamount: "" } });
     settoValue({ ...toValue, ...{ "amount": "", showamount: "" } });
     setswapdata(initialData1);
@@ -689,7 +775,6 @@ export default function Exchange(props) {
     }, 1200)
 
   }
-
 
   return (
     <div className="page_wrapper">
@@ -825,6 +910,7 @@ export default function Exchange(props) {
                       </div> */}
                       {walletConnection && walletConnection.address !== "" && walletConnection.connect === "yes" ?
                         <div>
+
                           {(insufficientliqerror) ?
                             <div className="text-center mt-2">
                               <Button className="primary_btn blue_btn">Insufficient liquidity for this trade.</Button>

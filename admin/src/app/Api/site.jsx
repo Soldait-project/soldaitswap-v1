@@ -76,6 +76,47 @@ export const getdetails = async (data) => {
     }
 }
 
+export const getuserMailList = async (data) => {
+    try {
+        let respData = await axios({
+            method: 'get',
+            url:`${baseUrl}/subscribers-list?skip=` +
+                data.skip +
+                `&limit=` +
+                data.limit+
+                `&search=` +
+                data.search,
+        })
+        console.log(respData.data.data,'apidata')
+        return {
+            result: respData.data.data,
+        }
+    } catch (err) {
+        return {
+            errors: returnErr(err),
+        }
+    }
+}
+
+export const deletesubscribers = async (data) =>{
+    try {
+        let respData = await axios({
+            method: 'post',
+            url:`${baseUrl}/admin-delete-subscribers`,
+            data: data, 
+        })
+        return {
+            result: respData.data.result,
+            totalrecords: respData.data.totalrecords,
+        }
+    } catch (err) {
+        return {
+            errors: returnErr(err),
+        }
+    }
+    
+};
+
 export const getuserMail = async (data) => {
     try {
         let respData = await axios({

@@ -30,8 +30,6 @@ import {
   approve,
 } from "../../ContractActions/bep20Actions";
 
-
-
 import {
   getPair,
 } from "../../ContractActions/factoryActions";

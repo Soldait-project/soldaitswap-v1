@@ -29,13 +29,13 @@ ReactDOM.render(
           <Route path="/exchange" component={Exchange} />
           <Route path="/pools" component={Pools} />
           <Route path="/farms" component={Farms} />
-          <Route path="/home" component={Home} />
+          <Route path="/" component={Home} />
           <Route path="/terms" component={Terms} />
           <Route path="/policy" component={Policy} />
           <Route path="/faq" component={Faq} />
           <Route path="/contact" component={Contact} />
           <Route exact path="/*" component={Home}>
-            <Redirect to="/home" />
+            <Redirect to="/" />
           </Route>
         </Switch>
       </Suspense>

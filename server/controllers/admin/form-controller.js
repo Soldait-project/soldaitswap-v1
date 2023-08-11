@@ -49,11 +49,12 @@ export const adminfarmslist = (async (req, res) => {
                     updated_time: 1,
                     lpSymbol: 1,
                     createdAt: 1,
+                    apy: 1,
                 }
             }
         ];
 
-        var countquery = { isTokenOnly: false, status: 1 };
+        var countquery = { isTokenOnly: false, status: "Live" };
         const result = await db.AsyncAggregation('forms', query);
         const count = await db.AsynccountDocuments('forms', countquery);
 
@@ -98,11 +99,12 @@ export const adminpoolslist = (async (req, res) => {
                     updated_time: 1,
                     lpSymbol: 1,
                     createdAt: 1,
+                    apy: 1,
                 }
             }
         ];
 
-        var countquery = { isTokenOnly: true, status: 1 };
+        var countquery = { isTokenOnly: true, status: "Live" };
         const result = await db.AsyncAggregation('forms', query);
         const count = await db.AsynccountDocuments('forms', countquery);
 
@@ -135,6 +137,7 @@ export const adminaddforms = (async (req, res) => {
             quoteTokenAdresses: req.body.quoteTokenAdresses,
             depositFee: req.body.depositFee,
             logoURI: (req.files && req.files[0] && req.files[0].filename) ? `${config.imageURL}forms/${req.files[0].filename}` : "",
+            apy: req.body.apy,
         }
         var data = await db.AsyncInsert('forms', saveData);
         // }
@@ -169,6 +172,7 @@ export const adminupdateforms = (async (req, res) => {
                 'quoteTokenSymbol': req.body.quoteTokenSymbol,
                 'quoteTokenAdresses': req.body.quoteTokenAdresses,
                 'depositFee': req.body.depositFee,
+                'apy': req.body.apy,
             };
             if (req.files[0] && req.files[0].filename != "") {
                 update.logoURI = (req.files[0] && req.files[0].filename) ? `${config.imageURL}forms/${req.files[0].filename}` : "";
@@ -254,7 +258,7 @@ export const updatetoken = (async (req, res) => {
                 address: req.body.address,
             };
             if (req.files && req.files[0] && req.files[0].filename != "") {
-                update.logoURI = (req.files[0] && req.files[0].filename) ?req.files[0].filename : "";
+                update.logoURI = (req.files[0] && req.files[0].filename) ? req.files[0].filename : "";
             }
             await db.AsyncfindOneAndUpdate('tokens', cond, update, { new: true });
 
@@ -270,17 +274,16 @@ export const updatetoken = (async (req, res) => {
 export const admintokenlist = (async (req, res) => {
 
     try {
-        console.log('ddddddddd')
+        console.log("hi surain")
+        console.log(req.query, "ddddddddd")
         let filter = filterSearchQuery(req.query, [
             "name",
             "address",
             "symbol",
-            
-          ]);
-          filter['status'] = "Live"
-          filter["addedbyuser"] = { $ne: "yes" };
 
-          console.log(filter,'fffffffff')
+        ]);
+        filter['status'] = "Live"
+        filter["addedbyuser"] = { $ne: "yes" };
         var limit = 10;
         var skip = 0;
         if (req.query.limit && req.query.limit != "") {
@@ -311,14 +314,15 @@ export const admintokenlist = (async (req, res) => {
             }
         ];
 
-        var countquery = { status: "Live" };
-        const result = await db.AsyncAggregation('tokens', query);
-        const count = await db.AsynccountDocuments('tokens', countquery);
+        // var countquery = [{ $match: filter }];
 
-        res.send({ status: 200, 'result': result, 'totalrecords': count });
+        const result = await db.AsyncAggregation('tokens', query);
+        console.log(result.length)
+        // const count = await db.Asynccount('tokens', countquery);
+        res.send({ status: 200, 'result': result, 'totalrecords': result.length });
 
     } catch (err) {
-        console.log(err,'ee')
+        console.log(err, 'ee')
         res.send({ status: 400, 'result': [], 'totalrecords': 0 });
     }
 });

@@ -46,9 +46,10 @@ const LiqutityModal = (props) => {
 	const [txid, settxid] = useState("");
 
 	async function proceedLiqutity() {
+		console.log('proceedLiqutity')
 		let reqdata = { address: walletConnection && walletConnection.address ? walletConnection.address : '' };
 		let { status } = await checkUser(reqdata);
-
+		console.log('status', status)
 		if (status == true) {
 			toastAlert('error', "Your Address is Blocked");
 		}
@@ -155,12 +156,16 @@ const LiqutityModal = (props) => {
 					onChildClickLiqutity(newTokenData);
 
 				} else {
-					window.$('#confirm_liqutity_modal').modal('hide');
-					window.$('#success_liqutity_modal').modal('hide');
-					window.$('#error_liqutity_modal').modal('show');
+					setTimeout(function () {
+						window.$('#confirm_liqutity_modal').modal('hide');
+						window.$('#success_liqutity_modal').modal('hide');
+					}, 200);
+					setTimeout(function () {
+						window.$('#error_liqutity_modal').modal('show');
+					}, 400)
+
 				}
 			} catch (err) {
-
 			}
 		}
 

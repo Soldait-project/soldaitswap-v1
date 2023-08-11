@@ -34,6 +34,7 @@ var initialvalue = {
     logoURI: '',
     risk: '',
     pid: '',
+    apy: '',
 }
 var validatationerror = {
     fromaddress: '',
@@ -80,11 +81,11 @@ export default function AddFarm(props) {
             if (window.ethereum) {
                 var web3 = new Web3(window.ethereum)
                 let version = await web3.eth.getChainId()
-                console.log(version, 'version------12')
+
                 if (config.netWorkversion == version) {
                     let address = await web3.eth.getAccounts()
                     let data = address[0]
-                    console.log(data, 'user123-------------12')
+
                     var addressData = {
                         user: data,
                     }
@@ -119,7 +120,7 @@ export default function AddFarm(props) {
                 setvalidatation(errors)
                 return
             }
-            console.log(fromtokens, totokens, 'totokenstotokens')
+
             try {
                 var BEP20ContractA = await new web3.eth.Contract(
                     BEP20ABI,
@@ -127,13 +128,11 @@ export default function AddFarm(props) {
                 )
                 var isTokenA = await BEP20ContractA.methods.name().call()
                 if (isTokenA == '' || !isTokenA) {
-                    console.log('nvcnvnvn')
                     errors.fromaddress = 'Please enter valid contract address'
                     setvalidatation(errors)
                     return
                 }
             } catch (err) {
-                console.log(err, 'errrrrrrrdddddddd')
                 errors.fromaddress = 'Please enter valid contract address'
                 setvalidatation(errors)
                 return
@@ -150,12 +149,11 @@ export default function AddFarm(props) {
                     return
                 }
             } catch (err) {
-                console.log(err, 'errrrrrrr1111')
                 errors.toaddress = 'Please enter valid contract address'
                 setvalidatation(errors)
                 return
             }
-            if(isEmpty(farmData.logoURI)){
+            if (isEmpty(farmData.logoURI)) {
                 errors.logoURI = 'Please select logo'
                 setvalidatation(errors)
                 return
@@ -172,22 +170,10 @@ export default function AddFarm(props) {
             )
             try {
                 var isowner = await MasterContract.methods.owner().call()
-            } catch (err) {
-                console.log(err, 'chef')
-            }
-            console.log(
-                isowner,
-                farmData.user,
-                isowner == farmData.user,
-                'owner------12'
-            )
+            } catch (err) {}
 
             let version = await web3.eth.getChainId()
-            console.log(
-                config.netWorkversion,
-                version,
-                'config.netWorkversion !== version'
-            )
+
             seterrorMessages('')
             setopen2(false)
             if (config.netWorkversion !== version) {
@@ -199,9 +185,8 @@ export default function AddFarm(props) {
 
             var address = await web3.eth.getAccounts()
             var currAddr = address[0]
-            console.log(currAddr, isowner, '+++++++++++*********>')
+
             if (isowner == currAddr) {
-                console.log('^^^^^^^^^^^^^^^^^^^^')
                 if (Edit) {
                     var pid = farmData.pid
 
@@ -209,11 +194,12 @@ export default function AddFarm(props) {
                     // allocPoint = allocPoint * 100
 
                     var depositFee = farmData.depositFee * 100
+                    var apy = farmData.apy * 100
                     // alert(pid+'&'+allocPoint+'&'+depositFee)
                     // return false;
                     try {
                         await MasterContract.methods
-                            .set(pid, depositFee)
+                            .set(pid, depositFee, apy)
                             .send({ from: isowner })
 
                         const updateFormdata = {
@@ -231,6 +217,7 @@ export default function AddFarm(props) {
                             user: farmData.user,
                             logoURI: farmData.lplogo,
                             file: tokenimage,
+                            apy: farmData.apy,
                         }
                         await updateForm(updateFormdata)
                         setLoading(false)
@@ -254,18 +241,22 @@ export default function AddFarm(props) {
                             farmData.quoteTokenAdresses
                         )
                         .call()
-                    console.log(lpAddress, 'lpaddress')
+
                     if (!web3.utils.toBN(lpAddress).isZero()) {
                         var pid = await MasterContract.methods
                             .poolLength()
                             .call()
-                        console.log(pid, 'poolLength')
 
                         var depositFee = farmData.depositFee * 100
+                        var apy = farmData.apy * 100
 
                         try {
+                            var estimateGas = await MasterContract.methods
+                                .add(lpAddress, depositFee, apy)
+                                .estimateGas({ from: isowner })
+
                             var result = await MasterContract.methods
-                                .add(lpAddress, depositFee)
+                                .add(lpAddress, depositFee, apy)
                                 .send({ from: isowner })
 
                             let fromsymbol = farmData.tokenSymbol.toUpperCase()
@@ -285,6 +276,7 @@ export default function AddFarm(props) {
                                 quoteTokenAdresses: farmData.quoteTokenAdresses,
                                 depositFee: farmData.depositFee,
                                 logoURI: farmData.lplogo,
+                                apy: farmData.apy,
                             }
                             let response = await addForm(newForm)
                             setopenfarm(false)
@@ -348,7 +340,6 @@ export default function AddFarm(props) {
         setopen2(false)
     }
 
-    console.log(farmData, '---------------farmdata12')
     return (
         <div>
             <Dialog
@@ -461,8 +452,28 @@ export default function AddFarm(props) {
                             name="Deposit Fee"
                             type="text"
                             value={farmData.depositFee}
-                            validators={['required','minNumber:0']}
-                            errorMessages={['This field is required','Enter greater then zero']}
+                            validators={['required', 'minNumber:0']}
+                            errorMessages={[
+                                'This field is required',
+                                'Enter greater then zero',
+                            ]}
+                        />
+                        <TextValidator
+                            sx={{ mb: '12px', width: '100%' }}
+                            variant="outlined"
+                            size="medium"
+                            id="apy"
+                            label="Apy"
+                            onChange={onChange}
+                            fullWidth
+                            name="apy"
+                            type="text"
+                            value={farmData.apy}
+                            validators={['required', 'minNumber:0']}
+                            errorMessages={[
+                                'This field is required',
+                                'Enter greater then zero',
+                            ]}
                         />
 
                         <TextValidator
@@ -477,7 +488,7 @@ export default function AddFarm(props) {
                             // validators={['required']}
                             // errorMessages={['This field is required']}
                         />
-                        {console.log(`${farmData.logoURI}`,'tokenimagetokenimagetokenimage')}
+
                         {farmData &&
                             farmData.logoURI &&
                             farmData.logoURI != '' &&
@@ -492,7 +503,6 @@ export default function AddFarm(props) {
                                 />
                             ) : (
                                 <IMG
-                              
                                     src={`${farmData.logoURI}`}
                                     alt=""
                                     style={{
@@ -501,12 +511,11 @@ export default function AddFarm(props) {
                                     }}
                                 />
                             ))}
-                            {validatation.logoURI &&
-                                    validatation.logoURI != '' && (
-                                        <Error style={{ color: 'red' }}>
-                                            {validatation.logoURI}
-                                        </Error>
-                                    )}
+                        {validatation.logoURI && validatation.logoURI != '' && (
+                            <Error style={{ color: 'red' }}>
+                                {validatation.logoURI}
+                            </Error>
+                        )}
                         <br></br>
                     </DialogContent>
                     <DialogActions>

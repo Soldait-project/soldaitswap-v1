@@ -14,7 +14,7 @@ import BEP20ABI from '../../../ABI/BEP20.json'
 import config from '../../../config/config'
 import { addForm, updateForm } from 'app/Api/Swapping'
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator'
-import isEmpty from 'app/helper/isEmpty';
+import isEmpty from 'app/helper/isEmpty'
 import { Alert, Snackbar, CircularProgress } from '@mui/material'
 import { red } from '@mui/material/colors'
 var initialvalue = {
@@ -29,6 +29,7 @@ var initialvalue = {
     logoURI: '',
     risk: '',
     pid: '',
+    apy: '',
 }
 
 const StyledProgress = styled(CircularProgress)(() => ({
@@ -55,13 +56,10 @@ export default function AddPool(props) {
     const IMG = styled('img')(() => ({
         width: '100%',
     }))
-    console.log(Editdata, 'EditdataEditdataEditdata')
+
     useEffect(async () => {
         await MetaMask()
         if (Edit && Editdata) {
-            console.log(Editdata,'MetaMaskMetaMask--MetaMask')
-            // Editdata.alloc = Editdata.alloc / 100
-            // Editdata.depositFee = Editdata.depositFee / 100
             setfarmData((prev) => {
                 return { ...prev, ...Editdata }
             })
@@ -76,7 +74,7 @@ export default function AddPool(props) {
                 if (config.netWorkversion == version) {
                     let address = await web3.eth.getAccounts()
                     let data = address[0]
-                    console.log(data, 'address2')
+
                     var addressData = {
                         user: data,
                     }
@@ -86,7 +84,6 @@ export default function AddPool(props) {
                 } else {
                     seterrorMessages('Please Connect Binance Network')
                     setopen2(true)
-                    console.log('please connect Binance')
                 }
             }
         } catch (e) {
@@ -119,13 +116,13 @@ export default function AddPool(props) {
                     return
                 }
             } catch (err) {
-                console.error(err,"myerror")
+                console.error(err, 'myerror')
                 errors.fromaddress = 'Please enter valid contract address'
                 setvalidatation(errors)
                 return
             }
 
-            if(isEmpty(farmData.logoURI)){
+            if (isEmpty(farmData.logoURI)) {
                 errors.logoURI = 'Please select logo'
                 setvalidatation(errors)
                 return
@@ -148,9 +145,11 @@ export default function AddPool(props) {
                     // allocPoint = allocPoint * 100
 
                     var depositFee = farmData.depositFee * 100
+                    var apy = farmData.apy * 100
+
                     try {
                         await MasterContract.methods
-                            .set(pid, depositFee)
+                            .set(pid, depositFee, apy)
                             .send({ from: farmData.user })
 
                         const updateFormdata = {
@@ -169,14 +168,15 @@ export default function AddPool(props) {
                             user: farmData.user,
                             logoURI: farmData.lplogo,
                             file: tokenimage,
+                            apy: farmData.apy,
                         }
-                        console.log('updateform', updateFormdata)
+
                         await updateForm(updateFormdata)
-console.log("heyyyy")
-                       // setopenfarm(false)
+
+                        // setopenfarm(false)
                         setopensuccess(true)
                         setsuccessMessages('Update Pool Successfully!')
-                       
+
                         setLoading(false)
                         reload()
                     } catch (err) {
@@ -184,28 +184,28 @@ console.log("heyyyy")
                         setopen2(true)
                         setLoading(false)
                     }
-                } 
-                else {
+                } else {
                     // var allocPoint = farmData.alloc
                     // allocPoint = allocPoint * 100
                     var lpAddress = farmData.tokenAddresses
-                    console.log(lpAddress, 'lpaddress')
+
                     var pid = await MasterContract.methods.poolLength().call()
-                    console.log(pid, 'pid')
+
                     var depositFee = farmData.depositFee * 100
-                    console.log('requestdata', lpAddress, depositFee)
+                    var apy = farmData.apy * 100
+
                     try {
                         var result = await MasterContract.methods
-                            .add(lpAddress, depositFee)
+                            .add(lpAddress, depositFee, apy)
                             .send({ from: farmData.user })
 
                         let fromsymbol = farmData.tokenSymbol.toUpperCase()
                         let tosymbol = farmData.quoteTokenSymbol.toUpperCase()
-                        let lpsymbol = `${fromsymbol}-${tosymbol} LP`
+                        // let lpsymbol = fromsymbol
                         const newForm = {
                             pid: pid,
                             risk: farmData.risk,
-                            lpSymbol: lpsymbol,
+                            lpSymbol: fromsymbol,
                             isTokenOnly: true,
                             lpAddresses: lpAddress,
                             tokenSymbol: fromsymbol,
@@ -214,14 +214,15 @@ console.log("heyyyy")
                             quoteTokenAdresses: '',
                             depositFee: farmData.depositFee,
                             logoURI: farmData.lplogo,
+                            apy: farmData.apy,
                         }
                         let response = await addForm(newForm)
-                       // setopenfarm(false)
-                        console.log(response.message, 'message')
+                        // setopenfarm(false)
+
                         setsuccessMessages(response.message)
                         setopensuccess(true)
                         reload()
-                        console.log(newForm, 'farmData')
+
                         setLoading(false)
                     } catch (err) {
                         seterrorMessages('Rejected')
@@ -254,7 +255,7 @@ console.log("heyyyy")
             settokenimage(true)
             var file = event.target.files[0]
             var url = URL.createObjectURL(file)
-            console.log(url, 'url')
+
             var newData = {
                 lplogo: file,
                 logoURI: url,
@@ -276,7 +277,6 @@ console.log("heyyyy")
         setopen2(false)
     }
 
-    console.log(farmData, 'farmData')
     return (
         <div>
             <Dialog
@@ -354,8 +354,29 @@ console.log("heyyyy")
                             name="Deposit Fee"
                             type="text"
                             value={farmData.depositFee}
-                            validators={['required','minNumber:0']}
-                            errorMessages={['This field is required','Enter greater then zero']}
+                            validators={['required', 'minNumber:0']}
+                            errorMessages={[
+                                'This field is required',
+                                'Enter greater then zero',
+                            ]}
+                        />
+
+                        <TextValidator
+                            sx={{ mb: '12px', width: '100%' }}
+                            variant="outlined"
+                            size="medium"
+                            id="apy"
+                            label="Apy"
+                            onChange={onChange}
+                            fullWidth
+                            name="apy"
+                            type="text"
+                            value={farmData.apy}
+                            validators={['required', 'minNumber:0']}
+                            errorMessages={[
+                                'This field is required',
+                                'Enter greater then zero',
+                            ]}
                         />
 
                         <TextValidator
@@ -383,21 +404,19 @@ console.log("heyyyy")
                                 />
                             ) : (
                                 <IMG
-                                src={`${farmData.logoURI}`}
+                                    src={`${farmData.logoURI}`}
                                     alt=""
                                     style={{
                                         maxWidth: '100%',
                                         width: 'unset',
                                     }}
-
                                 />
                             ))}
-                            {validatation.logoURI &&
-                                    validatation.logoURI != '' && (
-                                        <Error style={{ color: 'red' }}>
-                                            {validatation.logoURI}
-                                        </Error>
-                                    )}
+                        {validatation.logoURI && validatation.logoURI != '' && (
+                            <Error style={{ color: 'red' }}>
+                                {validatation.logoURI}
+                            </Error>
+                        )}
                         <br></br>
                     </DialogContent>
                     <DialogActions>

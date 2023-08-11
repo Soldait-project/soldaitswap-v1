@@ -133,7 +133,7 @@ export const swapHistoryChart = async (req, res) => {
         cond['$and'] = [
             { fromaddress: from, toaddress: to }
         ];
-        console.log(cond, 'condcondcond')
+
         var query = [
             {
                 "$match": cond

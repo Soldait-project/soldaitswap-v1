@@ -2,7 +2,9 @@ import {
     SET_WEB3,
     WALLET_CONNECT,
     TOKEN_LIST,
-    ALLOWED_PAIRS,IS_ELIGIBLE
+    ALLOWED_PAIRS,
+    ALLOWED_PAIRS_PANCAKE,
+    IS_ELIGIBLE
 } from '../constant';
 
 export const setWeb3 = details => {
@@ -37,11 +39,9 @@ export const setPairs = details => {
         payload: details
     };
 };
-
-
-
-
-
-
-
-
+export const setPairsPancake = details => {
+    return {
+        type: ALLOWED_PAIRS_PANCAKE,
+        payload: details
+    };
+};

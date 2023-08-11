@@ -151,6 +151,7 @@ export const admintotaldetails = (async (req, res) => {
       }
     }
     if (swapchart.length != 0) {
+      console.log("inside log")
       for (let i of swapchart) {
         swapchartdata[i.date - 1] = (i.Amount).toFixed(1);
       }

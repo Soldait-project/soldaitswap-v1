@@ -160,9 +160,6 @@ export default function HeaderLinks(props) {
 
   }
 
-
-
-
   const disconnectWeb3Wallet = async () => {
 
     try {
@@ -236,7 +233,7 @@ export default function HeaderLinks(props) {
       <List className={classes.list + " main_navbar"}>
         <Hidden lgUp>
           <ListItem className={classes.listItem}>
-            <NavLink to="/home" color="transparent" className="nav-link">Home</NavLink>
+            <NavLink to="/" color="transparent" className="nav-link">Home</NavLink>
           </ListItem>
           <ListItem className={classes.listItem}>
             <NavLink to="/exchange" color="transparent" className="nav-link">Exchange</NavLink>
@@ -249,6 +246,9 @@ export default function HeaderLinks(props) {
           </ListItem>
           <ListItem className={classes.listItem}>
             <NavLink to="/pools" color="transparent" className="nav-link">Pools</NavLink>
+          </ListItem>
+          <ListItem className={classes.listItem}>
+            <a href="https://soldait.gitbook.io/soldaitswap/" target="_blank" color="transparent" className="nav-link">Gitbook</a>
           </ListItem>
 
           <ListItem className={classes.listItem}>

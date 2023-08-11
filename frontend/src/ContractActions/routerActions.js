@@ -44,12 +44,11 @@ export async function swapping(
 ) {
   var get = await connection();
   try {
-
     if (get && get.web3) {
       var web3 = get.web3;
       var address = get.address;
       var result = {};
-      var Contract = new web3.eth.Contract(RouterABI, config.Router);
+      var Contract = new web3.eth.Contract(RouterABI, swapdata.routerContract);
       var deadlineval = await getdeadline(5);
 
       if (swapdata.fromsymbol === config.ETHSYMBOL || swapdata.tosymbol === config.ETHSYMBOL) {
@@ -136,7 +135,6 @@ export async function swapping(
 
 
         if (swapdata.id === "from") {
-
           let estimateGas = await Contract.methods.swapExactTokensForTokens(
             swapdata.amountIn.toString(),
             swapdata.amountOutMin.toString(),
@@ -156,6 +154,7 @@ export async function swapping(
           ).send({ from: address, gas: gesFee });
           result = resp;
         } else {
+
           let estimateGas = await Contract.methods.swapTokensForExactTokens(
             swapdata.amountOut.toString(),
             swapdata.amountInMax.toString(),
@@ -192,7 +191,6 @@ export async function swapping(
       };
     }
   } catch (err) {
-    console.log(err, 'errerrerrerrerrerr')
     return {
       value: "",
       status: false,
@@ -320,7 +318,6 @@ export async function addliqutity(
       };
     }
   } catch (err) {
-    console.log(err, 'errerrerrerrerrerr')
     return {
       value: "",
       status: false,

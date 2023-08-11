@@ -82,9 +82,7 @@ export const AddFaqVal = async (details) => {
     try {
         let errors = {}
         console.log(details, '===========detailssssss')
-        if (isEmpty(details.categoryId)) {
-            errors.categoryId = "Category field is required"
-        }
+       
         if (isEmpty(details.question)) {
             errors.question = "Question field is required"
         }

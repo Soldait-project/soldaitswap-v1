@@ -14,7 +14,7 @@ import db from '../../commonQuery/commonQuery'
 
 // var upload = multer({ storage: storage })
 
-export const pooladd=(async (req, res) => {
+export const pooladd = (async (req, res) => {
 
     try {
 
@@ -35,6 +35,7 @@ export const pooladd=(async (req, res) => {
                 quoteTokenAdresses: req.body.quoteTokenAdresses,
                 depositFee: req.body.depositFee,
                 logoURI: (req.file && req.file.filename) ? req.file.filename : "",
+                apy: req.body.apy,
             }
             var data = await db.AsyncInsert('forms', saveData);
         }
@@ -47,7 +48,7 @@ export const pooladd=(async (req, res) => {
     }
 });
 
-export const poolupdate =(async (req, res) => {
+export const poolupdate = (async (req, res) => {
 
     try {
 
@@ -69,6 +70,7 @@ export const poolupdate =(async (req, res) => {
                 'quoteTokenSymbol': req.body.quoteTokenSymbol,
                 'quoteTokenAdresses': req.body.quoteTokenAdresses,
                 'depositFee': req.body.depositFee,
+                'apy': req.body.apy,
             };
             if (req.file && req.file.filename != "") {
                 update.logoURI = (req.file && req.file.filename) ? req.file.filename : "";
@@ -84,7 +86,7 @@ export const poolupdate =(async (req, res) => {
     }
 });
 
-export const Pooldata=(async (req, res) => {
+export const Pooldata = (async (req, res) => {
 
     try {
         var data = await db.AsyncFind('forms', { isTokenOnly: true }, {}, {});
@@ -94,7 +96,7 @@ export const Pooldata=(async (req, res) => {
     }
 });
 
-export const pooldelete=(async (req, res) => {
+export const pooldelete = (async (req, res) => {
 
     try {
         var data = await db.Asyncremove('forms', { _id: ObjectId(req.body._id) }, {}, {});

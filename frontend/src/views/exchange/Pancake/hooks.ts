@@ -13,7 +13,7 @@ import {
   Percent,
   currencyEquals,
   Fraction,
-} from '@pancakeswap/sdk'
+} from '@pancakeswap/sdk';//soldait
 import { bignumber, multiply } from "mathjs";
 
 import { parseUnits } from "@ethersproject/units";
@@ -48,12 +48,10 @@ export function formatExecutionPrice(
     return "";
   }
   return inverted
-    ? `${trade.executionPrice.invert().toSignificant(6)} ${
-        trade.inputAmount.currency.symbol
-      } / ${trade.outputAmount.currency.symbol}`
-    : `${trade.executionPrice.toSignificant(6)} ${
-        trade.outputAmount.currency.symbol
-      } / ${trade.inputAmount.currency.symbol}`;
+    ? `${trade.executionPrice.invert().toSignificant(6)} ${trade.inputAmount.currency.symbol
+    } / ${trade.outputAmount.currency.symbol}`
+    : `${trade.executionPrice.toSignificant(6)} ${trade.outputAmount.currency.symbol
+    } / ${trade.inputAmount.currency.symbol}`;
 }
 
 export async function getMinumumReceived(details: any) {
@@ -61,13 +59,13 @@ export async function getMinumumReceived(details: any) {
   var toAmt = parseFloat(details.toAmt);
   var id = details.id;
   var slippageValue = details.slippageValue;
-  var minimumrecevied =0
+  var minimumrecevied = 0
   if (id === "from") {
     var A = (toAmt * slippageValue) / 100;
-     minimumrecevied = toAmt - A;
+    minimumrecevied = toAmt - A;
   } else {
     var B = (fromAmt * slippageValue) / 100;
-     minimumrecevied = B + fromAmt;
+    minimumrecevied = B + fromAmt;
   }
   return minimumrecevied;
 }
@@ -83,16 +81,16 @@ export function addmultiply(amount: any, deci: any): string {
   }
 }
 
-export async function getMethod(details: any,tokenList:any) {
-  var index = tokenList.findIndex((val:any) => val.symbol === config.ETHSYMBOL);
+export async function getMethod(details: any, tokenList: any) {
+  var index = tokenList.findIndex((val: any) => val.symbol === config.ETHSYMBOL);
   var WrappedETH = tokenList[index].address;
   var method = "";
   var fromField = "";
   var toField = "";
-  
 
-  var fromAddress = (details && details.from && details.from.address)?details.from.address:""
-  var toAddress = (details && details.to && details.to.address)?details.to.address:""
+
+  var fromAddress = (details && details.from && details.from.address) ? details.from.address : ""
+  var toAddress = (details && details.to && details.to.address) ? details.to.address : ""
 
   if (fromAddress.toLowerCase() === WrappedETH.toLowerCase()) {
     if (details.isExactIn) {
@@ -235,8 +233,12 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
 }
 
 export function listToTokenMapValue(list: any) {
-  const token = new WrappedTokenInfo(list, []);
-  return token;
+  try {
+    const token = new WrappedTokenInfo(list, []);
+    return token;
+  } catch (err) {
+  }
+
 }
 
 export function tryParseAmount(
@@ -248,7 +250,7 @@ export function tryParseAmount(
   }
   try {
     const typedValueParsed = parseUnits(value, currency.decimals).toString();
-    if (typedValueParsed !== "0") {
+    if (typedValueParsed !== "0" && typedValueParsed !== undefined && typedValueParsed !== null && typedValueParsed !== '') {
       return currency instanceof Token
         ? new TokenAmount(currency, JSBI.BigInt(typedValueParsed))
         : CurrencyAmount.ether(JSBI.BigInt(typedValueParsed));
@@ -267,8 +269,8 @@ export function wrappedCurrency(
   return chainId && currency === ETHER
     ? WETH[chainId]
     : currency instanceof Token
-    ? currency
-    : undefined;
+      ? currency
+      : undefined;
 }
 
 type ChainTokenList = {
@@ -336,62 +338,66 @@ export async function getAllCommonPairsList(
   currencyB?: Currency,
   bestPath?: any,
 ): Promise<Pair[]> {
+  //const chainId = 56;
   const chainId = 97;
   const [tokenA, tokenB] = chainId
     ? [wrappedCurrency(currencyA, chainId), wrappedCurrency(currencyB, chainId)]
     : [undefined, undefined];
 
-    const common = bestPath ?? []
-    const additionalA = tokenA ? ADDITIONAL_BASES[chainId]?.[tokenA.address] ?? [] : []
-    const additionalB = tokenB ? ADDITIONAL_BASES[chainId]?.[tokenB.address] ?? [] : []
-    const returndata =  [...common, ...additionalA, ...additionalB]
-    const bases: Token[] = returndata;
+  const common = bestPath ?? []
+  const additionalA = tokenA ? ADDITIONAL_BASES[chainId]?.[tokenA.address] ?? [] : []
+  const additionalB = tokenB ? ADDITIONAL_BASES[chainId]?.[tokenB.address] ?? [] : []
+  const returndata = [...common, ...additionalA, ...additionalB]
+  const bases: Token[] = returndata;
 
-    const basePairs: [Token, Token][] =flatMap(bases, (base): [Token, Token][] => bases.map((otherBase) => [base, otherBase]));
+  const basePairs: [Token, Token][] = flatMap(bases, (base): [Token, Token][] => bases.map((otherBase) => [base, otherBase]));
 
   const allPairCombinations: [Token, Token][] =
     tokenA && tokenB
       ? [
-          // the direct pair
-          [tokenA, tokenB],
-          // token A against all bases
-          ...bases.map((base): [Token, Token] => [tokenA, base]),
-          // token B against all bases
-          ...bases.map((base): [Token, Token] => [tokenB, base]),
-          // each base against all bases
-          ...basePairs,
-        ]
-          .filter((tokens): tokens is [Token, Token] =>
-            Boolean(tokens[0] && tokens[1])
+        // the direct pair
+
+
+        [tokenA, tokenB],
+        //token A against all bases
+        ...bases.map((base): [Token, Token] => [tokenA, base]),
+        // token B against all bases
+        ...bases.map((base): [Token, Token] => [tokenB, base]),
+        // each base against all bases
+        ...basePairs,
+      ]
+        .filter((tokens): tokens is [Token, Token] =>
+          Boolean(tokens[0] && tokens[1])
+        )
+        .filter(([t0, t1]) => t0.address !== t1.address)
+        .filter(([tokenA_, tokenB_]) => {
+          if (!chainId) return true;
+          const customBases = CUSTOM_BASES[chainId];
+
+          const customBasesA: Token[] | undefined =
+            customBases?.[tokenA_.address];
+          const customBasesB: Token[] | undefined =
+            customBases?.[tokenB_.address];
+
+          if (!customBasesA && !customBasesB) return true;
+
+          if (
+            customBasesA &&
+            !customBasesA.find((base) => tokenB_.equals(base))
           )
-          .filter(([t0, t1]) => t0.address !== t1.address)
-          .filter(([tokenA_, tokenB_]) => {
-            if (!chainId) return true;
-            const customBases = CUSTOM_BASES[chainId];
+            return false;
+          if (
+            customBasesB &&
+            !customBasesB.find((base) => tokenA_.equals(base))
+          )
+            return false;
 
-            const customBasesA: Token[] | undefined =
-              customBases?.[tokenA_.address];
-            const customBasesB: Token[] | undefined =
-              customBases?.[tokenB_.address];
-
-            if (!customBasesA && !customBasesB) return true;
-
-            if (
-              customBasesA &&
-              !customBasesA.find((base) => tokenB_.equals(base))
-            )
-              return false;
-            if (
-              customBasesB &&
-              !customBasesB.find((base) => tokenA_.equals(base))
-            )
-              return false;
-
-            return true;
-          })
+          return true;
+        })
       : [];
-      
+
   var allPairs = await getPairs(allPairCombinations);
+  // var allPairs = [currencyA,currencyB];
   var allPairs1: any = [];
   if (allPairs && allPairs.length > 0) {
     allPairs1 = Object.values(
@@ -408,6 +414,7 @@ export async function getAllCommonPairsList(
         }, {})
     );
   }
+
 
   return allPairs1;
 }
@@ -434,18 +441,17 @@ export async function getPairs(
       : undefined;
   });
   
-  var originalPairs = await getallPairs();
-  //var originalPairs = PairList;
+  var originalPairs = await getallPairs1(tokens);
 
   var getValidpair = [];
   for (var p = 0; p < pairAddresses.length; p++) {
     if (pairAddresses && pairAddresses[p]) {
       const pair: string = pairAddresses[p] as string;
-      var index = originalPairs.findIndex(
-        (val) => val.toLowerCase() === pair.toLowerCase()
-      );
 
-      if (index !== -1) {
+      var index = originalPairs.findIndex(
+        (val) => val?.toLocaleLowerCase() == pair.toLocaleLowerCase()
+      );
+      if (index != -1) {
         getValidpair.push({
           reference: pair,
           contractAddress: pair,
@@ -487,6 +493,7 @@ export async function getPairs(
   }
 
   var resp = pairDetail.map((result, i) => {
+
     const { result: reserves, loading } = result;
     const tokenA = tokens[i][0];
     const tokenB = tokens[i][1];
@@ -502,6 +509,13 @@ export async function getPairs(
     const [token0, token1] = tokenA.sortsBefore(tokenB)
       ? [tokenA, tokenB]
       : [tokenB, tokenA];
+    const testtt = [
+      PairState.EXISTS,
+      new Pair(
+        new TokenAmount(token0, reserve0.toString()),
+        new TokenAmount(token1, reserve1.toString())
+      ),
+    ];
     return [
       PairState.EXISTS,
       new Pair(
@@ -510,8 +524,67 @@ export async function getPairs(
       ),
     ];
   });
-
   return resp && resp.length > 0 ? resp : (null as any);
+}
+
+export async function getallPairs1(tokens: any) {
+  try {
+    const chainId = config.NetworkId;
+    var web3 = new Web3(
+      config.netWorkUrl
+    );
+    const multicall = new Multicall({
+      web3Instance: web3,
+    });
+
+    // return tokenA && tokenB && !tokenA.equals(tokenB)
+
+    var getPairList = [];
+    for (var t = 0; t < tokens.length; t++) {
+
+      if (
+        tokens[t] &&
+        tokens[t][0] &&
+        tokens[t][1] &&
+        tokens[t][0].address &&
+        tokens[t][1].address &&
+        tokens[t][0].address != "" &&
+        tokens[t][1].address != ""
+      ) {
+
+        getPairList.push({
+          reference: "pairs-" + t,
+          contractAddress: config.Factory,
+          abi: IUniswapV2FactoryABI,
+          calls: [
+            {
+              reference: "getPair",
+              methodName: "getPair",
+              methodParameters: [tokens[t][0].address, tokens[t][1].address],
+            },
+          ],
+        });
+      }
+    }
+
+    const pairsresult: ContractCallResults = await multicall.call(getPairList);
+
+    var pairList = [];
+    for (var t = 0; t < tokens.length; t++) {
+      var pairAddr = await getFormatMulticall(pairsresult, "pairs-" + t, 0);
+      var index = pairList.findIndex((val: any) => val.toLowerCase() === pairAddr.toLowerCase());
+      if (
+        pairAddr != "0x0000000000000000000000000000000000000000" &&
+        pairAddr != "" && index == -1
+      ) {
+        pairList.push(pairAddr);
+      }
+    }
+    return pairList;
+  } catch (err) {
+    console.log(err, "err..........");
+    return [];
+  }
 }
 
 export async function getAllowedPairs(
@@ -524,7 +597,6 @@ export async function getAllowedPairs(
     currencyOut,
     bestPath
   );
-
   return allowedPairs;
 }
 
@@ -542,6 +614,7 @@ export async function SwapTradeExactIn(
     allowedPairs.length > 0
   ) {
     if (singleHopOnly) {
+
       return (
         Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, {
           maxHops: 1,
@@ -553,7 +626,7 @@ export async function SwapTradeExactIn(
     var bestTradeSoFar: Trade | null = null;
 
     const MAX_HOPS = 3;
-
+    
     for (let i = 1; i <= MAX_HOPS; i++) {
       try {
         const currentTrade: Trade | null =
@@ -572,7 +645,10 @@ export async function SwapTradeExactIn(
         ) {
           bestTradeSoFar = currentTrade;
         }
-      } catch (err) {}
+       
+      } catch (err) {
+        console.log(err, 'errerrerrerrbbbb')
+      }
     }
     return bestTradeSoFar;
   }
@@ -586,7 +662,7 @@ export async function swapTradeExactOut(
   singleHopOnly?: any,
   allowedPairs?: any
 ) {
- 
+
   const MAX_HOPS = 3;
 
   if (
@@ -595,7 +671,9 @@ export async function swapTradeExactOut(
     allowedPairs &&
     allowedPairs.length > 0
   ) {
+
     if (singleHopOnly) {
+
       return (
         Trade.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, {
           maxHops: 1,
@@ -603,7 +681,7 @@ export async function swapTradeExactOut(
         })[0] ?? null
       );
     }
-
+   
     // search through trades with varying hops, find best trade out of them
     let bestTradeSoFar: Trade | null = null;
     for (let i = 1; i <= MAX_HOPS; i++) {
@@ -612,13 +690,17 @@ export async function swapTradeExactOut(
           maxHops: i,
           maxNumResults: 1,
         })[0] ?? null;
+  
       if (
+
         isTradeBetter(
           bestTradeSoFar,
           currentTrade,
           BETTER_TRADE_LESS_HOPS_THRESHOLD
         )
       ) {
+
+
         bestTradeSoFar = currentTrade;
       }
     }
@@ -655,25 +737,27 @@ export function isTradeBetter(
 export function computeTradePriceBreakdown(
   trade?: Trade | null
 ): { priceImpactWithoutFee: Percent | undefined; realizedLPFee: CurrencyAmount | undefined | null } {
+  console.log(trade,'tradeetereeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
   // for each hop in our trade, take away the x*y=k price impact from 0.3% fees
   // e.g. for 3 tokens/2 hops: 1 - ((1 - .03) * (1-.03))
   const realizedLPFee = !trade
     ? undefined
     : ONE_HUNDRED_PERCENT.subtract(
-        trade.route.pairs.reduce<Fraction>(
-          (currentFee: Fraction): Fraction => currentFee.multiply(INPUT_FRACTION_AFTER_FEE),
-          ONE_HUNDRED_PERCENT
-        )
+      trade.route.pairs.reduce<Fraction>(
+        (currentFee: Fraction): Fraction => currentFee.multiply(INPUT_FRACTION_AFTER_FEE),
+        ONE_HUNDRED_PERCENT
       )
+    )
+    console.log(trade,'realizedLPFeerealizedLPFeerealizedLPFee')
 
   // remove lp fees from price impact
   const priceImpactWithoutFeeFraction = trade && realizedLPFee ? trade.priceImpact.subtract(realizedLPFee) : undefined
+  console.log('priceImpactWithoutttttttttttFeeFraction: ', priceImpactWithoutFeeFraction);
 
   // the x*y=k impact
   const priceImpactWithoutFeePercent = priceImpactWithoutFeeFraction
     ? new Percent(priceImpactWithoutFeeFraction?.numerator, priceImpactWithoutFeeFraction?.denominator)
     : undefined
-
   // the amount of the input that accrues to LPs
   const realizedLPFeeAmount =
     realizedLPFee &&
@@ -681,6 +765,7 @@ export function computeTradePriceBreakdown(
     (trade.inputAmount instanceof TokenAmount
       ? new TokenAmount(trade.inputAmount.token, realizedLPFee.multiply(trade.inputAmount.raw).quotient)
       : CurrencyAmount.ether(realizedLPFee.multiply(trade.inputAmount.raw).quotient))
+      console.log(priceImpactWithoutFeePercent?.toFixed(6),'priceImpactWithoutFeePercentassdsdsdsdsdsd')
 
   return { priceImpactWithoutFee: priceImpactWithoutFeePercent, realizedLPFee: realizedLPFeeAmount }
 }
@@ -689,13 +774,13 @@ export async function getFormatMulticall(results: any, name: any, pos: any) {
   try {
     var returnVal =
       results &&
-      results.results &&
-      results.results[name] &&
-      results.results[name].callsReturnContext &&
-      results.results[name].callsReturnContext &&
-      results.results[name].callsReturnContext[pos] &&
-      results.results[name].callsReturnContext[pos].returnValues &&
-      results.results[name].callsReturnContext[pos].returnValues[0]
+        results.results &&
+        results.results[name] &&
+        results.results[name].callsReturnContext &&
+        results.results[name].callsReturnContext &&
+        results.results[name].callsReturnContext[pos] &&
+        results.results[name].callsReturnContext[pos].returnValues &&
+        results.results[name].callsReturnContext[pos].returnValues[0]
         ? results.results[name].callsReturnContext[pos].returnValues[0]
         : "";
     return returnVal;
@@ -708,13 +793,13 @@ export async function getFormatMulticall1(results: any, name: any, pos: any) {
   try {
     var returnVal =
       results &&
-      results.results &&
-      results.results[name] &&
-      results.results[name].callsReturnContext &&
-      results.results[name].callsReturnContext &&
-      results.results[name].callsReturnContext[pos] &&
-      results.results[name].callsReturnContext[pos].returnValues &&
-      results.results[name].callsReturnContext[pos].returnValues
+        results.results &&
+        results.results[name] &&
+        results.results[name].callsReturnContext &&
+        results.results[name].callsReturnContext &&
+        results.results[name].callsReturnContext[pos] &&
+        results.results[name].callsReturnContext[pos].returnValues &&
+        results.results[name].callsReturnContext[pos].returnValues
         ? results.results[name].callsReturnContext[pos].returnValues
         : "";
     return returnVal;
@@ -724,18 +809,20 @@ export async function getFormatMulticall1(results: any, name: any, pos: any) {
 }
 
 export async function getBestTokens(list: any) {
-  var bestList =[];
-  for(var t=0;t<list.length;t++){
-    if(list[t].symbol=="BUSD" || list[t].symbol=="CAKE" || list[t].symbol=="BNB" || list[t].symbol=="SIT"){
-   var routeToken =  new Token(
-    list[t].chainId,
-    list[t].address,
-    list[t].decimals,
-    list[t].symbol,
-    list[t].name,
-    );
-    bestList.push(routeToken);
-   }
+  var bestList = [];
+  for (var t = 0; t < list.length; t++) {
+    if (list[t].symbol == "BUSD" || list[t].symbol == "CAKE" || list[t].symbol == "BNB" || list[t].symbol == "QRR" || list[t].symbol == "Alwin" || list[t].symbol == "Alwinnew"
+      // if(list[t].symbol=="Alwin" || list[t].symbol=="Alwinnew" ||  list[t].symbol=="QRR"
+    ) {
+      var routeToken = new Token(
+        list[t].chainId,
+        list[t].address,
+        list[t].decimals,
+        list[t].symbol,
+        list[t].name,
+      );
+      bestList.push(routeToken);
+    }
 
   }
 
@@ -744,57 +831,57 @@ export async function getBestTokens(list: any) {
 }
 
 export async function getallPairs() {
-  
- try{
-  var web3 = new Web3(
-    config.netWorkUrl
-  );
-  const multicall = new Multicall({
-    web3Instance: web3,
-  });
 
-  var allPairsLength=[{
-    reference: "allPairsLength",
-    contractAddress: config.Factory,
-    abi: IUniswapV2FactoryABI,
-    calls: [
-      {
-        reference: "allPairsLength",
-        methodName: "allPairsLength",
-        methodParameters: [],
-      },
-    ],
-  }];
-  const pairsresult: ContractCallResults = await multicall.call(allPairsLength);
-  var length = await getFormatMulticall(pairsresult, "allPairsLength", 0);
-  length = parseInt(length.hex)
-  var pairPos =[];
-  for (var p = 0; p < length; p++) {
-    
-    pairPos.push({
-          reference: "pair-"+p,
-          contractAddress: config.Factory,
-          abi: FactoryABI,
-          calls: [
-            {
-              reference: "allPairs",
-              methodName: "allPairs",
-              methodParameters: [p],
-            },
-          ],
-        });
+  try {
+    var web3 = new Web3(
+      config.netWorkUrl
+    );
+    const multicall = new Multicall({
+      web3Instance: web3,
+    });
+
+    var allPairsLength = [{
+      reference: "allPairsLength",
+      contractAddress: config.Factory,
+      abi: IUniswapV2FactoryABI,
+      calls: [
+        {
+          reference: "allPairsLength",
+          methodName: "allPairsLength",
+          methodParameters: [],
+        },
+      ],
+    }];
+    const pairsresult: ContractCallResults = await multicall.call(allPairsLength);
+    var length = await getFormatMulticall(pairsresult, "allPairsLength", 0);
+    length = parseInt(length.hex)
+    var pairPos = [];
+    for (var p = 0; p < length; p++) {
+
+      pairPos.push({
+        reference: "pair-" + p,
+        contractAddress: config.Factory,
+        abi: FactoryABI,
+        calls: [
+          {
+            reference: "allPairs",
+            methodName: "allPairs",
+            methodParameters: [p],
+          },
+        ],
+      });
+    }
+    const results3: ContractCallResults = await multicall.call(pairPos);
+    var pairList = [];
+    for (var t = 0; t < length; t++) {
+      var pairAddr = await getFormatMulticall(results3, "pair-" + t, 0);
+      pairList.push(pairAddr)
+    }
+
+    return pairList;
+  } catch (err) {
+    return [];
   }
-  const results3: ContractCallResults = await multicall.call(pairPos);
-  var pairList = [];
-  for (var t = 0; t < length; t++) {
-    var pairAddr = await getFormatMulticall(results3, "pair-"+t, 0);
-    pairList.push(pairAddr)
-  }
-  
-  return pairList;
-}catch(err){
-  return [];
-}
 
 }
 

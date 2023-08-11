@@ -27,7 +27,7 @@ export function getWeekMonthData(categories, series) {
         if (categories && categories[i]) {
             var index = series.findIndex(val => val.date === categories[i]);
             if (index !== -1) {
-                var amt = (series[index].toamount > 0) ? series[index].toamount.toFixed(2) : 0
+                var amt = (series[index].toamount > 0) ? series[index].toamount.toFixed(4) : 0
                 seriesList.push(amt);
             } else {
                 seriesList.push(0);

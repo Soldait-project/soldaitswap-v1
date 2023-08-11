@@ -278,6 +278,70 @@ export const userlistCSVreport = (async (req, res) => {
   }
 });
 
+export const suscriberslistCSVreport = (async (req, res) => {
+
+  console.log(req.query.type, 'querytype')
+  var type = req.query.type;
+  var today = new Date();
+  today.setHours(0, 0, 0, 0)
+  var first = today.getDate() - today.getDay();
+  var last = first + 6;
+  var firstday = new Date(today.setDate(first)).toUTCString();
+  var lastday = new Date(today.setDate(last)).toUTCString();
+  var firstDayMonth = new Date(today.setDate(1));
+  var lastDayMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+  lastDayMonth.setHours(23, 59, 59, 0);
+  today = new Date().setHours(0, 0, 0, 0);
+
+
+  var cond = {};
+  switch (type) {
+    case "daily":
+      cond = { createdAt: { $gte: today }, status: "Live" }
+      break;
+    case "weekly":
+      cond = {
+        createdAt: {
+          $gte: firstday,
+          $lte: lastday,
+          status: "Live"
+        }
+      }
+      break;
+    case "monthly":
+      cond = {
+        createdAt:
+        {
+          $gte: firstDayMonth,
+          $lte: lastDayMonth,
+          status: "Live"
+        }
+      }
+      break;
+    default:
+      cond = {status: "Live"}
+  }
+
+  var query = [
+    { $match: cond },
+    { $sort: { createdAt: -1 } },
+    {
+      $project: {
+        _id: 0,
+        email: 1,
+        createdAt: 1
+      }
+    }
+  ];
+  const getData = await db.AsyncAggregation('subscribe', query);
+  console.log(getData.length, 'getdata')
+  if (getData.length == 0) {
+    return res.status(200).send({ 'result': getData });
+  } else {
+    return res.status(200).send({ 'result': getData });
+  }
+});
+
 export const SwappingCSVreport = (async (req, res) => {
 
   console.log(req.query.type, 'querytype')

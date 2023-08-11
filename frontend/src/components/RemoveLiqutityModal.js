@@ -135,7 +135,7 @@ const RemoveLiqutityModal = (props) => {
 
     const sliderChange = async (value) => {
         setisRemove(true);
-
+        console.log(poolLiq, 'poolLiqpoolLiqpoolLiq', value)
         var per = (poolLiq) * parseFloat(value) / 100;
         var removedValue = await division(per, 1e18);
         var totalPool = JSBI.BigInt(poolLiq);
@@ -145,7 +145,8 @@ const RemoveLiqutityModal = (props) => {
         var finalAmt = JSBI.BigInt(divideVal);
         var finalAmt1 = String(finalAmt);
 
-        var fromAmt = reserveFrom * (parseFloat(removedValue) / totalSupply);
+        var fromAmt = parseFloat(reserveFrom) * (parseFloat(removedValue) / parseFloat(totalSupply));
+        console.log(fromAmt, 'fromAmtfromAmtfromAmt', reserveFrom, removedValue, totalSupply)
         var toAmt = reserveTo * (parseFloat(removedValue) / totalSupply);
 
         var fromData = {
@@ -211,7 +212,9 @@ const RemoveLiqutityModal = (props) => {
 
 
             setpairaddress(pairAddress);
+            console.log(pairAddress, 'pairAddress')
             var liqutityBal = await getBalanceof("balanceOf", pairAddress);
+            console.log(liqutityBal, 'liqutityBal')
             var balance = liqutityBal.value;
             setpoolLiq(balance);
 

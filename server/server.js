@@ -11,26 +11,28 @@ import config from "./config/config";
 import frontroutes from "./routes/front.routes"
 import adminroutes from "./routes/admin.routes"
 
+//import cron from "./cron/cron"
+
 
 const CoinMarketCap = require('coinmarketcap-api')
 const apiKey = 'ec80bed3-8f55-46b5-b0a3-8394981d5b1c'
 const client = new CoinMarketCap(apiKey)
 
-test()
-async function test() {
-  var currencies = ["ETH", "FIL", "DOGE", "LTC", "XRP", "BTC"]
-  var resp = await client.getQuotes({ symbol: currencies })
-  //console.log(resp.data['ETH'].quote, 'resprespresp')
-  for (var c = 0; c < currencies.length; c++) {
+// test()
+// async function test() {
+//   var currencies = ["ETH", "FIL", "DOGE", "LTC", "XRP", "BTC"]
+//   var resp = await client.getQuotes({ symbol: currencies })
+//   //console.log(resp.data['ETH'].quote, 'resprespresp')
+//   for (var c = 0; c < currencies.length; c++) {
 
-    var usdprice = resp.data[currencies[c]].quote
+//     var usdprice = resp.data[currencies[c]].quote
 
-    //console.log(usdprice, 'usdpriceusdpriceusdprice')
+//     //console.log(usdprice, 'usdpriceusdpriceusdprice')
 
-  }
-  // client.getGlobal().then(console.log).catch(console.error)
-  //client.getQuotes({ symbol: ['BTC', 'ETH'] }).then(console.log).catch(console.error)
-}
+//   }
+//   // client.getGlobal().then(console.log).catch(console.error)
+//   //client.getQuotes({ symbol: ['BTC', 'ETH'] }).then(console.log).catch(console.error)
+// }
 
 const app = express();
 const server = http.createServer(app);

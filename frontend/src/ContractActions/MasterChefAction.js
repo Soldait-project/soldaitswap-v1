@@ -81,6 +81,9 @@ export async function getFormsDetails(data) {
         const poolresults = await multicall.call(masterChefContract);
 
         var poolinfo = await getFormatMulticall(poolresults, "poolInfo", 0);
+        var apy = await getFormatMulticall(poolresults, "poolInfo", 0);
+        apy = (apy && apy[2] && apy[2].hex) ? parseInt(apy[2].hex) / 100 : 0
+
         var stakeBal = await getFormatMulticall(poolresults, "poolInfo", 1);
 
 
@@ -136,7 +139,7 @@ export async function getFormsDetails(data) {
           apr: 0,
           logoURI: range[i].logoURI,
           depositFee: range[i].depositFee,
-          apy: 300,
+          apy: apy,
           status: range[i].status,
         };
 
@@ -208,6 +211,8 @@ export async function fetchPoolsDetails(data) {
         const poolresults = await multicall.call(masterChefContract);
 
         var poolinfo = await getFormatMulticall(poolresults, "poolInfo", 0);
+        var apy = await getFormatMulticall(poolresults, "poolInfo", 0);
+        apy = (apy && apy[2] && apy[2].hex) ? parseInt(apy[2].hex) / 100 : 0
         var stakeBal = await getFormatMulticall(poolresults, "poolInfo", 1);
 
         const contractCallContext = [
@@ -255,7 +260,7 @@ export async function fetchPoolsDetails(data) {
           pid: ran,
           stakeBal: stakeBal,
           earned: 0,
-          apy: 300,
+          apy: apy,
           lastRewardBlock: 0,
           logoURI: range[i].logoURI,
           depositFee: range[i].depositFee,

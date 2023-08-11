@@ -18,7 +18,7 @@ import { Breadcrumb, SimpleCard } from 'app/components'
 import { Box, styled } from '@mui/system'
 import { Span } from 'app/components/Typography'
 import { getUrlList, sendnewsletter } from '../../../Api/site'
-import { getuserMail } from '../../../Api/p2p'
+import { getuserMail } from '../../../Api/site'
 import Multiselect from 'multiselect-dropdown-react'
 
 const Container = styled('div')(({ theme }) => ({

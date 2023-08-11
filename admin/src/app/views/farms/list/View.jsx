@@ -109,11 +109,11 @@ const AppTable = () => {
         setEdit(true)
     }
 
-    function onDelete(data) {
+   async function onDelete(_data) {
         if (window.confirm('Are you sure you want to Delete?')) {
-            console.log(data, 'data')
-            let input = { _id: data }
-            deleteForm(input)
+            console.log(_data, 'data')
+            let input = { _id: _data }
+           let data = await deleteForm(input)
             setopensuccess(true)
             window.location.reload()
         }

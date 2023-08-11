@@ -47,6 +47,7 @@ export async function connection() {
     var web3 = new Web3(provider);
     if (typeof web3 !== "undefined") {
 
+      //var network = 56;
       var network = await web3.eth.net.getId();
       var result = await web3.eth.getAccounts();
 

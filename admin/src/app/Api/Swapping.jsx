@@ -13,7 +13,7 @@ export const getHistory = async (data) => {
                 data.skip +
                 `&limit=` +
                 data.limit +
-                `&search=`+
+                `&search=` +
                 data.search,
         })
         return {
@@ -35,8 +35,8 @@ export const getLiqutityHistory = async (data) => {
                 `${baseUrl}/admin-liqutity-history?skip=` +
                 data.skip +
                 `&limit=` +
-                data.limit+
-                `&search=`+
+                data.limit +
+                `&search=` +
                 data.search,
         })
         return {
@@ -58,7 +58,7 @@ export const getUserList = async (data) => {
                 `${baseUrl}/admin-users-list?skip=` +
                 data.skip +
                 `&limit=` +
-                data.limit+
+                data.limit +
                 `&search=` +
                 data.search,
         })
@@ -124,7 +124,7 @@ export const gettokenList = async (data) => {
                 `&limit=` +
                 data.limit +
                 `&search=` +
-                data.search
+                data.search,
         })
         return {
             result: respData.data.result,
@@ -137,28 +137,29 @@ export const gettokenList = async (data) => {
     }
 }
 
-export const addForm = async (param) =>{
-    var formData = new FormData();
-    formData.append('pid', param.pid);
-    formData.append('risk', 5);
-    formData.append('lpSymbol', param.lpSymbol);
+export const addForm = async (param) => {
+    var formData = new FormData()
+    formData.append('pid', param.pid)
+    formData.append('risk', 5)
+    formData.append('lpSymbol', param.lpSymbol)
     // formData.append('alloc', param.alloc);
-    formData.append('isTokenOnly', param.isTokenOnly);
-    formData.append('lpAddresses', param.lpAddresses);
-    formData.append('tokenSymbol', param.tokenSymbol);
-    formData.append('tokenAddresses', param.tokenAddresses);
-    formData.append('quoteTokenSymbol', param.quoteTokenSymbol);
-    formData.append('quoteTokenAdresses', param.quoteTokenAdresses);
-    formData.append('depositFee', param.depositFee);
-    formData.append('withdrawFee', param.withdrawFee);
-    formData.append('file', param.logoURI);
+    formData.append('isTokenOnly', param.isTokenOnly)
+    formData.append('lpAddresses', param.lpAddresses)
+    formData.append('tokenSymbol', param.tokenSymbol)
+    formData.append('tokenAddresses', param.tokenAddresses)
+    formData.append('quoteTokenSymbol', param.quoteTokenSymbol)
+    formData.append('quoteTokenAdresses', param.quoteTokenAdresses)
+    formData.append('depositFee', param.depositFee)
+    formData.append('withdrawFee', param.withdrawFee)
+    formData.append('file', param.logoURI)
+    formData.append('apy', param.apy)
     try {
         let respData = await axios({
             method: 'post',
-            url:`${baseUrl}/admin-add-forms`,
-            data: formData, 
+            url: `${baseUrl}/admin-add-forms`,
+            data: formData,
         })
-        console.log(respData,'apirespdata')
+        console.log(respData, 'apirespdata')
         return {
             result: respData.data.result,
             message: respData.data.message,
@@ -168,25 +169,24 @@ export const addForm = async (param) =>{
             errors: returnErr(err),
         }
     }
-    
-};
+}
 
-export const addToken = async (param) =>{
-   let newname = `${param.address.toLowerCase()}.png`
-    var formData = new FormData();
-    formData.append('name', param.name);
-    formData.append('symbol', param.symbol);
-    formData.append('decimals', param.decimals);
-    formData.append('totalSupply', param.totalSupply);
-    formData.append('address', param.address);
-    formData.append('file', param.logoURI,newname);
+export const addToken = async (param) => {
+    let newname = `${param.address.toLowerCase()}.png`
+    var formData = new FormData()
+    formData.append('name', param.name)
+    formData.append('symbol', param.symbol)
+    formData.append('decimals', param.decimals)
+    formData.append('totalSupply', param.totalSupply)
+    formData.append('address', param.address)
+    formData.append('file', param.logoURI, newname)
     try {
         let respData = await axios({
             method: 'post',
-            url:`${baseUrl}/admin-add-token`,
-            data: formData, 
+            url: `${baseUrl}/admin-add-token`,
+            data: formData,
         })
-        console.log(respData,'apirespdata')
+        console.log(respData, 'apirespdata')
         return {
             result: respData.data.result,
             message: respData.data.message,
@@ -196,25 +196,28 @@ export const addToken = async (param) =>{
             errors: returnErr(err),
         }
     }
-    
-};
-export const updateToken = async (param) =>{
-    if(param.file){
-   var newname = `${param.address.toLowerCase()}.png`
+}
+export const updateToken = async (param) => {
+    if (param.file) {
+        var newname = `${param.address.toLowerCase()}.png`
     }
-    var formData = new FormData();
-    formData.append('_id', param._id);
-    formData.append('name', param.name);
-    formData.append('symbol', param.symbol);
-    formData.append('decimals', param.decimals);
-    formData.append('totalSupply', param.totalSupply);
-    formData.append('address', param.address);
-    formData.append('file',param.file?param.logoURI:'',param.file?newname:'');
+    var formData = new FormData()
+    formData.append('_id', param._id)
+    formData.append('name', param.name)
+    formData.append('symbol', param.symbol)
+    formData.append('decimals', param.decimals)
+    formData.append('totalSupply', param.totalSupply)
+    formData.append('address', param.address)
+    formData.append(
+        'file',
+        param.file ? param.logoURI : '',
+        param.file ? newname : ''
+    )
     try {
         let respData = await axios({
             method: 'post',
-            url:`${baseUrl}/admin-update-token`,
-            data: formData, 
+            url: `${baseUrl}/admin-update-token`,
+            data: formData,
         })
         return {
             result: respData.data.result,
@@ -225,30 +228,30 @@ export const updateToken = async (param) =>{
             errors: returnErr(err),
         }
     }
-    
-};
+}
 
-export const updateForm = async (param) =>{
-    var formData = new FormData();
-    formData.append('_id', param._id);
-    formData.append('pid', param.pid);
-    formData.append('risk', 5);
-    formData.append('lpSymbol', param.lpSymbol);
-    formData.append('alloc', param.alloc);
-    formData.append('isTokenOnly', param.isTokenOnly);
-    formData.append('lpAddresses', param.lpAddresses);
-    formData.append('tokenSymbol', param.tokenSymbol);
-    formData.append('tokenAddresses', param.tokenAddresses);
-    formData.append('quoteTokenSymbol', param.quoteTokenSymbol);
-    formData.append('quoteTokenAdresses', param.quoteTokenAdresses);
-    formData.append('depositFee', param.depositFee);
-    formData.append('withdrawFee', param.withdrawFee);
-    formData.append('file',param.file?param.logoURI:'');
+export const updateForm = async (param) => {
+    var formData = new FormData()
+    formData.append('_id', param._id)
+    formData.append('pid', param.pid)
+    formData.append('risk', 5)
+    formData.append('lpSymbol', param.lpSymbol)
+    formData.append('alloc', param.alloc)
+    formData.append('isTokenOnly', param.isTokenOnly)
+    formData.append('lpAddresses', param.lpAddresses)
+    formData.append('tokenSymbol', param.tokenSymbol)
+    formData.append('tokenAddresses', param.tokenAddresses)
+    formData.append('quoteTokenSymbol', param.quoteTokenSymbol)
+    formData.append('quoteTokenAdresses', param.quoteTokenAdresses)
+    formData.append('depositFee', param.depositFee)
+    formData.append('withdrawFee', param.withdrawFee)
+    formData.append('file', param.file ? param.logoURI : '')
+    formData.append('apy', param.apy)
     try {
         let respData = await axios({
             method: 'post',
-            url:`${baseUrl}/admin-update-forms`,
-            data: formData, 
+            url: `${baseUrl}/admin-update-forms`,
+            data: formData,
         })
         return {
             result: respData.data.result,
@@ -259,15 +262,14 @@ export const updateForm = async (param) =>{
             errors: returnErr(err),
         }
     }
-    
-};
+}
 
-export const deleteForm = async (data) =>{
+export const deleteForm = async (data) => {
     try {
         let respData = await axios({
             method: 'post',
-            url:`${baseUrl}/admin-delete-forms`,
-            data: data, 
+            url: `${baseUrl}/admin-delete-forms`,
+            data: data,
         })
         return {
             result: respData.data.result,
@@ -278,15 +280,14 @@ export const deleteForm = async (data) =>{
             errors: returnErr(err),
         }
     }
-    
-};
+}
 
-export const deleteToken = async (data) =>{
+export const deleteToken = async (data) => {
     try {
         let respData = await axios({
             method: 'post',
-            url:`${baseUrl}/admin-delete-token`,
-            data: data, 
+            url: `${baseUrl}/admin-delete-token`,
+            data: data,
         })
         return {
             result: respData.data.result,
@@ -297,14 +298,13 @@ export const deleteToken = async (data) =>{
             errors: returnErr(err),
         }
     }
-    
-};
-export const StarToken = async (data) =>{
+}
+export const StarToken = async (data) => {
     try {
         let respData = await axios({
             method: 'post',
-            url:`${baseUrl}/admin-star-token`,
-            data: data, 
+            url: `${baseUrl}/admin-star-token`,
+            data: data,
         })
         return {
             result: respData.data.result,
@@ -315,15 +315,14 @@ export const StarToken = async (data) =>{
             errors: returnErr(err),
         }
     }
-    
-};
+}
 
-export const LockUser = async (data) =>{
+export const LockUser = async (data) => {
     try {
         let respData = await axios({
             method: 'post',
-            url:`${baseUrl}/admin-update-user`,
-            data: data, 
+            url: `${baseUrl}/admin-update-user`,
+            data: data,
         })
         return {
             message: respData.data.message,
@@ -334,8 +333,7 @@ export const LockUser = async (data) =>{
             errors: returnErr(err),
         }
     }
-    
-};
+}
 function returnErr(err) {
     if (err.response && err.response.data && err.response.data.errors) {
         return err.response.data.errors

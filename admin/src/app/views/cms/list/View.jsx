@@ -152,7 +152,7 @@ const AppTable = () => {
                     >
                         <MenuItem value="terms">Terms and Condition</MenuItem>
                         <MenuItem value="privacy">Privacy Policy</MenuItem>
-                        <MenuItem value="faq">FAQ</MenuItem>
+                        {/* <MenuItem value="faq">FAQ</MenuItem> */}
                     </Select>
                     {mailContent && (
                         <CKEditor

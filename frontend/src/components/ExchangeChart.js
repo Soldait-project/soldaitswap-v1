@@ -181,7 +181,7 @@ export default function ExchangeChart(props) {
             yaxis: {
                 labels: {
                     formatter: function (value) {
-                        return nFormatter(value, 1) + " " + tosymbol;
+                        return nFormatter(value, 4) + " " + tosymbol;
                     }
                 },
                 tooltip: {
