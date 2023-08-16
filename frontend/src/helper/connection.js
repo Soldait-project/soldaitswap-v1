@@ -11,10 +11,9 @@ const web3Modal = new Web3Modal({
   cacheProvider: true, // optional
 });
 
-var isLoad = false
-
 export async function connection() {
   var currentProvider = store.getState()
+  console.log('currentProviderrrrr: ', currentProvider);
 
   var connect = {
     web3: "",
@@ -29,36 +28,86 @@ export async function connection() {
 
   var isConnected = "no"
   var WEB3_CONNECT_CACHED_PROVIDER = localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER")
-  if (WEB3_CONNECT_CACHED_PROVIDER) {
+
+  var WEB3_CONNECT_CACHED_PROVIDER22 = localStorage.getItem("wagmi.wallet")
+  if (WEB3_CONNECT_CACHED_PROVIDER22) {
+    var connnector = JSON.parse(WEB3_CONNECT_CACHED_PROVIDER22)
+    if (connnector === "walletConnect") {
+      isConnected = "yes";
+    }
+
+    if ( provider && provider !== "" && connnector === "walletConnect") {
+      provider = currentProvider.walletConnection.provider
+      console.log('provideddddddddddddddddddddr: ', provider);
+
+      //var provider = await web3Modal.connect();
+      var web3 = new Web3(provider);
+      if (typeof web3 !== "undefined") {
+
+        var network = await web3.eth.net.getId();
+        var result = await web3.eth.getAccounts();
+
+        var currAddr = result[0];
+        console.log('currAdsssssssssssssdr: ', currAddr);
+        var bnbBalance = await web3.eth.getBalance(currAddr);
+        bnbBalance = bnbBalance / 10 ** 18
+
+        if (currAddr === undefined) currAddr = "";
+        if (network === config.NetworkId) {
+          connect.network = network;
+          connect.web3 = web3;
+          connect.address = currAddr;
+          connect.provider = provider;
+          connect.connect = "yes"
+  
+        }
+        else if (network !== config.NetworkId) {
+          connect.web3 = "";
+          connect.address = "";
+          connect.network = 0;
+          connect.provider = "";
+        }
+        else {
+          return connect;
+        }
+
+      }
+    }
+    return connect;
+
+  }
+  else if (WEB3_CONNECT_CACHED_PROVIDER) {
     var connnector = JSON.parse(WEB3_CONNECT_CACHED_PROVIDER)
-    if (connnector === "injected" || connnector === "walletconnect"
-      || connnector === "walletlink" || connnector === "binancechainwallet") {
+    if (connnector === "injected" || connnector === "binancechainwallet"
+       || connnector === "walletlink") {
       isConnected = "yes";
     }
   }
 
-  if (provider === "" && isConnected && web3Modal.cachedProvider) {
-    isLoad = true;
+
+  if ((connnector === "injected" || connnector === "binancechainwallet" ||
+   connnector === "walletlink") && provider === "" && isConnected && web3Modal.cachedProvider) {
     provider = await web3Modal.connect();
   }
 
-  if (provider && provider !== "") {
+  if (provider && provider !== "" && (connnector === "injected" || connnector === "binancechainwallet" ||
+   connnector === "walletlink")) {
     //var provider = await web3Modal.connect();
     var web3 = new Web3(provider);
     if (typeof web3 !== "undefined") {
 
-      //var network = 56;
       var network = await web3.eth.net.getId();
       var result = await web3.eth.getAccounts();
 
       var currAddr = result[0];
+      console.log(currAddr, 'currAddrcurrAddr')
       if (currAddr === undefined) currAddr = "";
       if (network === config.NetworkId) {
         connect.network = network;
         connect.web3 = web3;
         connect.address = currAddr;
         connect.provider = provider;
-        connect.connect = "yes";
+        connect.connect = "yes"
       }
     }
   }

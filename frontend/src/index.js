@@ -8,6 +8,57 @@ import store from "./store";
 import "react-toastify/dist/ReactToastify.css";
 import './index.css';
 
+import { WagmiConfig, createConfig, configureChains } from 'wagmi'
+import { bsc, bscTestnet} from 'viem/chains'
+import { publicProvider } from 'wagmi/providers/public'
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+
+
+
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [bsc,bscTestnet],
+  [publicProvider()],
+)
+
+
+// Set up wagmi config
+const config = createConfig({
+
+  autoConnect: true,
+  connectors: [
+
+
+    new MetaMaskConnector({ chains ,
+      shimDisconnect: true,
+    }),
+    // new CoinbaseWalletConnector({
+    //   chains,
+    //   options: {
+    //     appName: 'Web3modalv2',
+    //     jsonRpcUrl: 'https://eth-mainnet.alchemyapi.io/v2/N55E4OBB31jjeOw9d6FBUVebdYu3chSY',
+    //   },
+    // }),
+    new WalletConnectConnector({
+      chains,
+      options: {
+        projectId: '681700e231a5aef269b7fe4adb34981a',
+        version: '2',
+      },
+    }),
+    new InjectedConnector({
+      chains,
+      options: {
+        name: 'Injected',
+        shimDisconnect: true,
+      },
+    }),
+  ],
+  publicClient,
+  webSocketPublicClient,
+})
+
 // pages for this product
 const Home = React.lazy(() => import('./views/home'))
 const Farms = React.lazy(() => import('./views/farms'))
@@ -22,6 +73,7 @@ const Contact = React.lazy(() => import('./views/contact'))
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter basename="/">
+    <WagmiConfig config={config}>
       <ToastContainer />
       <Suspense fallback={<></>}>
         <Switch>
@@ -39,6 +91,7 @@ ReactDOM.render(
           </Route>
         </Switch>
       </Suspense>
+      </WagmiConfig>
     </BrowserRouter>
   </Provider>,
   document.getElementById("root")

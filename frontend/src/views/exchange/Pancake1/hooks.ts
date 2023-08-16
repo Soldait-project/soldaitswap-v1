@@ -13,7 +13,7 @@ import {
   Percent,
   currencyEquals,
   Fraction,
-} from '@pancake-swap/sdk'//pancake
+} from '@pancakeswap/sdk'//pancake
 
 import { bignumber, multiply } from "mathjs";
 

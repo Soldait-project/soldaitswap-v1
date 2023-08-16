@@ -23,6 +23,9 @@ import { providerOptions } from "../../config/providerOptions"
 import {
   getSettings
 } from "../../Api/UserActions";
+import { useWalletClient, useAccount, usePublicClient, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi'
+import { useEthersSigner, walletClientToSigner } from "../ethersconnect.js"
+import Web3 from "web3";
 
 const useStyles = makeStyles(styles);
 
@@ -30,11 +33,68 @@ export default function HeaderLinks(props) {
 
   const dispatch = useDispatch();
   const walletConnection = useSelector((state) => state.walletConnection);
+
+  console.log('walletConnection: ', walletConnection);
   const [anchorEl, setAnchorEl] = useState(null);
   const [balance, setbalance] = useState("");
   const [useraddress, setuseraddress] = useState("");
 
   const [socialLinks, SetsocialLinks] = React.useState({ facebook: "", linkedin: "", telegram: "", twitter: "", youtube: "" });
+
+  const { disconnect, isSuccess, status } = useDisconnect()
+  const { chain } = useNetwork()
+  let chainId = config.NetworkId;
+  const { data: walletClient } = useWalletClient({ chainId })
+
+  useAccount({
+
+    onDisconnect: () => {
+      localStorage.clear();
+      console.log('Disconnected')
+      dispatch(
+        setWallet({
+          network: walletConnection.network,
+          web3: "",
+          address: "",
+          provider: "",
+          connect: "no",
+        })
+      );
+    },
+  }
+  )
+  useEffect(() => {
+    if (isSuccess == true) {
+      setTimeout(() => {
+        localStorage.clear()
+        window.location.reload(false)
+      }, 500)
+    }
+  }, [isSuccess])
+
+
+  useEffect(() => {
+    if (chain && (chain.id !== config.NetworkId)) {
+      dispatch(setWallet({
+        network: "",
+        web3: "",
+        address: "",
+        provider: "",
+        connect: "",
+        isChange: "true"
+      }));
+    } else {
+      dispatch(setWallet({
+        network: chainId,
+        web3: walletConnection.web3,
+        address: walletConnection.address,
+        provider: walletConnection.provider,
+        connect: "yes",
+        isChange: "false"
+      }))
+      // window.location.reload(false)
+    }
+  }, [walletClient, chain?.network])
 
 
   useEffect(() => {
@@ -60,7 +120,9 @@ export default function HeaderLinks(props) {
 
   useEffect(() => {
     setConnection();
-  }, [walletConnection.network]);
+  }, [walletConnection.network, walletClient]);
+  // }, []);
+
 
   async function getTokenList() {
     let { result } = await tokenDetails();
@@ -113,12 +175,56 @@ export default function HeaderLinks(props) {
     }
   }, [walletConnection]);
 
+
+
+
   async function setConnection() {
+    var WEB3_CONNECT_CACHED_PROVIDER = localStorage.getItem(
+      "WEB3_CONNECT_CACHED_PROVIDER"
+    );
+    if (WEB3_CONNECT_CACHED_PROVIDER) {
+      var connnector = JSON.parse(WEB3_CONNECT_CACHED_PROVIDER);
+      if (
+        connnector == "injected" ||
+        connnector == "portis" ||
+        connnector == "fortmatic" ||
+        // connnector == "walletconnect" ||
+        connnector == "walletlink"
+      ) {
+        var get = await connection();
 
+        let reqdata = { address: get && get.address ? get.address : '' };
+        let { status } = await checkUser(reqdata);
 
-    if (localStorage.getItem("connect") == "yes") {
-      var get = await connection();
+        if (status == true) {
+          var eligibleStatus = {
+            eligible: "no",
+          }
 
+          dispatch(setEligible(eligibleStatus));
+          toastAlert('error', "Your Address is Blocked");
+        }
+        else {
+          dispatch(setWallet(get));
+        }
+      }
+    }
+    else if (walletClient && chain && (chain.id == config.NetworkId)) {
+
+      var { signer, transport } = walletClientToSigner(walletClient);
+      var web3 = new Web3(transport);
+
+      console.log('userdetailssssssssssssss: ', {
+        network: config.NetworkId,
+        web3: web3,
+        address: walletClient.account.address,
+        provider: transport,
+        connect: "yes",
+        isChange: "false",
+      });
+
+  
+      var get = await connection()
       let reqdata = { address: get && get.address ? get.address : '' };
       let { status } = await checkUser(reqdata);
 
@@ -130,35 +236,70 @@ export default function HeaderLinks(props) {
         dispatch(setEligible(eligibleStatus));
         toastAlert('error', "Your Address is Blocked");
       }
-      else {
-        let initialState = {
-          connect: (localStorage.getItem("connect") && localStorage.getItem("connect") == "yes")
-            ? localStorage.getItem("connect") : "no",
-          iswallet: (localStorage.getItem("iswallet") && localStorage.getItem("iswallet") != "")
-            ? localStorage.getItem("iswallet") : "no",
-          network: get.network,
-          web3: get.web3,
-          address: get.address,
-        };
-        dispatch(setWallet(initialState));
-        var add = get && get.address ? get.address : ''
-
-        setuseraddress(add);
-        //addUsers({ address: get.address });
-        var WEB3_CONNECT_CACHED_PROVIDER = localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER")
-        if (WEB3_CONNECT_CACHED_PROVIDER) {
-          var connnector = JSON.parse(WEB3_CONNECT_CACHED_PROVIDER)
-          if (connnector == "injected" || connnector == "walletconnect" || connnector === "binancechainwallet"
-            || connnector == "walletlink") {
-            var get = await connection();
-            dispatch(setWallet(get));
-            getuserBalance();
-          }
-        }
+      else{
+        dispatch(setWallet({
+          network: config.NetworkId,
+          web3: web3,
+          address: walletClient.account.address,
+          provider: transport,
+          connect: "yes",
+          isChange: "false",
+        }));
       }
+
     }
 
   }
+
+
+
+  // async function setConnection() {
+
+
+  //   if (localStorage.getItem("connect") == "yes") {
+  //     var get = await connection();
+
+  //     let reqdata = { address: get && get.address ? get.address : '' };
+  //     let { status } = await checkUser(reqdata);
+
+  //     if (status == true) {
+  //       var eligibleStatus = {
+  //         eligible: "no",
+  //       }
+
+  //       dispatch(setEligible(eligibleStatus));
+  //       toastAlert('error', "Your Address is Blocked");
+  //     }
+  //     else {
+  //       let initialState = {
+  //         connect: (localStorage.getItem("connect") && localStorage.getItem("connect") == "yes")
+  //           ? localStorage.getItem("connect") : "no",
+  //         iswallet: (localStorage.getItem("iswallet") && localStorage.getItem("iswallet") != "")
+  //           ? localStorage.getItem("iswallet") : "no",
+  //         network: get.network,
+  //         web3: get.web3,
+  //         address: get.address,
+  //       };
+  //       dispatch(setWallet(initialState));
+  //       var add = get && get.address ? get.address : ''
+
+  //       setuseraddress(add);
+  //       //addUsers({ address: get.address });
+  //       var WEB3_CONNECT_CACHED_PROVIDER = localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER")
+  //       if (WEB3_CONNECT_CACHED_PROVIDER) {
+  //         var connnector = JSON.parse(WEB3_CONNECT_CACHED_PROVIDER)
+  //         if (connnector == "injected" || connnector == "walletconnect" || connnector === "binancechainwallet"
+  //           || connnector == "walletlink") {
+  //           var get = await connection();
+  //           dispatch(setWallet(get));
+  //           getuserBalance();
+  //         }
+  //       }
+  //     }
+  //   }
+
+  // }
+
 
   const disconnectWeb3Wallet = async () => {
 
@@ -198,7 +339,9 @@ export default function HeaderLinks(props) {
       console.error(error);
     }
   };
-
+  useEffect(() => {
+    getuserBalance();
+  }, [walletConnection, walletClient]);
   async function getuserBalance() {
     if (walletConnection && walletConnection.web3 && walletConnection.address && walletConnection.address != "") {
       setuseraddress(walletConnection.address);
