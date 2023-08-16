@@ -42,7 +42,7 @@ if (process.env.NODE_ENV == "production") {
     blockexploer: "https://bscscan.com",
     imageUrl: "https://productionapi.soldaitswap.finance/tokens/",
     reactLoadr: "#19366b",
-    MasterChef: "0x3ec5356226b09c61e54dc7fb0becd7da9743d394",
+    MasterChef: "0x47f3486e436FD40781D7d349D75734F6622f1182",
     rpcurl: "https://bsc-dataseed1.ninicoin.io/",
     defaultLogo: "https://productionapi.soldaitswap.finance/tokens/question.svg",
     ETHSYMBOL: "BNB",
